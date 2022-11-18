@@ -4,6 +4,12 @@
 // Sample header file that should be used as reference
 // for creating ECG algorithms.
 //
+// ImplNote: Module class MUST expose only one public method
+// that handles all operations the module is created for
+// e.g. R_Peaks MUST only have one public method execute()
+// that will return indices of detected R peaks. All internal logic
+// MUST NOT be exposed to external classes.
+//
 
 #ifndef ECG_ANALYZER_SAMPLE_H
 #define ECG_ANALYZER_SAMPLE_H
@@ -12,22 +18,19 @@
 
 class Sample {
 
+    private:
+        float a;
+        float b;
+        float c;
+
     public:
-    Sample()
-    {
-        text = "Lorem ipsum";
-        number = 2;
-        number2 = 3;
-    }
+        Sample(float a, float b, float c);
 
     private:
-        std::string text;
-        int number;
-        int number2;
+        float calculateDelta();
 
     public:
-        std::string getText();
-        [[nodiscard]] int sumFields() const;
+        int getNumberOfRoots();
 };
 
 #endif //ECG_ANALYZER_SAMPLE_H

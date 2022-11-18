@@ -7,25 +7,50 @@
 
 #include "Sample.h"
 
-// This should be use to define functions that don't belong to
+// This should be used to define functions that don't belong to
 // the class itself, but are required by the class to perform
 // certain actions.
 namespace
 {
-    int sum (const int a, const int b)
+    float power(const float a, const int n)
     {
-        return a+b;
+        float result = 1;
+        for(int i=0; i<n; i++)
+        {
+            result*=a;
+        }
+        return result;
     }
 }
 
 
-// Class methods definitions.
-std::string Sample::getText()
+Sample::Sample(float a, float b, float c)
 {
-    return text;
+    Sample::a = a;
+    Sample::b = b;
+    Sample::c = c;
 }
 
-int Sample::sumFields() const
+// ImplNote: This is an example of internal method that MUST NOT
+// be exposed outside containing class. This is not required outside
+// the containing class as its only purpose is to disclose the number of
+// roots, not the implementation details.
+float Sample::calculateDelta()
 {
-    return sum(number, number2);
+    return power(b, 2)-(4*a*c);
+}
+
+// ImplNote: This is an example of executable method that is exposed
+// outside containing class. It handles the entire logic of Sample class
+// which is calculating the number of quadratic function roots.
+int Sample::getNumberOfRoots()
+{
+    float delta = Sample::calculateDelta();
+    if (delta > 0) {
+        return 2;
+    } else if (delta == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }

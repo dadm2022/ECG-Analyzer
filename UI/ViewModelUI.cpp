@@ -8,7 +8,9 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    auto sampleData = Sample();
-    m_button = std::make_shared<QPushButton>(sampleData.getText().c_str(), this);
+    auto sampleData = Sample(1, 2, 3);
+    int numberOfRoots = sampleData.getNumberOfRoots();
+    std::cout<<numberOfRoots;
+    m_button = std::make_shared<QPushButton>("The number of roots was displayed in the console", this);
     m_button->resize(200, 100);
 }
