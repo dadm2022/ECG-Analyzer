@@ -14,23 +14,23 @@
 #ifndef ECG_ANALYZER_SAMPLE_H
 #define ECG_ANALYZER_SAMPLE_H
 
-#include "iostream"
+#include <iostream>
 
 class Sample {
 
     private:
-        float a;
-        float b;
-        float c;
+        float a=0;
+        float b=0;
+        float c=0;
 
     public:
         Sample(float a, float b, float c);
 
     private:
-        float calculateDelta();
+        float calculateDelta() const;
 
     public:
-        int getNumberOfRoots();
+        unsigned int getNumberOfRoots();
 };
 
 #endif //ECG_ANALYZER_SAMPLE_H

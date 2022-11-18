@@ -26,16 +26,16 @@ namespace
 
 Sample::Sample(float a, float b, float c)
 {
-    Sample::a = a;
-    Sample::b = b;
-    Sample::c = c;
+    this->a = a;
+    this->b = b;
+    this->c = c;
 }
 
 // ImplNote: This is an example of internal method that MUST NOT
 // be exposed outside containing class. This is not required outside
 // the containing class as its only purpose is to disclose the number of
 // roots, not the implementation details.
-float Sample::calculateDelta()
+float Sample::calculateDelta() const
 {
     return power(b, 2)-(4*a*c);
 }
@@ -43,14 +43,14 @@ float Sample::calculateDelta()
 // ImplNote: This is an example of executable method that is exposed
 // outside containing class. It handles the entire logic of Sample class
 // which is calculating the number of quadratic function roots.
-int Sample::getNumberOfRoots()
+unsigned int Sample::getNumberOfRoots()
 {
-    float delta = Sample::calculateDelta();
-    if (delta > 0) {
+    const float delta = calculateDelta();
+
+    if (delta > 0)
         return 2;
-    } else if (delta == 0) {
+    else if (delta == 0)
         return 1;
-    } else {
+    else
         return 0;
-    }
 }

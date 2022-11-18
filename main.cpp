@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "UI/ViewModelUI.h"
+#include "UI/MainWindow.h"
 
 int main(int argc, char *argv[])
 {

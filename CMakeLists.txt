@@ -8,19 +8,25 @@ set(CMAKE_AUTOUIC ON)
 
 # Comment the following line on Windows (uncomment on Mac)
 # DO NOT COMMIT THIS CHANGE
-set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.7/lib/cmake/Qt5")
+set(CMAKE_PREFIX_PATH "/Users/marcelpikula/Qt/6.4.1/macos/lib/cmake/Qt6")
 
 
-find_package(Qt5 COMPONENTS
+find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
         REQUIRED)
 
-add_executable(ECG_Analyzer main.cpp Modules/Sample/Sample.h Modules/Sample/Sample.cpp UI/ViewModelUI.cpp UI/ViewModelUI.h)
+add_executable(ECG_Analyzer main.cpp
+        Modules/Sample/Sample.h
+        Modules/Sample/Sample.cpp
+        UI/MainWindow.cpp
+        UI/MainWindow.h
+        UI/ViewmodelUI.cpp)
+
 target_link_libraries(ECG_Analyzer
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
         )
 
