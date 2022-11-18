@@ -10,10 +10,6 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-//    auto sampleData = Sample(1, 2, 3);
-//    int numberOfRoots = sampleData.getNumberOfRoots();
-//    std::cout<<numberOfRoots;
-
     auto Viewmodel = std::make_unique<ViewmodelUI>();
 
     unsigned int numberOfRoots = Viewmodel->getNumberOfRoots();
