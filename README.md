@@ -24,9 +24,9 @@
       `git checkout -b [nazwa gałęzi]` - nazwa gałęzi w formacie
       `feature/[nazwa-modułu-oddzielona-myślnikami]`
    3. Zrobić zmiany w kodzie
-   4. `git pull origin main`
-   5. `git add -A`
-   6. `git commit -m "[NAZWA MODUŁU] - [krótki opis zmian]"`
+   4. `git add -A`
+   5. `git commit -m "[NAZWA MODUŁU] - [krótki opis zmian]"`
+   6. `git pull origin main`
    7. `git push origin [nazwa gałęzi]` w przypadku, gdy jest to kolejny
       commit lub `git push --set-upstream origin [nazwa gałęzi]` w przypadku
       pierwszego commita
