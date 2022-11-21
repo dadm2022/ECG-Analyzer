@@ -4,48 +4,52 @@
 
 #ifndef ECG_ANALYZER_WAVES_H
 #define ECG_ANALYZER_WAVES_H
-#include <complex>
 #include <iostream>
-#include <utility>
-#include <valarray>
 #include <vector>
-#include <memory>
 
 using namespace std;
 
 class Utils {
 public:
+    template <typename T, typename A> int arg_max(std::vector<T, A> const& vec);
     template <typename T, typename A> int arg_min(std::vector<T, A> const& vec);
+    template <typename T> double getAverage(std::vector<T> const& v);
     template <typename T> vector<T> gradient(vector<T> input);
     template <typename T> vector<T> slicing(vector<T> const& v, int X, int Y);
 };
 
-
-class QRS  : public Utils{
-public:
-    int findQPoint(int interval, int rLoc, const vector<float>& filteredSignal, const vector<int>& rPeaks);
-    int findSPoint(int interval, int rLoc, const vector<float>& filteredSignal, const vector<int>& rPeaks);
-};
-
-
-class WavesDetector : public QRS {
+class WavesDetector : public Utils {
 private:
     vector<int>QRSonset;
     vector<int>QRSend;
-    vector<int>findQRSonset();
-    vector<int>findQRSend();
+    vector<int>Tend;
+    vector<int>Ponset;
+    vector<int>Pend;
+    int findQPoint(int interval, int rLoc);
+    int findSPoint(int interval, int rLoc);
+    int findBoundaryPoint(vector<float> window);
+    void findQRSonset();
+    void findQRSend();
+    void findTend();
+    void findPwaveBoundaryPoints();
+
 public:
     vector<float>filteredSignal;
     vector<int>rPeaks;
 
     WavesDetector(const vector<float>&filteredSignal, const vector<int>&rPeaks) :
     filteredSignal(filteredSignal), rPeaks(rPeaks){
-        QRSonset = findQRSonset();
-        QRSend = findQRSend();
+        findQRSonset();
+        findQRSend();
+        findTend();
+        findPwaveBoundaryPoints();
     };
 
     vector <int> getQRSonset() { return QRSonset; };
     vector <int> getQRSend() { return QRSend; };
+    vector <int> getTend() { return Tend; };
+    vector <int> getPonset() { return Ponset; };
+    vector <int> getPend() { return Pend; };
 };
 
 
