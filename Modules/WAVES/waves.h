@@ -20,14 +20,14 @@ public:
 
 class WavesDetector : public Utils {
 private:
-    vector<int>QRSonset;
-    vector<int>QRSend;
-    vector<int>Tend;
-    vector<int>Ponset;
-    vector<int>Pend;
+    vector<int>qrsOnsetPoints;
+    vector<int>qrsEndPoints;
+    vector<int>tEndPoints;
+    vector<int>pOnsetPoints;
+    vector<int>pEndPoints;
     int findQPoint(int interval, int rLoc);
     int findSPoint(int interval, int rLoc);
-    int findBoundaryPoint(vector<float> window);
+    int findPwaveBoundaryPoint(vector<float> window);
     void findQRSonset();
     void findQRSend();
     void findTend();
@@ -37,19 +37,18 @@ public:
     vector<float>filteredSignal;
     vector<int>rPeaks;
 
-    WavesDetector(const vector<float>&filteredSignal, const vector<int>&rPeaks) :
-    filteredSignal(filteredSignal), rPeaks(rPeaks){
+    WavesDetector(const vector<float>&filteredSignal, const vector<int>&rPeaks) : filteredSignal(filteredSignal), rPeaks(rPeaks){
         findQRSonset();
         findQRSend();
         findTend();
         findPwaveBoundaryPoints();
     };
 
-    vector <int> getQRSonset() { return QRSonset; };
-    vector <int> getQRSend() { return QRSend; };
-    vector <int> getTend() { return Tend; };
-    vector <int> getPonset() { return Ponset; };
-    vector <int> getPend() { return Pend; };
+    vector <int> getQRSonset() { return qrsOnsetPoints; };
+    vector <int> getQRSend() { return qrsEndPoints; };
+    vector <int> getTend() { return tEndPoints; };
+    vector <int> getPonset() { return pOnsetPoints; };
+    vector <int> getPend() { return pEndPoints; };
 };
 
 
