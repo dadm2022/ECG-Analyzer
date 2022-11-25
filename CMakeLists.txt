@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 
 # Comment the following line on Windows (uncomment on Mac)
 # DO NOT COMMIT THIS CHANGE
-set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.7/lib/cmake/Qt5")
+set(CMAKE_PREFIX_PATH "C:\Qt\5.15.11\mingw81_64\lib\cmake\Qt5")
 
 
 find_package(Qt5 COMPONENTS
