@@ -1,21 +1,32 @@
 //
-// Created by Laura Kucharska on 20/11/2022.
+// Created by Laura Kucharska on 28/11/2022.
 //
-//
+// Header file with DataAccessor class.
 //
 //
 
 #ifndef ECG_ANALYZER_DATA_ACCESSOR_H
 #define ECG_ANALYZER_DATA_ACCESSOR_H
 
+#include "wfdb.h"
+
 #include <string>
 #include <vector>
+#include <filesystem>
 
 class DataAccessor {
-    std::vector<unsigned char> datBuffer;
-    std::vector<std::string> heaBuffer;
-    bool loaded = false;
+    bool m_loaded = false; // 
+    const static char m_separator = '/';
+    int m_signalCount = 0; // number of signals in specified record
+    std::string m_heaFilePath; //
+    std::string m_fileNameWithoutExtension; //
+
 public:
+
+    /**
+     * @brief Construct a new Data Accessor object
+     * 
+     */
     DataAccessor() = default;
 
     /**
@@ -36,21 +47,33 @@ public:
      * @return false Not loaded.
      */
     [[nodiscard]] bool isLoaded() const;
-    
-    /**
-     * @brief Get the reference to data buffer.
-     * 
-     * @return std::vector<unsigned char>& 
-     */
-    std::vector<unsigned char>& datBufferGet();
 
     /**
-     * @brief Get the reference to header data.
-     * Each element of the vector is a new line.
+     * @brief Function for getting number of signals from loaded record.
      * 
-     * @return std::vector<std::string>& 
+     * @note This function should be called after @ref load().
+     * 
+     * @return int Number of signals in record.
      */
-    std::vector<std::string>& heaBufferGet();
+    int signalCountGet() const;
+
+    /**
+     * @brief Function for getting signals info from loaded record.
+     * 
+     * @note This function should be called after @ref load().
+     *
+     * @return std::vector<WFDB_Siginfo> 
+     */
+    std::vector<WFDB_Siginfo> signalInfoGet() const;
+
+    /**
+     * @brief Function for getting signals' data from loaded record.
+     * 
+     * @note This function should be called after @ref load().
+     * 
+     * @return std::vector<std::vector<float>> 
+     */
+    std::vector<std::vector<float>> signalDataGet() const;
 };
 
 #endif // ECG_ANALYZER_DATA_ACCESSOR_H
