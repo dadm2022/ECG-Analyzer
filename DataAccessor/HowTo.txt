@@ -1,0 +1,2 @@
+This directory should contain IO logic.
+Discard this file after committing first file.
