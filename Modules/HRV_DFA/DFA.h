@@ -10,83 +10,128 @@
 #include <cmath>
 #include <fstream>
 
+// todo - check if all libraries needed
+
 using namespace std;
+
+
+
+class inputData
+{
+    private:
+    vector <double> data;
+    vector <long double> y;
+    vector <long double> yk;
+    double xmean;
+    int length;
+    double temp;
+
+    public:
+    inputData()
+    {
+        xmean=0;
+        length = 0;
+        temp = 0;
+    }
+
+    // change code for data in proper application!!!!!!!
+
+    // pass the data from module R-Peaks
+    // fs needs checking from io module
+    vector<long double> readInput(vector<int>& input, int fs);
+
+    vector<int> createNarray(int start, int end);
+
+};
+
+
 
 class polyfit {
 private: 
-    // Store the coefficient/slope in the best fitting line
-    double coeff;
+
+    // coeffs y=ax+b
+    long double a;
+    long double b;
  
-    // Store the constant term in the best fitting line
-    double constTerm;
- 
-    // Contains sum of product of all (i-th x) and (i-th y)
-    double sum_xy;
- 
-    // Contains sum of all (i-th x)
-    double sum_x;
- 
-    // Contains sum of all (i-th y)
-    double sum_y;
- 
-    // Contains sum of square of all (i-th x)
-    double sum_x_square;
- 
-    // Contains sum of square of all (i-th y)
-    double sum_y_square;
+    // for sum algorithm
+    double sumXY;
+    double sumX;
+    double sumY;
+    double sumXsquare;
+    double sumYsquare;
 
     double value;
+
+    // iterators
+    int j, k, m;
+
+    // for modulo
+    int mod;
+
+    //data in polyfit algorithm
+    vector <int> x;
+    vector <long double> y_cut;
+    vector <long double> yy;
+    vector <double> p;
+    vector <long double> y_est;
+    vector <long double> yf;
+
+    // for root mean square error
+    vector <double> diff;
+    vector <double> diff2;
+    double sum;
+    double mean_sqr;
+    double sq;
+    vector <double> f;
+
+    // DFA
+    vector <long double> fa;
+    vector <int> na;
+
+    // calculate coeff
+    void calculateCoeff(vector<int>& x, vector<double>& p, vector<long double>& y_est);
+
+    // Function to take input from the dataset
+    void takeInput(vector<int>& x, vector<long double>& y);
+
+    void diffVec(vector<long double>& y_cut, vector<long double>& yf, vector<double>& diff);
+
+    void pow2Vec(vector<double>& diff, vector<double>& diff2);
+
+    double sumDouble(vector<double>& diff2, double &sum);
+
+
+    template <typename T> T* log10Vec (vector<T> &f, vector<T> &flog);
+
  
 public:
     // Constructor
     polyfit()
     {
-        coeff = 0;
-        constTerm = 0;
-        sum_y = 0;
-        sum_y_square = 0;
-        sum_x_square = 0;
-        sum_x = 0;
-        sum_xy = 0;
-        value = 0.0;
+        a = 0.0;
+        b = 0.0;
+        sumY = 0;
+        sumYsquare = 0;
+        sumXsquare = 0;
+        sumX = 0;
+        sumXY = 0;
+        value = 0;
+
+        sum = 0;
+        mean_sqr = 0;
+        sq = 0;
     }
- 
-    // Function that calculate the coefficient/slope
-    void calculateCoefficient(vector<int>& x);
- 
-    // Member function that will calculate the constant term 
-    void calculateConstantTerm(vector<int>& x);
- 
-    // Function that return the size of data set
-    int sizeOfData(vector<int>& x);
- 
-    // Function that return the coefficient/
-    // slope of the best fitting line
-    double coefficient(vector<int>& x);
 
- 
-    // Function that return the constant
-    // term of the best fitting line
-    double constant(vector<int>& x);
- 
- 
-    // Function to take input from the dataset
-    void takeInput(vector<int>& x, vector<double>& yy);
+    void loopPoly(vector<long double>& yk, vector<int>& n);
+    vector<double> returnF();
 
-    // Function to return vector of 2 values - a and b
-    void returnP(vector<double>& p);
+    // part for DFA
+    double calcAlfa(int nDiv, bool choose);
 
-    void polyval(vector<double>& p, vector<int>& x, vector<double>& y_temp);
 
 };
 
-    void diffVec(vector<double>& y_cut, vector<double>& yf, vector<double>& diff);
 
-    void pow2Vec(vector<double>& diff, vector<double>& diff2);
-
-    void sumVec(vector<double>& y, vector<double>& yk);
-
-    void sumDouble(vector<double>& diff2, double &sum);
-
-    void log10Vec(vector<double>& f, vector<double>& flog);
-    void log10Vec(vector<int>& n, vector<int>& nlog);
+    // funkcja do liczenia wyznacznika macierzy, do algorytmu macierzowego
+    // not used
+    static double CalcDeterminant(vector<vector<double>> Matrix);
