@@ -2,7 +2,7 @@
 
 using namespace std;
 
-
+// creating array with natural numbers for dfa algorhitm
 vector<int> inputData::createNarray(int start, int end)
 {
     vector <int> n;
@@ -15,6 +15,8 @@ vector<int> inputData::createNarray(int start, int end)
     return n;
 }
 
+// create vector with proper data
+// input comes from higher level module as number of R-peak sample
 vector<long double> inputData::readInput(vector<int>& input, int fs)
 {
     // this only for debugging
@@ -71,11 +73,21 @@ vector<long double> inputData::readInput(vector<int>& input, int fs)
 
 /////////////////////////////////////////////////////////////////
 
-
-void polyfit::loopPoly(vector<long double>& yk, vector<int>& n)
+// proper function for all polyfitting for DFA calculation
+// y (means yk)
+// y_cut is data from yk, but last few data is cut off, as y_cut mast be divided by n value
+// whole x is for the number of data in input
+// n value say, how large x pieces will be
+// for n=4, x will be: <1, 2, 3, 4>, <5, 6, 7, 8> and so on
+// with those x and short y_cut pieces, the algorithm of actual polyfit is calculated
+// yf is vector of estimated values, needed for calculating difference between estimated and real value
+// next are calculations for F(n)
+// f is the output vector with F(n)
+void Polyfit::loopPoly(vector<long double>& yk, vector<int>& n)
 {
     int size = int (n.size());
     for (int i = 0; i<size; i++)
+    // for debugging
 //        for (int i = 1; i<2; i++)
     {
         j = n[i];
@@ -89,6 +101,7 @@ void polyfit::loopPoly(vector<long double>& yk, vector<int>& n)
         diff2.clear();
 
         while (k < int (y_cut.size()) )
+        // for debugging
 //        while (k < 9 )
 //        while (k < 1 )
         {
@@ -117,26 +130,30 @@ void polyfit::loopPoly(vector<long double>& yk, vector<int>& n)
         sum = sumDouble(diff2, sum);
         mean_sqr = sum/(int (y_cut.size()));
         sq = sqrt(mean_sqr);
+        // f is F(n), the result of DFA
         f.push_back(sq);
 
-        //delete after debugging
+        // for debugging
         cout << "Test dzialania: " << j << endl;
     }
 }
 
-vector<double> polyfit:: returnF()
+// return F(n) - result of DFA
+vector<double> Polyfit:: returnF()
 {
     return f;
 }
 
-
-void polyfit::calculateCoeff(vector<int>& x, vector<double>& p, vector<long double>& y_est)
+// calculate coeff a and b of function y=ax+b
+// y_est is y-value estimated from a and b values
+void Polyfit::calculateCoeff(vector<int>& x, vector<double>& p, vector<long double>& y_est)
     {
         a=0.0;
         b=0.0;
         double N = x.size();
 
-        // to do - change for matrix algorhitm
+
+        // to do - change for matrix algorhitm or gsl library
         b = (N * sumXY - sumY * sumX)/(N*sumXsquare - sumX * sumX);
         a = (sumY - b*sumX)/N;
 
@@ -157,15 +174,18 @@ void polyfit::calculateCoeff(vector<int>& x, vector<double>& p, vector<long doub
 
     }
 
-
-void polyfit::takeInput(vector<int>& x, vector<long double>& y)
+// function for taking input data (x and y) and return parameters for polyfit algorithm
+void Polyfit::takeInput(vector<int>& x, vector<long double>& y)
     {
+        tempx = x.front();
+        tempy = y.front();
+
         for (size_t i = 0; i < x.size(); i++) 
         {
             double xi = 0.0;
             double yi = 0.0;
-            xi = x.at(i);
-            yi = y.at(i);
+            xi = x.at(i)-tempx;
+            yi = y.at(i)-tempy;
             sumXY += xi * yi;
             sumX += xi;
             sumY += yi;
@@ -174,8 +194,8 @@ void polyfit::takeInput(vector<int>& x, vector<long double>& y)
         }
     }
 
-
-void polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vector<double>& diff)
+// difference between real y and estimated y
+void Polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vector<double>& diff)
     {
         int k = 0;
         double temp=0.0;
@@ -188,7 +208,8 @@ void polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vecto
         }
     }
 
- void polyfit::pow2Vec(vector<double>& diff, vector<double>& diff2)
+// squared value of difference
+ void Polyfit::pow2Vec(vector<double>& diff, vector<double>& diff2)
     {
         int k = 0;
         double temp=0.0;
@@ -201,8 +222,8 @@ void polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vecto
         }
     }
 
-
- double polyfit::sumDouble(vector<double>& diff2, double &sum)
+// sum of squared values
+ double Polyfit::sumDouble(vector<double>& diff2, double &sum)
     {
         sum = 0.0;
         for_each(diff2.begin(), diff2.end(), [&] (double val)
@@ -213,8 +234,8 @@ void polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vecto
 
     }
 
-
- template <typename T> T* polyfit::log10Vec (vector<T> &f, vector<T> &flog)
+// log10 for polyfit after DFA
+ template <typename T> T* Polyfit::log10Vec (vector<T> &f, vector<T> &flog)
  {
 
     for (auto it = f.begin(); it != f.end(); it++)
@@ -223,8 +244,14 @@ void polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vecto
     }
  }
 
-
- double polyfit::calcAlfa(int nDiv, bool choose)
+ // calculating alfa1 and alfa2 parameters - outputs of this module
+ // nDiv tells, for which n the lower n is for alfa1 and higher is for alfa2
+ // choose is for choosing which alfa calculate
+ // 0 (false) for alfa1, 1 (true) for alfa2
+ // fa is cuted f log vector, na is cuted n log vector
+ // calculateCoeff gives 3 values, but only pDFA is important
+ // pDFA.at(0) is alfa value
+ double Polyfit::calcAlfa(int nDiv, bool choose)
     {
         vector <double> pDfa;
         vector <long double> yEstDfa;
@@ -244,11 +271,12 @@ void polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vecto
         takeInput(na, fa);
         calculateCoeff(na, pDfa, yEstDfa);
 
-        return p.at(0);
+        return pDfa.at(0);
     }
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+ // if unused before 16.12, needs to be deleted
  static double CalcDeterminant(vector<vector<double>> Matrix)
     {
          //this function is written in c++ to calculate the determinant of matrix

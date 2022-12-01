@@ -10,10 +10,15 @@
 #include <cmath>
 #include <fstream>
 
+// to do - add gsl library
+//#include "gsl/gsl_math.h"
+
 // todo - check if all libraries needed
 
 using namespace std;
 
+#ifndef ECG_ANALYZER_SAMPLE_H
+#define ECG_ANALYZER_SAMPLE_H
 
 
 class inputData
@@ -45,8 +50,7 @@ class inputData
 };
 
 
-
-class polyfit {
+class Polyfit {
 private: 
 
     // coeffs y=ax+b
@@ -75,6 +79,9 @@ private:
     vector <double> p;
     vector <long double> y_est;
     vector <long double> yf;
+    vector <int> xt;  //not used
+    int tempx;
+    long double tempy;
 
     // for root mean square error
     vector <double> diff;
@@ -106,7 +113,7 @@ private:
  
 public:
     // Constructor
-    polyfit()
+    Polyfit()
     {
         a = 0.0;
         b = 0.0;
@@ -116,6 +123,8 @@ public:
         sumX = 0;
         sumXY = 0;
         value = 0;
+        tempx = 0;
+        tempy = 0;
 
         sum = 0;
         mean_sqr = 0;
@@ -135,3 +144,6 @@ public:
     // funkcja do liczenia wyznacznika macierzy, do algorytmu macierzowego
     // not used
     static double CalcDeterminant(vector<vector<double>> Matrix);
+
+
+    #endif //ECG_ANALYZER_SAMPLE_H
