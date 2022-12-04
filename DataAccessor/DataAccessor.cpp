@@ -12,6 +12,31 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <regex>
+
+inline std::string trim(std::string &str) {
+    return str.erase(str.find_last_not_of("\t\n\v\f\r ") + 1).erase(0, str.find_first_not_of("\t\n\v\f\r "));
+}
+
+void DataAccessor::parseComment() {
+    for (auto &line: comment) {
+        std::smatch match;
+        line = trim(line);
+        if (std::regex_search(line, match, std::regex(R"(^\d+\s[FM]\s)"))) {
+            std::string mathString = match.str(0);
+            auto spaceIndex = mathString.find_first_of(' ');
+            age = std::stoi(mathString.substr(0, spaceIndex));
+            sex = mathString.at(spaceIndex + 1);
+        } else if (std::regex_search(line, match, std::regex(R"(^Age:\s+\d+\s+Sex:\s+[FM])"))) {
+            std::string mathString = match.str(0);
+            std::regex_search(line, match, std::regex(R"(\d+)"));
+            age = std::stoi(match.str(0));
+            std::regex_search(line, match, std::regex(R"([FM])"));
+            sex = match.str(0).at(0);
+        }
+    }
+}
 
 bool DataAccessor::load(std::string filepath) {
     m_loaded = false;
@@ -38,6 +63,13 @@ bool DataAccessor::load(std::string filepath) {
         return false;
     }
 
+    std::ifstream headerFile(m_heaFilePath);
+    for (std::string line; getline(headerFile, line);) {
+        if (line.at(0) == '#') { // The line starts with # is a comment
+            comment.push_back(line.substr(1));
+        }
+    }
+
     char *fname = const_cast<char *>(m_heaFilePath.c_str());
     char *record = const_cast<char *>(m_fileNameWithoutExtension.c_str());
 
@@ -55,8 +87,8 @@ bool DataAccessor::load(std::string filepath) {
     }
 
     m_signalCount = signalCount;
-
     m_loaded = true;
+    parseComment();
     return m_loaded;
 }
 
@@ -124,6 +156,27 @@ std::vector<std::vector<float>> DataAccessor::signalDataGet() const {
         }
         delete[] signalInfo;
         delete[] sample;
+    }
+    return {};
+}
+
+int DataAccessor::ageGet() const {
+    if (isLoaded()) {
+        return age;
+    }
+    return 0;
+}
+
+char DataAccessor::sexGet() const {
+    if (isLoaded()) {
+        return sex;
+    }
+    return ' ';
+}
+
+std::vector<std::string> DataAccessor::commentGet() const {
+    if (isLoaded()) {
+        return comment;
     }
     return {};
 }

@@ -20,6 +20,10 @@ class DataAccessor {
     int m_signalCount = 0; // number of signals in specified record
     std::string m_heaFilePath; //
     std::string m_fileNameWithoutExtension; //
+    std::vector<std::string> comment;
+    char sex = ' ';
+    int age = 0;
+    void parseComment();
 
 public:
 
@@ -74,6 +78,33 @@ public:
      * @return std::vector<std::vector<float>> 
      */
     std::vector<std::vector<float>> signalDataGet() const;
+
+    /**
+     * @brief Function for getting comment from header file if exists.
+     * 
+     * @note This function should be called after @ref load().
+     * 
+     * @return std::vector<std::string>
+     */
+    std::vector<std::string> commentGet() const;
+
+    /**
+     * @brief Function for getting age from comment if exists.
+     * 
+     * @note This function should be called after @ref load().
+     * 
+     * @return int 
+     */
+    int ageGet() const;
+
+    /**
+     * @brief Function for getting sex from comment if exists.
+     * 
+     * This function should be called after @ref load().
+     * 
+     * @return char 
+     */
+    char sexGet() const;
 };
 
 #endif // ECG_ANALYZER_DATA_ACCESSOR_H

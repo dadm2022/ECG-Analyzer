@@ -19,10 +19,10 @@ struct WFDB_FILE {
 typedef struct WFDB_FILE WFDB_FILE;
 
 /* Dynamic memory allocation macros. */
-#define MEMERR(P, N, S)                                                      \
-    do {                                                                     \
-        std::cout << "WFDB: can't allocate (%lu*%lu) bytes for %s\n" <<      \
-                   (unsigned long)N <<  (unsigned long)S << #P  <<std::endl; \
+#define MEMERR(P, N, S)                                                          \
+    do {                                                                         \
+        std::cout << "WFDB: can't allocate (%lu*%lu) bytes for %s\n" <<          \
+                   (unsigned long)(N) <<  (unsigned long)(S) << #P  <<std::endl; \
     } while (0)
 
 #define SREALLOC(P, N, S) \
@@ -65,7 +65,8 @@ WFDB_FILE *wfdb_fopen(char *fname, const char *mode) {
 
     wp = new WFDB_FILE;
 
-    if (wp->fp = fopen(fname, mode)) {
+    wp->fp = fopen(fname, mode);
+    if (wp->fp) {
         wp->type = WFDB_LOCAL;
         return (wp);
     }
@@ -124,6 +125,25 @@ static double bcount;         /* base count (counter value at sample 0) */
 static long prolog_bytes;     /* length of prolog, as told to wfdbsetstart
 					(used only by setheader, if output signal
 					file(s) are not open) */
+static int gvmode = 0; /* getvec mode */
+
+static WFDB_Time istime;           /* time of next input sample */
+static WFDB_Time msnsamples; /* duration of multi-segment record */
+static unsigned ispfmax;   /* max number of samples of any open signal
+				  per input frame */
+static WFDB_Time ostime; /* time of next output sample */
+
+static char date_string[37];
+static char time_string[62];
+static WFDB_Date pdays = -1;
+
+static long msbtime;         /* base time for multi-segment record */
+static WFDB_Date msbdate;     /* base date for multi-segment record */
+static WFDB_Seginfo *segp, *segend;
+static WFDB_Seginfo *segarray;
+
+/* beginning, current segment, end pointers */
+static struct WFDB_seginfo_L *segarray_L;
 
 static struct hsdata {
     WFDB_Siginfo info; /* info about signal from header */
@@ -162,8 +182,6 @@ size_t wfdb_getline(char **buffer, size_t *buffer_size, WFDB_FILE *fp) {
         (*buffer)[i] = 0;
     return (i);
 }
-
-static int gvmode = 0; /* getvec mode */
 
 FINT setsampfreq(WFDB_Frequency freq) {
     if (freq >= 0.) {
@@ -206,12 +224,6 @@ FDATE strdat(const char *string) {
     }
     return (date);
 }
-
-static WFDB_Time istime;           /* time of next input sample */
-static WFDB_Time msnsamples; /* duration of multi-segment record */
-static unsigned ispfmax;   /* max number of samples of any open signal
-				  per input frame */
-static WFDB_Time ostime; /* time of next output sample */
 
 static WFDB_Time fstrtim(const char *string, WFDB_Frequency f) {
     const char *p, *q, *r;
@@ -264,10 +276,6 @@ static WFDB_Time fstrtim(const char *string, WFDB_Frequency f) {
     }
 }
 
-static char date_string[37];
-static char time_string[62];
-static WFDB_Date pdays = -1;
-
 FINT setbasetime(char *string) {
     char *p;
 
@@ -289,7 +297,8 @@ FINT setbasetime(char *string) {
         return (0);
     }
     while (*string == ' ') string++;
-    if (p = strchr(string, ' '))
+    p = strchr(string, ' ');
+    if (p)
         *p++ = '\0';    /* split time and date components */
     btime = fstrtim(string, 1000.0);
     bdate = p ? strdat(p) : (WFDB_Date) 0;
@@ -300,14 +309,6 @@ FINT setbasetime(char *string) {
     }
     return (0);
 }
-
-static long msbtime;         /* base time for multi-segment record */
-static WFDB_Date msbdate;     /* base date for multi-segment record */
-static WFDB_Seginfo *segp, *segend;
-static WFDB_Seginfo *segarray;
-
-/* beginning, current segment, end pointers */
-static struct WFDB_seginfo_L *segarray_L;
 
 static int isfmt(int f) {
     int i;
@@ -1117,8 +1118,8 @@ FINT isigopen(const char *record, const char *filepath, WFDB_Siginfo *siarray, i
     WFDB_Group g;
 
     /* Close previously opened input signals unless otherwise requested. */
-//    if (*record == '+') record++;
-//    else isigclose();
+    if (*record == '+') record++;
+    else isigclose();
 
     /* Remove trailing .hea, if any, from record name. */
 //    wfdb_striphea(record);
