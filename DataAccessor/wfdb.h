@@ -8,7 +8,7 @@
 #ifndef ECG_ANALYZERRRR_WFDB_H
 #define ECG_ANALYZERRRR_WFDB_H
 
-#include <wfdb_macros.h>
+#include "wfdb_macros.h"
 
 /* Simple data types */
 typedef int WFDB_Sample;             /* units are adus */
