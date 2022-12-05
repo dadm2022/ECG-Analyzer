@@ -17,16 +17,25 @@
 class DataAccessor {
     bool m_loaded = false; // 
     const static char m_separator = '/';
-    int m_signalCount = 0; // number of signals in specified record
-    std::string m_heaFilePath; //
-    std::string m_fileNameWithoutExtension; //
     std::vector<std::string> comment;
     char sex = ' ';
     int age = 0;
     void parseComment();
 
 public:
+    /**
+     * @brief Signal info and data from record.
+     */
+    struct Signal {
+        WFDB_Siginfo info;
+        std::vector<float> data;
+    };
 
+private:
+    std::vector<Signal> signals;
+    Signal dummy; // dummy signal is required to use references.
+
+public:
     /**
      * @brief Construct a new Data Accessor object
      * 
@@ -59,25 +68,18 @@ public:
      * 
      * @return int Number of signals in record.
      */
-    int signalCountGet() const;
+    [[nodiscard]] int signalCountGet() const;
 
     /**
-     * @brief Function for getting signals info from loaded record.
-     * 
-     * @note This function should be called after @ref load().
-     *
-     * @return std::vector<WFDB_Siginfo> 
-     */
-    std::vector<WFDB_Siginfo> signalInfoGet() const;
-
-    /**
-     * @brief Function for getting signals' data from loaded record.
+     * @brief Function for getting reference to signal at specified index.
+     * Index should be smaller than the value returned from @ref signalCountGet().
      * 
      * @note This function should be called after @ref load().
      * 
-     * @return std::vector<std::vector<float>> 
+     * @param[in] index Specified signal index. 
+     * @return Signal& 
      */
-    std::vector<std::vector<float>> signalDataGet() const;
+    Signal& at(std::size_t index);
 
     /**
      * @brief Function for getting comment from header file if exists.
@@ -86,7 +88,7 @@ public:
      * 
      * @return std::vector<std::string>
      */
-    std::vector<std::string> commentGet() const;
+    [[nodiscard]] std::vector<std::string> commentGet() const;
 
     /**
      * @brief Function for getting age from comment if exists.
@@ -95,7 +97,7 @@ public:
      * 
      * @return int 
      */
-    int ageGet() const;
+    [[nodiscard]] int ageGet() const;
 
     /**
      * @brief Function for getting sex from comment if exists.
@@ -104,7 +106,7 @@ public:
      * 
      * @return char 
      */
-    char sexGet() const;
+    [[nodiscard]] char sexGet() const;
 };
 
 #endif // ECG_ANALYZER_DATA_ACCESSOR_H
