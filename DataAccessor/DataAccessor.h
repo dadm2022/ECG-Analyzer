@@ -14,25 +14,24 @@
 #include <vector>
 #include <filesystem>
 
+/**
+     * @brief Signal info and data from record.
+     */
+struct Signal {
+    WFDB_Siginfo info;
+    std::vector<float> data;
+};
+
 class DataAccessor {
-    bool m_loaded = false; // 
+
+    bool m_loaded = false;
     const static char m_separator = '/';
     std::vector<std::string> comment;
     char sex = ' ';
     int age = 0;
     void parseComment();
 
-public:
-    /**
-     * @brief Signal info and data from record.
-     */
-    struct Signal {
-        WFDB_Siginfo info;
-        std::vector<float> data;
-    };
-
-private:
-    std::vector<Signal> signals;
+    std::vector<Signal> m_signals;
     Signal dummy; // dummy signal is required to use references.
 
 public:

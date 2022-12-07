@@ -39,7 +39,7 @@ void DataAccessor::parseComment() {
 }
 
 bool DataAccessor::load(std::string filepath) {
-    signals.clear();
+    m_signals.clear();
     m_loaded = false;
     namespace fs = std::filesystem;
 
@@ -86,7 +86,7 @@ bool DataAccessor::load(std::string filepath) {
         return false;
     }
 
-    signals.reserve(signalCount);
+    m_signals.reserve(signalCount);
 
     auto signalInfo = new WFDB_Siginfo[signalCount];
     auto sample = new WFDB_Sample[signalCount];
@@ -100,9 +100,9 @@ bool DataAccessor::load(std::string filepath) {
         for (int i = 0; i < signalCount; i++) {
             baseline[i] = static_cast<float>(signalInfo[i].baseline);
             gain[i] = static_cast<float>(signalInfo[i].gain);
-            signals.push_back({});
-            signals.at(i).info = signalInfo[i];
-            signals.at(i).data.reserve(signalInfo[i].nsamp);
+            m_signals.push_back({});
+            m_signals.at(i).info = signalInfo[i];
+            m_signals.at(i).data.reserve(signalInfo[i].nsamp);
         }
 
         for (int i = 0; i < signalInfo->nsamp; i++) {
@@ -112,7 +112,7 @@ bool DataAccessor::load(std::string filepath) {
             }
 
             for (int j = 0; j < signalCount; j++) {
-                signals.at(j).data.push_back(((float) sample[j] - baseline[j]) / gain[j]);
+                m_signals.at(j).data.push_back(((float) sample[j] - baseline[j]) / gain[j]);
             }
         }
 
@@ -131,14 +131,14 @@ bool DataAccessor::isLoaded() const {
 
 int DataAccessor::signalCountGet() const {
     if (isLoaded()) {
-        return static_cast<int>(signals.size());
+        return static_cast<int>(m_signals.size());
     }
     return {};
 }
 
-DataAccessor::Signal& DataAccessor::at(std::size_t index) {
+Signal& DataAccessor::at(std::size_t index) {
     if (isLoaded() && (index < signalCountGet()) ) {
-        return signals.at(index);
+        return m_signals.at(index);
     }
     return dummy;
 }
