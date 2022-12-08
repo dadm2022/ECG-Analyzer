@@ -7,46 +7,50 @@
 #define ECG_ANALYZER_HILBERTTRANSFORM_H
 
 #include <vector>
+#include <memory>
 
 /*
  * Example usage:
  * HilbertTransform hilbert = HilbertTransform();
- * vector<int> peaks = hilbert.GetPeaks(signal);
+ * std::shared_ptr<const std::vector<float>> electrocardiogram_signal = make_shared<std::vector<float>>(signal.data);
+ * vector<int> peaks = hilbert.GetPeaks(electrocardiogram_signal);
  */
-class HilbertTransform {
+class HilbertTransform
+{
 public:
     HilbertTransform() = default;
+
 
     /*
      * @brief Function for finding R peaks using Hilbert Transform
      *@param[in] EKG signal
      *@return Indexes of R peaks for given signal
      */
-    std::vector<int> GetPeaks(std::vector<double> electrocardiogram_signal) const;
+    std::vector<int> GetPeaks(std::shared_ptr<const std::vector<float>> electrocardiogram_signal, int fs = 360);
 
 private:
-    const int SIZE = 1024; // size of window in Hilbert Transform
-    const int fs = 360; // electrocardiogram_signal sampling frequency
+    static constexpr int m_kSize = 1024; // size of window in Hilbert Transform
+    int m_fs; // electrocardiogram_signal sampling frequency
     /*
-     * @brief compute Hilbert Transform on window with size HilbertTransform::SIZE,
+     * @brief compute Hilbert Transform on window with size HilbertTransform::m_kSize,
      * @param[in] first index to start
      */
-    std::vector<double> ComputeHilbertTransform(std::vector<double> signal, int first) const;
+    std::vector<float> ComputeHilbertTransform(std::vector<float> signal, int first) const;
 
-    std::vector<double> Derivative(std::vector<double> signal) const;
+    std::vector<float> Derivative(std::vector<float> &signal) const;
 
-    std::vector<double> Filter(std::vector<double> signal, double fc1, double fc2) const;
+    std::vector<float> Filter(const std::vector<float> &signal, float fc1, float fc2) const;
 
-    int CalcAverageDistance(std::vector<int> peaks) const;
+    int CalcAverageDistance(std::vector<int> &peaks) const;
 
-    double CalcRMSValue(std::vector<double> signal) const;
+    float CalcRMSValue(std::vector<float> &signal) const;
 
-    void Normalize(std::vector<double> &v) const;
+    void Normalize(std::vector<float> &v) const;
 
     template<typename T>
     std::vector<T> Conv(std::vector<T> const &f, std::vector<T> const &g) const;
 
-    double Factorial(int n) const;
+    float Factorial(int n) const;
 };
 
 

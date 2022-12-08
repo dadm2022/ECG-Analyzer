@@ -10,31 +10,35 @@
 
 
 #include <vector>
+#include <memory>
 
 /*
  * Example usage:
- * PanTompkins pan_tompkins = PanTompkins();
- * vector<int> peaks = pan_tompkins.GetPeaks(signal);
+ * DataAccessor::Signal signal =dataAccessor.at(0);
+ * std::shared_ptr<const std::vector<float>> electrocardiogram_signal = make_shared<std::vector<float>>(signal.data);
+ * pan_tompkins.GetPeaks(electrocardiogram_signal);
  */
-class PanTompkins {
+class PanTompkins
+{
 public:
     PanTompkins() = default;
+
 
     /*@brief Function for finding R peaks using Pan Tompkins method
      *@param[in] EKG signal
      *@return indexes of R peaks for given signal
      */
-    std::vector<int> GetPeaks(std::vector<double> electrocardiogram_signal) const;
+    std::vector<int> GetPeaks(std::shared_ptr<const std::vector<float>> electrocardiogram_signal, int fs = 360);
 
 private:
-    const int fs = 360;
+    int m_fs; // electrocardiogram_signal sampling frequency
 
-    std::vector<double> Filter(std::vector<double> signal, double fc1, double fc2) const;
+    std::vector<float> Filter(std::vector<float> signal, float fc1, float fc2) const;
 
     template<typename T>
     std::vector<T> Conv(std::vector<T> const &f, std::vector<T> const &g) const;
 
-    void Normalize(std::vector<double> &v) const;
+    void Normalize(std::vector<float> &v) const;
 };
 
 
