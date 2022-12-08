@@ -1,28 +1,17 @@
 //
 // Created by Laura Kucharska on 28/11/2022.
 //
-// Header file with DataAccessor class.
-//
-//
 
 #ifndef ECG_ANALYZER_DATA_ACCESSOR_H
 #define ECG_ANALYZER_DATA_ACCESSOR_H
 
-#include "wfdb.h"
+
 
 #include <string>
 #include <vector>
 #include <filesystem>
+#include "wfdb.h"
 
-class DataAccessor {
-    bool m_loaded = false; // 
-    const static char m_separator = '/';
-    std::vector<std::string> comment;
-    char sex = ' ';
-    int age = 0;
-    void parseComment();
-
-public:
     /**
      * @brief Signal info and data from record.
      */
@@ -31,9 +20,20 @@ public:
         std::vector<float> data;
     };
 
-private:
-    std::vector<Signal> signals;
-    Signal dummy; // dummy signal is required to use references.
+class DataAccessor {
+
+    bool m_loaded = false;
+    const static char m_separator = '/';
+
+    int m_signalsCount = 0;
+    std::vector<std::string> comment;
+    std::vector<Signal> m_signals;
+    Signal dummy;// dummy signal is required to use references.
+
+    char sex = (char)0;
+    int age = 0;
+
+    void parseComment();
 
 public:
     /**
