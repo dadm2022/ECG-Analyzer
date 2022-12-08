@@ -18,7 +18,10 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(ECG_Analyzer main.cpp Modules/Sample/Sample.h Modules/Sample/Sample.cpp UI/ViewModelUI.cpp UI/ViewModelUI.h DataAccessor/DataAccessor.h DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp)
+add_executable(ECG_Analyzer main.cpp Modules/Sample/Sample.h Modules/Sample/Sample.cpp UI/ViewModelUI.cpp
+        UI/ViewModelUI.h DataAccessor/DataAccessor.h
+        DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp)
+
 target_link_libraries(ECG_Analyzer
         Qt5::Core
         Qt5::Gui
