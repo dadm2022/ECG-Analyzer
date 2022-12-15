@@ -1,17 +1,12 @@
 #pragma once
 
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-#include <random>
 #include <algorithm>
 #include <iterator>
 #include <vector>
 #include <cmath>
-#include <fstream>
 #include <utility>
-
-# define M_PIl          3.141592653589793238462643383279502884L
+#include <numeric>
+#define M_PIl 3.141592653589793238462643383279502884L
 
 enum ConvolutionType
 {
@@ -20,35 +15,73 @@ enum ConvolutionType
 }; 
 
 
-struct MovingAverageFilterParameters
+class MovingAverageFilterParameters
 {
-	unsigned int windowLenght = 10;
-	std::vector<float> convolutionWindow = {};
-	std::vector<float> filteredSignal;
+public:
+	MovingAverageFilterParameters();
+
+	void SetWindowLenght(unsigned int length);
+	unsigned int GetWindowLenght();
+	std::vector<float> GetConvolutionWindow();
+	void ResetConvolutionWindow();
+	void CreateMAFConvolutionWindow();
+
+private:
+	unsigned int m_windowLength;
+	std::vector<float> m_convolutionWindow;
 };
 
-struct LMSFilterParameters
+class LMSFilterParameters
 {
-	float convergenceRate = 0.2f;
-	std::vector<float> weights = { 0.0, 0.0, 0.0, 0.0, 0.0 };
-	std::vector<float> errors = {};
-	std::vector<float> desireSignalCoefficients = { 1, 0.5, 0.25,0.125, 0.0625 };
-	std::vector<float> desireSignal = {};
-	std::vector<float> currentlyCalculatedSubvector = {};
-	std::vector<float> filteredSignal;
+public:
+	LMSFilterParameters();
+	void SetConvergenceRate(float rate);
+	float GetConvergenceRate();
+	std::vector<float> GetWeights();
+	void ResetWeights();
+	void UpdateLMSWeights(float error);
+	std::vector<float> GetCurrentlyCalculatedSubsignal();
+	void AddValueToCurrentlyCalculatedSubsignal(float value);
+	void ResetCurrentlyCalculatedSubsignal();
+
+private:
+	float m_convergenceRate;
+	std::vector<float> m_weights;
+	std::vector<float> m_currentlyCalculatedSubsignal;
+
 };
 
-struct ButterworthFilterParameters
+class ButterworthFilterParameters
 {
-	unsigned int fLowPass = 15;
-	unsigned int fHighPass = 5;
-	unsigned int fSampling = 360;
-	unsigned int coefficientsNumber = 40;
-	std::vector<float> lowPassFilter = {};
-	std::vector<float> highPassFilter = {};
-	std::vector<float> hammingWindow = {};
-	std::vector<float> filteredSignal;
+public:
+	ButterworthFilterParameters();
+
+	void CreateBWBandPassFilter();
+
+	unsigned int GetBWFrequencyLowPassFilter();
+	void SetBWFrequencyLowPassFilter(unsigned int freq);
+	unsigned int GetBWFrequencyHighPassFilter();
+	void SetBWFrequencyHighPassFilter(unsigned int freq);
+	unsigned int GetBWFrequencySampling();
+	void SetBWFrequencySampling(unsigned int freq);
+	unsigned int GetBWCoefficientsNumber();
+	void SetBWCoefficientsNumber(unsigned int number);
+
+	std::vector<float> GetLowPassFilter();
+	std::vector<float> GetHighPassFilter();
+
+	void ResetFilterParams();
+
+private:
+	unsigned int m_fLowPass;
+	unsigned int m_fHighPass;
+	unsigned int m_fSampling;
+	unsigned int m_coefficientsNumber;
+	std::vector<float> m_lowPassFilter;
+	std::vector<float> m_highPassFilter;
+	std::vector<float> m_hammingWindow;
 };
+
 
 class ECG_Baseline
 {
@@ -62,30 +95,25 @@ class ECG_Baseline
 		std::vector<float> GetFilteredSignalMovingAverageFilter();
 		std::vector<float> GetFilteredSignalLMSFilter();
 		std::vector<float> GetFilteredSignalButterworthFilter();
-
-		void SetMAFWindowLenght(unsigned int size);
-		unsigned int GetMAFWindowLenght();
-		unsigned int GetBWFrequencyLowPassFilter();
-		void SetBWFrequencyLowPassFilter(unsigned int freq);
-		unsigned int GetBWFrequencyHighPassFilter();
-		void SetBWFrequencyHighPassFilter(unsigned int freq);
-		unsigned int GetBWFrequencySampling();
-		void SetBWFrequencySampling(unsigned int freq);
-		unsigned int GetBWCoefficientsNumber();
-		void SetBWCoefficientsNumber(unsigned int number);
 		
+		void SetSamplingFrequencyForButteworthFilter(unsigned int freq);
+		void SetLowPassFrequencyForButteworthFilter(unsigned int freq);
+		void SetHighPassFrequencyForButteworthFilter(unsigned int freq);
+		void SetWindowLengthForMovingAverageFilter(unsigned int length);
+		void SetNumberOfCoefficientsForButteworthFilter(unsigned int number);
+		void SetConvergenceRateForLMSFilter(float rate);
+
 	private:
 
 		std::vector<float> Convolution1D(std::unique_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, ConvolutionType parameter);
 		float CalculateConvolutionResultForChosenElementOfSignal(std::unique_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, size_t currentIndex);
 		
-		void CreateMAFConvolutionWindow();
-		void CreateBWBandPassFilter();
-		void UpdateLMSWeights(float error);
-
 		MovingAverageFilterParameters m_MovingAverageFilterParameters;
 		LMSFilterParameters m_LMSFilterParameters;
 		ButterworthFilterParameters m_ButterworthFilterParameters;
+		
+		std::vector<float> m_filteredSignalUsingMovingAverageFilter;
+		std::vector<float> m_filteredSignalUsingLMSFilter;
+		std::vector<float> m_filteredSignalUsingButterworthFilter;
 
 };
-

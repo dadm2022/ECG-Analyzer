@@ -1,118 +1,70 @@
-#include "pch.h"
 #include "ECG_Baseline.h"
 
 using namespace std; 
 
 ECG_Baseline::ECG_Baseline()
 {
+    m_filteredSignalUsingMovingAverageFilter = {};
+    m_filteredSignalUsingLMSFilter = {};
+    m_filteredSignalUsingButterworthFilter = {};
 } 
 
 void ECG_Baseline::ButterworthFiltering(std::unique_ptr<std::vector<float>>& originalSignal)
 {
-    CreateBWBandPassFilter();
-    vector<float> filteredSignalLowPass = Convolution1D(originalSignal, m_ButterworthFilterParameters.lowPassFilter, ConvolutionType::Same);
+    m_ButterworthFilterParameters.CreateBWBandPassFilter();
+    vector<float> filteredSignalLowPass = Convolution1D(originalSignal, m_ButterworthFilterParameters.GetLowPassFilter(), ConvolutionType::Same);
     std::unique_ptr<std::vector<float>> filteredSignalLowPassPointer;
     filteredSignalLowPassPointer = make_unique<std::vector<float>>(filteredSignalLowPass);
-    m_ButterworthFilterParameters.filteredSignal = Convolution1D(filteredSignalLowPassPointer, m_ButterworthFilterParameters.highPassFilter, ConvolutionType::Same);
+    m_filteredSignalUsingButterworthFilter = Convolution1D(filteredSignalLowPassPointer, m_ButterworthFilterParameters.GetHighPassFilter(), ConvolutionType::Same);
+      
+ 
 }
 
 void ECG_Baseline::MovingAverageFiltering(std::unique_ptr<std::vector<float>>& originalSignal)
 {
-    CreateMAFConvolutionWindow();
-    if (m_MovingAverageFilterParameters.convolutionWindow.size() > 0)
+    
+    m_filteredSignalUsingMovingAverageFilter.clear();
+    m_MovingAverageFilterParameters.ResetConvolutionWindow();
+
+    m_MovingAverageFilterParameters.CreateMAFConvolutionWindow();
+    if (m_MovingAverageFilterParameters.GetConvolutionWindow().size() > 0)
     {
-        m_MovingAverageFilterParameters.filteredSignal = Convolution1D(originalSignal, m_MovingAverageFilterParameters.convolutionWindow, ConvolutionType::Same);
+        m_filteredSignalUsingMovingAverageFilter = Convolution1D(originalSignal, m_MovingAverageFilterParameters.GetConvolutionWindow(), ConvolutionType::Same);
     }
+    
+   
 }
 
 void ECG_Baseline::LMSFiltering(std::unique_ptr<std::vector<float>>& originalSignal)
 {
-    float sum = 0.0;
-    float error = 0.0;
-    m_LMSFilterParameters.desireSignal = Convolution1D(originalSignal, m_LMSFilterParameters.desireSignalCoefficients, ConvolutionType::Same); // what is the desire signal for ECG?
+    float sum = 0.0f;
+    float error = 0.0f;
+    m_filteredSignalUsingLMSFilter.clear();
+    m_LMSFilterParameters.ResetWeights();
+    m_filteredSignalUsingMovingAverageFilter.clear();
 
+    MovingAverageFiltering(originalSignal); //desired signal = filtered signal using another method 
     for (size_t currentIndex = 0; currentIndex < originalSignal->size(); currentIndex++)
     {
-        sum = CalculateConvolutionResultForChosenElementOfSignal(originalSignal, m_LMSFilterParameters.weights, currentIndex);
-        error = m_LMSFilterParameters.desireSignal.at(currentIndex) - sum;
-        m_LMSFilterParameters.errors.push_back(error);
-        UpdateLMSWeights(error);
-        m_LMSFilterParameters.filteredSignal.push_back(sum);
+        sum = CalculateConvolutionResultForChosenElementOfSignal(originalSignal, m_LMSFilterParameters.GetWeights(), currentIndex);
+        error = m_filteredSignalUsingMovingAverageFilter.at(currentIndex) - sum;
+        m_LMSFilterParameters.UpdateLMSWeights(error);
+        m_filteredSignalUsingLMSFilter.push_back(sum);
     }
 }
 
-void ECG_Baseline::CreateBWBandPassFilter()
-{
-    // Vector of filter coefficients
-    std::vector<float> vectorOfCoefficients;
-    int firstValue = -m_ButterworthFilterParameters.coefficientsNumber;
-    for (int i = 0; i < 2 * m_ButterworthFilterParameters.coefficientsNumber + 1; i++)
-    {
-        vectorOfCoefficients.push_back(firstValue);
-        firstValue++;
-    }
-
-    // Frequency normalization
-    unsigned int normfLowPass = m_ButterworthFilterParameters.fLowPass / (m_ButterworthFilterParameters.fSampling / 2);
-    unsigned int normfHighPass = m_ButterworthFilterParameters.fHighPass / (m_ButterworthFilterParameters.fSampling / 2);
-
-    // LowPass and HighPass Filter Coeff
-    for (auto& coeff : vectorOfCoefficients)
-    {
-        if (coeff == 0)
-        {
-            m_ButterworthFilterParameters.lowPassFilter.push_back(2 * normfLowPass);
-            m_ButterworthFilterParameters.highPassFilter.push_back(1 - 2 * normfHighPass);
-        }
-        else
-        {
-            m_ButterworthFilterParameters.lowPassFilter.push_back(sin((2 * M_PIl * normfLowPass * coeff) / (M_PIl * coeff)));
-            m_ButterworthFilterParameters.highPassFilter.push_back(-sin((2 * M_PIl * normfHighPass * coeff) / (M_PIl * coeff)));
-        }
-    }
-
-    // Create HammingWindow
-    for (size_t i = 0; i < vectorOfCoefficients.size(); i++)
-    {
-        m_ButterworthFilterParameters.hammingWindow.push_back(0.54 - 0.46 * cos((2 * M_PIl * i) / (vectorOfCoefficients.size())));
-    }
-
-    // Windowing 
-    for (size_t i = 0; i < vectorOfCoefficients.size(); i++)
-    {
-        m_ButterworthFilterParameters.lowPassFilter.at(i) = m_ButterworthFilterParameters.lowPassFilter.at(i) * m_ButterworthFilterParameters.hammingWindow.at(i);
-        m_ButterworthFilterParameters.highPassFilter.at(i) = m_ButterworthFilterParameters.highPassFilter.at(i) * m_ButterworthFilterParameters.hammingWindow.at(i);
-    }
-
-}
-void ECG_Baseline::UpdateLMSWeights(float error)
-{
-    for (size_t i = 0; i < m_LMSFilterParameters.currentlyCalculatedSubvector.size(); i++)
-    {
-        m_LMSFilterParameters.weights.at(m_LMSFilterParameters.weights.size() - 1 - i) = m_LMSFilterParameters.weights.at(m_LMSFilterParameters.weights.size() - 1 - i) + (error * m_LMSFilterParameters.currentlyCalculatedSubvector.at(i) * m_LMSFilterParameters.convergenceRate);
-    }
-}
-
-void ECG_Baseline::CreateMAFConvolutionWindow()
-{
-    float maskValue = (float)1. / m_MovingAverageFilterParameters.windowLenght;
-    for (size_t i = 0; i < m_MovingAverageFilterParameters.windowLenght; i++)
-    {
-        m_MovingAverageFilterParameters.convolutionWindow.push_back(maskValue);
-    }
-}
 
 float ECG_Baseline::CalculateConvolutionResultForChosenElementOfSignal(std::unique_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, size_t currentIndex)
 {
     float sum = 0;
     size_t startingIndexForConv = (currentIndex < mask.size() - 1) ? 0 : currentIndex - (mask.size() - 1);
     size_t endingIndexForConv = (currentIndex < originalSignal->size() - 1) ? currentIndex : originalSignal->size() - 1;
-    m_LMSFilterParameters.currentlyCalculatedSubvector.clear();
+    m_LMSFilterParameters.ResetCurrentlyCalculatedSubsignal();
 
     for (size_t j = startingIndexForConv; j <= endingIndexForConv; j++)
     {
         sum += (originalSignal->at(j) * mask.at(currentIndex - j));
-        m_LMSFilterParameters.currentlyCalculatedSubvector.push_back(originalSignal->at(j));
+        m_LMSFilterParameters.AddValueToCurrentlyCalculatedSubsignal(originalSignal->at(j));
     }
 
     return sum;
@@ -123,9 +75,10 @@ std::vector<float> ECG_Baseline::Convolution1D(std::unique_ptr<std::vector<float
     size_t filteredSignalAfterConvolutionLength = originalSignal->size() + mask.size() - 1;
 
     std::vector<float> convolutionResult = {};
-    float sum = 0.0;
+   
     for (size_t i = 0; i < filteredSignalAfterConvolutionLength; i++)
     {
+        float sum = 0.0f;
         sum = CalculateConvolutionResultForChosenElementOfSignal(originalSignal, mask, i);
         convolutionResult.push_back(sum);
     }
@@ -147,57 +100,207 @@ std::vector<float> ECG_Baseline::Convolution1D(std::unique_ptr<std::vector<float
 
 }
 
-void ECG_Baseline::SetMAFWindowLenght(unsigned int size)
-{
-    m_MovingAverageFilterParameters.windowLenght = size;
-}
-unsigned int ECG_Baseline::GetMAFWindowLenght()
-{
-    return m_MovingAverageFilterParameters.windowLenght;
-}
-
 std::vector<float> ECG_Baseline::GetFilteredSignalMovingAverageFilter()
 {
-    return m_MovingAverageFilterParameters.filteredSignal;
+    return m_filteredSignalUsingMovingAverageFilter;
 }
 std::vector<float> ECG_Baseline::GetFilteredSignalLMSFilter()
 {
-    return m_LMSFilterParameters.filteredSignal;
+    return m_filteredSignalUsingLMSFilter;
 }
 std::vector<float> ECG_Baseline::GetFilteredSignalButterworthFilter()
 {
-    return m_ButterworthFilterParameters.filteredSignal;
+    return m_filteredSignalUsingButterworthFilter;
+}
+void ECG_Baseline::SetWindowLengthForMovingAverageFilter(unsigned int length)
+{
+    m_MovingAverageFilterParameters.SetWindowLenght(length);
+}
+void ECG_Baseline::SetNumberOfCoefficientsForButteworthFilter(unsigned int number)
+{
+    m_ButterworthFilterParameters.SetBWCoefficientsNumber(number);
+}
+void ECG_Baseline::SetConvergenceRateForLMSFilter(float rate)
+{
+    m_LMSFilterParameters.SetConvergenceRate(rate);
+}
+void ECG_Baseline::SetSamplingFrequencyForButteworthFilter(unsigned int freq)
+{
+    m_ButterworthFilterParameters.SetBWFrequencySampling(freq);
+}
+void ECG_Baseline::SetLowPassFrequencyForButteworthFilter(unsigned int freq)
+{
+    m_ButterworthFilterParameters.SetBWFrequencyLowPassFilter(freq);
+}
+void ECG_Baseline::SetHighPassFrequencyForButteworthFilter(unsigned int freq)
+{
+    m_ButterworthFilterParameters.SetBWFrequencyHighPassFilter(freq);
 }
 
-unsigned int ECG_Baseline::GetBWFrequencyLowPassFilter()
+
+MovingAverageFilterParameters::MovingAverageFilterParameters()
 {
-    return m_ButterworthFilterParameters.fLowPass;
+    m_windowLength = 10;
+    m_convolutionWindow = {};
 }
-void ECG_Baseline::SetBWFrequencyLowPassFilter(unsigned int freq)
+void MovingAverageFilterParameters::SetWindowLenght(unsigned int length)
 {
-    m_ButterworthFilterParameters.fLowPass = freq;
+    m_windowLength = length;
 }
-unsigned int ECG_Baseline::GetBWFrequencyHighPassFilter()
+unsigned int MovingAverageFilterParameters::GetWindowLenght()
 {
-    return m_ButterworthFilterParameters.fHighPass;
+    return m_windowLength;
 }
-void ECG_Baseline::SetBWFrequencyHighPassFilter(unsigned int freq)
+std::vector<float> MovingAverageFilterParameters::GetConvolutionWindow()
 {
-    m_ButterworthFilterParameters.fHighPass = freq;
+    return m_convolutionWindow;
 }
-unsigned int ECG_Baseline::GetBWFrequencySampling()
+void MovingAverageFilterParameters::CreateMAFConvolutionWindow()
 {
-    return m_ButterworthFilterParameters.fSampling;
+    float maskValue = static_cast<float>(1.f / m_windowLength);
+    m_convolutionWindow.insert(m_convolutionWindow.begin(), m_windowLength, maskValue);
 }
-void ECG_Baseline::SetBWFrequencySampling(unsigned int freq)
+void MovingAverageFilterParameters::ResetConvolutionWindow()
 {
-    m_ButterworthFilterParameters.fSampling = freq;
+    m_convolutionWindow.clear();
 }
-unsigned int ECG_Baseline::GetBWCoefficientsNumber()
+
+LMSFilterParameters::LMSFilterParameters()
 {
-    return m_ButterworthFilterParameters.coefficientsNumber;
+    m_convergenceRate = 0.2f;
+    m_weights = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+    m_currentlyCalculatedSubsignal = {};
 }
-void ECG_Baseline::SetBWCoefficientsNumber(unsigned int number)
+void LMSFilterParameters::SetConvergenceRate(float rate)
 {
-    m_ButterworthFilterParameters.coefficientsNumber = number;
+    m_convergenceRate = rate;
+}
+float LMSFilterParameters::GetConvergenceRate()
+{
+    return m_convergenceRate;
+}
+std::vector<float> LMSFilterParameters::GetWeights()
+{
+    return m_weights;
+}
+void LMSFilterParameters::UpdateLMSWeights(float error)
+{
+    for (size_t i = 0; i < m_currentlyCalculatedSubsignal.size(); i++)
+    {
+        m_weights.at(m_weights.size() - 1 - i) += (error * m_currentlyCalculatedSubsignal.at(i) * m_convergenceRate);
+    }
+}
+void LMSFilterParameters::ResetWeights()
+{
+    m_weights = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+}
+std::vector<float> LMSFilterParameters::GetCurrentlyCalculatedSubsignal()
+{
+    return m_currentlyCalculatedSubsignal;
+}
+void LMSFilterParameters::AddValueToCurrentlyCalculatedSubsignal(float value)
+{
+    m_currentlyCalculatedSubsignal.push_back(value);
+}
+void LMSFilterParameters::ResetCurrentlyCalculatedSubsignal()
+{
+    m_currentlyCalculatedSubsignal.clear();
+}
+
+ButterworthFilterParameters::ButterworthFilterParameters()
+{
+    m_fLowPass = 15;
+    m_fHighPass = 5;
+    m_fSampling = 0;
+    m_coefficientsNumber = 40;
+    m_lowPassFilter = {};
+    m_highPassFilter = {};
+    m_hammingWindow = {};
+}
+void ButterworthFilterParameters::CreateBWBandPassFilter()
+{
+    // Vector of filter coefficients
+    std::vector<float> vectorOfCoefficients;
+    unsigned int numberOfCoefficients = 2 * m_coefficientsNumber + 1;
+    vectorOfCoefficients.resize(numberOfCoefficients);
+    std::iota(vectorOfCoefficients.begin(), vectorOfCoefficients.end(), - m_coefficientsNumber);
+    
+    // Frequency normalization
+    unsigned int normfLowPass = m_fLowPass / (m_fSampling / 2);
+    unsigned int normfHighPass = m_fHighPass / (m_fSampling / 2);
+
+    // LowPass and HighPass Filter Coeff
+    for (auto& coeff : vectorOfCoefficients)
+    {
+        if (coeff == 0)
+        {
+            m_lowPassFilter.push_back(2.0f * normfLowPass);
+            m_highPassFilter.push_back(1.0f - 2.0f * normfHighPass);
+        }
+        else
+        {
+            m_lowPassFilter.push_back(static_cast<float>(sin((2.0f * M_PIl * normfLowPass * coeff) / (M_PIl * coeff))));
+            m_highPassFilter.push_back(static_cast<float>(-sin((2.0f * M_PIl * normfHighPass * coeff) / (M_PIl * coeff))));
+        }
+    }
+
+    // Create HammingWindow
+    for (size_t i = 0; i < vectorOfCoefficients.size(); i++)
+    {
+        m_hammingWindow.push_back(static_cast<float>(0.54 - 0.46 * cos((2 * M_PIl * i) / (vectorOfCoefficients.size()))));
+    }
+
+    // Windowing 
+    for (size_t i = 0; i < vectorOfCoefficients.size(); i++)
+    {
+        m_lowPassFilter.at(i) *= m_hammingWindow.at(i);
+        m_highPassFilter.at(i) *= m_hammingWindow.at(i);
+    }
+}
+
+unsigned int ButterworthFilterParameters::GetBWFrequencyLowPassFilter()
+{
+    return m_fLowPass;
+}
+void ButterworthFilterParameters::SetBWFrequencyLowPassFilter(unsigned int freq)
+{
+    m_fLowPass = freq;
+}
+unsigned int ButterworthFilterParameters::GetBWFrequencyHighPassFilter()
+{
+    return m_fHighPass;
+}
+void ButterworthFilterParameters::SetBWFrequencyHighPassFilter(unsigned int freq)
+{
+    m_fHighPass = freq;
+}
+unsigned int ButterworthFilterParameters::GetBWFrequencySampling()
+{
+    return m_fSampling;
+}
+void ButterworthFilterParameters::SetBWFrequencySampling(unsigned int freq)
+{
+    m_fSampling = freq;
+}
+unsigned int ButterworthFilterParameters::GetBWCoefficientsNumber()
+{
+    return m_coefficientsNumber;
+}
+void ButterworthFilterParameters::SetBWCoefficientsNumber(unsigned int number)
+{
+    m_coefficientsNumber = number;
+}
+void ButterworthFilterParameters::ResetFilterParams()
+{
+    m_lowPassFilter.clear();
+    m_highPassFilter.clear();
+    m_hammingWindow.clear();
+}
+std::vector<float> ButterworthFilterParameters::GetLowPassFilter()
+{
+    return m_lowPassFilter;
+}
+std::vector<float> ButterworthFilterParameters::GetHighPassFilter()
+{
+    return m_highPassFilter;
 }
