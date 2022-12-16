@@ -2,80 +2,88 @@
 
 using namespace std;
 
-// creating array with natural numbers for dfa algorhitm
-vector<int> inputData::createNarray(int start, int end)
+// creating array with natural numbers for dfa algorithm
+void Polyfit::createNarray()
 {
-    vector <int> n;
-    int size = end-start+1;
-    for(int i = 0; i<size; i++)
+
+    int m_Size = m_End-m_Start+1;
+    for(int i = 0; i<m_Size; i++)
     {
-        n.push_back(i+start);
+        m_N.push_back(i+m_Start);
     }
 
-    return n;
 }
 
 // create vector with proper data
 // input comes from higher level module as number of R-peak sample
-vector<long double> inputData::readInput(vector<int>& input, int fs)
+void Polyfit::readInput()
 {
     // this only for debugging
     // delete before use in application
     ifstream ifile ("C://Users//Natalia//Desktop//dadm projekt//ECG-Analyzer//Modules//HRV_DFA//nsr001.txt");
-    double num = 0.0;
+    double m_Num = 0.0;
+
+    vector <double> m_Data;
+
 
     if (!ifile.is_open()) {
             std::cerr << "There was a problem opening the input file!\n";
             exit(1);//exit or do additional error checking
         }
 
-    while (ifile >> num) {
-            data.push_back(num);
+    while (ifile >> m_Num) {
+            m_Data.push_back(m_Num);
         };
 
     // for proper application
     // uncomment this before use in application
-//    int len = int (input.size());
+//    int m_Len = int (m_Input->size());
 //    int k = 0;
-//    int temp;
+//    int m_Temp;
 
-//    while (k < len-1)
+//    while (k < m_Len-1)
 //    {
-//        temp = input.at(k+1) - input.at(k);
-//        data.push_back( temp/fs );
+//        m_Temp = m_Input->at(k+1) - m_Input->at(k);
+//        m_Data.push_back( m_Temp/m_Fs );
 //        k++;
 //    }
 
-    length = int(data.size());
+    int m_Length = int(m_Data.size());
+    double m_Xmean = 0.0;
+    double m_Temp = 0.0;
+    vector <long double> m_Y;
 
-    for(int i = 0; i<length; i++)
-        xmean += data.at(i);
+    for(int i = 0; i<m_Length; i++)
+        m_Xmean += m_Data.at(i);
 
-    xmean = xmean/length;
+    m_Xmean = m_Xmean / m_Length;
 
-    for( size_t i = 0; i < data.size(); i++ )
+    for(size_t i = 0; i < m_Data.size(); i++ )
     {
-        temp = data.at(i)-xmean;
-        y.push_back(temp);
+        m_Temp = m_Data.at(i) - m_Xmean;
+        m_Y.push_back(m_Temp);
     }
 
-    for( size_t i = 0; i < y.size(); i++ )
-    {
-        temp += y.at(i);
-        yk.push_back(temp);
-    }
+    m_Temp = 0.0;
 
-    return yk;
+//    std::for_each( m_Y.begin(), m_Y.end(), [](int& i)
+//    {
+//        m_Temp += m_Y.at(i);
+//        m_Yk.push_back(m_Temp);
+//    }
+//    );
+
+    for(size_t i = 0; i < m_Y.size(); i++ )
+    {
+        m_Temp += m_Y.at(i);
+        m_Yk.push_back(m_Temp);
+    }
 }
 
 
-
-
-/////////////////////////////////////////////////////////////////
-
 // proper function for all polyfitting for DFA calculation
-// y (means yk)
-// y_cut is data from yk, but last few data is cut off, as y_cut mast be divided by n value
+// y (means m_Yk)
+// y_cut is data from m_Yk, but last few data is cut off, as y_cut mast be divided by n value
 // whole x is for the number of data in input
 // n value say, how large x pieces will be
 // for n=4, x will be: <1, 2, 3, 4>, <5, 6, 7, 8> and so on
@@ -83,161 +91,136 @@ vector<long double> inputData::readInput(vector<int>& input, int fs)
 // yf is vector of estimated values, needed for calculating difference between estimated and real value
 // next are calculations for F(n)
 // f is the output vector with F(n)
-void Polyfit::loopPoly(vector<long double>& yk, vector<int>& n)
+void Polyfit::loopPoly()
 {
-    int size = int (n.size());
-    for (int i = 0; i<size; i++)
+    vector <int> m_X;
+    vector <long double> m_Yy;
+    vector <long double> m_P;
+    int size = int (m_N.size());
+    int j, mod = 0;
+    int k, m;
+    double sum = 0.0;
+    double mean_sqr = 0.0;
+    double sq = 0.0;
+
+    for (int i = 0; i < size; i++)
     // for debugging
 //        for (int i = 1; i<2; i++)
     {
-        j = n[i];
-        mod = int (yk.size()) % j;
-        y_cut.assign(yk.begin(), yk.end()-mod);
+        j = m_N[i];
+        mod = int (m_Yk.size()) % j;
+        m_YCut.assign(m_Yk.begin(), m_Yk.end()-mod);
 
         k = 0;
         m = 0;
-        yf.clear();
-        diff.clear();
-        diff2.clear();
+        m_Yf.clear();
+        m_Diff.clear();
+        m_Diff2.clear();
 
-        while (k < int (y_cut.size()) )
+        while (k < int (m_YCut.size()) )
         // for debugging
 //        while (k < 9 )
 //        while (k < 1 )
         {
-            x.clear();
-            yy.clear();
-            p.clear();
-            y_est.clear();
+            m_X.clear();
+            m_Yy.clear();
+            m_P.clear();
+            m_Yest.clear();
 
             m = k;
             while (m < k+j)
             {
-                x.push_back(m+1);
-                yy.push_back(y_cut.at( m ));
+                m_X.push_back(m+1);
+                m_Yy.push_back(m_YCut.at( m ));
                 m++;
             }
 
-            takeInput(x, yy);
-            calculateCoeff(x,p, y_est);
+            calculateCoeff(m_X, m_Yy, m_P, true);
 
-            yf.insert(yf.end(), y_est.begin(), y_est.end() );
+            m_Yf.insert(m_Yf.end(), m_Yest.begin(), m_Yest.end() );
             k = k+j;
 
         }
-        diffVec(y_cut, yf, diff);
-        pow2Vec(diff, diff2);
-        sum = sumDouble(diff2, sum);
-        mean_sqr = sum/(int (y_cut.size()));
+        diffVec();
+        pow2Vec();
+        sum = std::accumulate(begin(m_Diff2), end(m_Diff2), 0);
+        mean_sqr = sum/(int (m_YCut.size()));
         sq = sqrt(mean_sqr);
         // f is F(n), the result of DFA
-        f.push_back(sq);
+        m_F.push_back(sq);
 
         // for debugging
-        cout << "Test dzialania: " << j << endl;
+//        cout << "Test dzialania: " << j << endl;
     }
-}
-
-// return F(n) - result of DFA
-vector<double> Polyfit:: returnF()
-{
-    return f;
 }
 
 // calculate coeff a and b of function y=ax+b
 // y_est is y-value estimated from a and b values
-void Polyfit::calculateCoeff(vector<int>& x, vector<double>& p, vector<long double>& y_est)
+
+template <typename T> void Polyfit::calculateCoeff(vector<T>& x, vector <long double> yy, vector <long double>& p, bool isEst)
+{
+    long double value = 0.0;
+    int N = int(x.size());
+
+    const vector<double> constX(x.begin(), x.end());
+    const vector<double> constY(yy.begin(), yy.end());
+
+    double beta0, beta1, cov00, cov01, cov11, sumsq;
+
+    gsl_fit_linear(constX.data(), 1, constY.data(), 1, N, &beta0, &beta1,
+                   &cov00, &cov01, &cov11, &sumsq);
+
+
+    p.push_back(beta1);
+    p.push_back(beta0);
+    if (isEst)
     {
-        a=0.0;
-        b=0.0;
-        double N = x.size();
-
-
-        // to do - change for matrix algorhitm or gsl library
-        b = (N * sumXY - sumY * sumX)/(N*sumXsquare - sumX * sumX);
-        a = (sumY - b*sumX)/N;
-
-        p.push_back(a);
-        p.push_back(b);
-
         for( size_t i = 0; i < x.size(); i++ )
         {
-            value = a*x.at(i) + b;
-            y_est.push_back(value);
-        }
-
-        sumY = 0;
-        sumYsquare = 0;
-        sumXsquare = 0;
-        sumX = 0;
-        sumXY = 0;
-
-    }
-
-// function for taking input data (x and y) and return parameters for polyfit algorithm
-void Polyfit::takeInput(vector<int>& x, vector<long double>& y)
-    {
-        tempx = x.front();
-        tempy = y.front();
-
-        for (size_t i = 0; i < x.size(); i++) 
-        {
-            double xi = 0.0;
-            double yi = 0.0;
-            xi = x.at(i)-tempx;
-            yi = y.at(i)-tempy;
-            sumXY += xi * yi;
-            sumX += xi;
-            sumY += yi;
-            sumXsquare += xi * xi;
-            sumYsquare += yi * yi;
+            value = beta1*x.at(i) + beta0;
+            m_Yest.push_back(value);
         }
     }
+//    debugging
+//    if (!isEst)
+//        cout << p.at(0) << endl;
+
+
+}
+
 
 // difference between real y and estimated y
-void Polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vector<double>& diff)
-    {
-        int k = 0;
-        double temp=0.0;
+void Polyfit::diffVec()
+{
+    int k = 0;
+    double temp=0.0;
 
-        while (k < int (yf.size()) )
-        {
-            temp = y_cut.at(k) - yf.at(k);
-            diff.push_back(temp);
-            k++;
-        }
+    while (k < int (m_Yf.size()) )
+    {
+        temp = m_YCut.at(k) - m_Yf.at(k);
+        m_Diff.push_back(temp);
+        k++;
     }
+}
 
 // squared value of difference
- void Polyfit::pow2Vec(vector<double>& diff, vector<double>& diff2)
+ void Polyfit::pow2Vec()
+ {
+    int k = 0;
+    double temp=0.0;
+
+    while (k < int (m_Diff.size()) )
     {
-        int k = 0;
-        double temp=0.0;
-
-        while (k < int (diff.size()) )
-        {
-            temp = diff.at(k)*diff.at(k);
-            diff2.push_back(temp);
-            k++;
-        }
+        temp = m_Diff.at(k) * m_Diff.at(k);
+        m_Diff2.push_back(temp);
+        k++;
     }
+ }
 
-// sum of squared values
- double Polyfit::sumDouble(vector<double>& diff2, double &sum)
-    {
-        sum = 0.0;
-        for_each(diff2.begin(), diff2.end(), [&] (double val)
-        {
-          sum += val;
-        });
-        return sum;
-
-    }
 
 // log10 for polyfit after DFA
- template <typename T> T* Polyfit::log10Vec (vector<T> &f, vector<T> &flog)
+ template <typename T, typename A> void Polyfit::log10Vec (vector<T> &f, vector<A> &flog)
  {
-
     for (auto it = f.begin(); it != f.end(); it++)
     {
         flog.push_back( log10(*it) );
@@ -251,82 +234,65 @@ void Polyfit::diffVec(vector<long double>& y_cut, vector<long double>& yf, vecto
  // fa is cuted f log vector, na is cuted n log vector
  // calculateCoeff gives 3 values, but only pDFA is important
  // pDFA.at(0) is alfa value
- double Polyfit::calcAlfa(int nDiv, bool choose)
+ double Polyfit::calcAlfa(bool choose)
     {
-        vector <double> pDfa;
+        vector <long double> pDfa;
         vector <long double> yEstDfa;
         if (choose == 0)
         {
-            fa.insert(fa.begin(), f.begin(), f.begin()+nDiv);
-            na.insert(na.begin(), f.begin(), f.begin()+nDiv);
+            m_Fa.insert(m_Fa.begin(), m_FLog.begin(), m_FLog.begin()+m_NDiv);
+            m_Na.insert(m_Na.begin(), m_NLog.begin(), m_NLog.begin()+m_NDiv);
 
         }
         else
         {
-            fa.insert(fa.begin(), f.begin()+nDiv, f.end());
-            na.insert(na.begin(), f.begin()+nDiv, f.end());
+            m_Fa.insert(m_Fa.begin(), m_FLog.begin()+m_NDiv, m_FLog.end());
+            m_Na.insert(m_Na.begin(), m_NLog.begin()+m_NDiv, m_NLog.end());
         }
 
 
-        takeInput(na, fa);
-        calculateCoeff(na, pDfa, yEstDfa);
+        calculateCoeff(m_Na, m_Fa, pDfa, false);
+
+        // debugging
+//        cout << pDfa.at(0) << endl;
 
         return pDfa.at(0);
     }
 
+void Polyfit::calculateResults()
+{
 
-/////////////////////////////////////////////////////////////////////////////////////////////
- // if unused before 16.12, needs to be deleted
- static double CalcDeterminant(vector<vector<double>> Matrix)
+    readInput();
+    createNarray();
+    loopPoly();
+    log10Vec(m_N, m_NLog);
+    log10Vec(m_F, m_FLog);
+}
+
+double Polyfit::returnAlfa(bool choose)
+{
+    if (!choose)
     {
-         //this function is written in c++ to calculate the determinant of matrix
-         // it's a recursive function that can handle matrix of any dimension
-         int det = 0; // the determinant value will be stored here
-         if (Matrix.size() == 1)
-         {
-             return Matrix[0][0]; // no calculation needed
-         }
-         else if (Matrix.size() == 2)
-         {
-             //in this case we calculate the determinant of a 2-dimensional matrix in a
-             //default procedure
-             det = (Matrix[0][0] * Matrix[1][1] - Matrix[0][1] * Matrix[1][0]);
-             return det;
-         }
-         else
-         {
-             //in this case we calculate the determinant of a squared matrix that have
-             // for example 3x3 order greater than 2
-             for (int p = 0; p < int (Matrix[0].size()) ; p++)
-             {
-                 //this loop iterate on each elements of the first row in the matrix.
-                 //at each element we cancel the row and column it exist in
-                 //and form a matrix from the rest of the elements in the matrix
-                 vector<vector<double>> TempMatrix; // to hold the shaped matrix;
-                 for (int i = 1; i < int ( Matrix.size() ) ; i++)
-                 {
-                     // iteration will start from row one cancelling the first row values
-                     vector<double> TempRow;
-                     for (int j = 0; j < int (Matrix[i].size()); j++)
-                     {
-                         // iteration will pass all cells of the i row excluding the j
-                         //value that match p column
-                         if (j != p)
-                         {
-                            TempRow.push_back(Matrix[i][j]);//add current cell to TempRow
-                         }
-                     }
-                     if (TempRow.size() > 0)
-                         TempMatrix.push_back(TempRow);
-                     //after adding each row of the new matrix to the vector tempx
-                     //we add it to the vector temp which is the vector where the new
-                     //matrix will be formed
-                 }
-                 det = det + Matrix[0][p] * pow(-1, p) * CalcDeterminant(TempMatrix);
-                 //then we calculate the value of determinant by using a recursive way
-                 //where we re-call the function by passing to it the new formed matrix
-                 //we keep doing this until we get our determinant
-             }
-             return det;
-         }
-     }
+        calculateResults();
+    }
+    double alfa = 0.0;
+    // can we improve results of alfa1?
+    alfa = calcAlfa(choose);
+    return alfa;
+}
+
+// return log10F(n) - result of DFA
+vector<double> Polyfit::returnLogF()
+{
+    return m_FLog;
+}
+// return log10n - result of DFA
+vector<double> Polyfit::returnLogN()
+{
+    return m_NLog;
+}
+
+int Polyfit::returnNDiv()
+{
+    return m_NDiv;
+}

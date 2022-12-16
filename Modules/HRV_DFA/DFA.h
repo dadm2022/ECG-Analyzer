@@ -10,8 +10,8 @@
 #include <cmath>
 #include <fstream>
 
-// to do - add gsl library
-//#include "gsl/gsl_math.h"
+#include <gsl/gsl_fit.h>
+
 
 // todo - check if all libraries needed
 
@@ -21,129 +21,75 @@ using namespace std;
 #define ECG_ANALYZER_SAMPLE_H
 
 
-class inputData
-{
-    private:
-    vector <double> data;
-    vector <long double> y;
-    vector <long double> yk;
-    double xmean;
-    int length;
-    double temp;
-
-    public:
-    inputData()
-    {
-        xmean=0;
-        length = 0;
-        temp = 0;
-    }
-
-    // change code for data in proper application!!!!!!!
-
-    // pass the data from module R-Peaks
-    // fs needs checking from io module
-    vector<long double> readInput(vector<int>& input, int fs);
-
-    vector<int> createNarray(int start, int end);
-
-};
-
 
 class Polyfit {
-private: 
+private:
 
-    // coeffs y=ax+b
-    long double a;
-    long double b;
- 
-    // for sum algorithm
-    double sumXY;
-    double sumX;
-    double sumY;
-    double sumXsquare;
-    double sumYsquare;
+    std::shared_ptr<std::vector<int>> m_Input;
+    int m_Fs;
 
-    double value;
+    vector <long double> m_Yk;
+    int m_Start, m_End;
+    vector <int> m_N;
 
-    // iterators
-    int j, k, m;
+    vector <long double> m_YCut;
 
-    // for modulo
-    int mod;
+    vector <long double> m_Yf;
+    vector <long double> m_Yest;
+    vector <double> m_P;
 
-    //data in polyfit algorithm
-    vector <int> x;
-    vector <long double> y_cut;
-    vector <long double> yy;
-    vector <double> p;
-    vector <long double> y_est;
-    vector <long double> yf;
-    vector <int> xt;  //not used
-    int tempx;
-    long double tempy;
+    vector <long double> m_Diff;
+    vector <long double> m_Diff2;
 
-    // for root mean square error
-    vector <double> diff;
-    vector <double> diff2;
-    double sum;
-    double mean_sqr;
-    double sq;
-    vector <double> f;
+    vector <double> m_F;
+    vector <double> m_FLog;
+    vector <double> m_NLog;
 
     // DFA
-    vector <long double> fa;
-    vector <int> na;
+    vector <long double> m_Fa;
+    vector <long double> m_Na;
+    int m_NDiv;
+
+    // FUNCTIONS
+    void createNarray();
+    void readInput();
+
+    void loopPoly();
 
     // calculate coeff
-    void calculateCoeff(vector<int>& x, vector<double>& p, vector<long double>& y_est);
+    template <typename T> void calculateCoeff(vector<T>& x, vector <long double> yy, vector <long double>& p, bool isEst);
 
-    // Function to take input from the dataset
-    void takeInput(vector<int>& x, vector<long double>& y);
+    void diffVec();
 
-    void diffVec(vector<long double>& y_cut, vector<long double>& yf, vector<double>& diff);
+    void pow2Vec();
 
-    void pow2Vec(vector<double>& diff, vector<double>& diff2);
+    template <typename T, typename A> void log10Vec (vector<T> &f, vector<A> &flog);
 
-    double sumDouble(vector<double>& diff2, double &sum);
+    // part for DFA
+    double calcAlfa(bool choose);
+    void calculateResults();
 
-
-    template <typename T> T* log10Vec (vector<T> &f, vector<T> &flog);
 
  
 public:
     // Constructor
-    Polyfit()
+    Polyfit(int fs, std::shared_ptr<const std::vector<int>>& RPeaks, int start = 4, int end = 64, int nDiv = 16)
     {
-        a = 0.0;
-        b = 0.0;
-        sumY = 0;
-        sumYsquare = 0;
-        sumXsquare = 0;
-        sumX = 0;
-        sumXY = 0;
-        value = 0;
-        tempx = 0;
-        tempy = 0;
-
-        sum = 0;
-        mean_sqr = 0;
-        sq = 0;
+        *m_Input = *RPeaks;
+        m_Fs = fs;
+        m_Start = start;
+        m_End = end;
+        m_NDiv = nDiv;
+        // debugging
+//        cout << "constructor " << endl;
     }
 
-    void loopPoly(vector<long double>& yk, vector<int>& n);
-    vector<double> returnF();
-
-    // part for DFA
-    double calcAlfa(int nDiv, bool choose);
-
+    double returnAlfa(bool choose);
+    vector <double> returnLogF();
+    vector <double> returnLogN();
+    int returnNDiv();
 
 };
 
 
-    // funkcja do liczenia wyznacznika macierzy, do algorytmu macierzowego
-    // not used
-    static double CalcDeterminant(vector<vector<double>> Matrix);
-
-
-    #endif //ECG_ANALYZER_SAMPLE_H
+#endif //ECG_ANALYZER_SAMPLE_H
