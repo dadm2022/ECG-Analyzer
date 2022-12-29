@@ -1,26 +1,25 @@
+#include"pch.h"
 #include "ECG_Baseline.h"
 
 using namespace std; 
 
-ECG_Baseline::ECG_Baseline()
+ECG_Baseline::ECG_Baseline(std::shared_ptr<std::vector<float>> originalSignal) : m_originalSignal(originalSignal)
 {
     m_filteredSignalUsingMovingAverageFilter = {};
     m_filteredSignalUsingLMSFilter = {};
     m_filteredSignalUsingButterworthFilter = {};
 } 
 
-void ECG_Baseline::ButterworthFiltering(std::unique_ptr<std::vector<float>>& originalSignal)
+void ECG_Baseline::ButterworthFiltering()
 {
     m_ButterworthFilterParameters.CreateBWBandPassFilter();
-    vector<float> filteredSignalLowPass = Convolution1D(originalSignal, m_ButterworthFilterParameters.GetLowPassFilter(), ConvolutionType::Same);
-    std::unique_ptr<std::vector<float>> filteredSignalLowPassPointer;
-    filteredSignalLowPassPointer = make_unique<std::vector<float>>(filteredSignalLowPass);
+    vector<float> filteredSignalLowPass = Convolution1D(m_originalSignal, m_ButterworthFilterParameters.GetLowPassFilter(), ConvolutionType::Same);
+    std::shared_ptr<std::vector<float>> filteredSignalLowPassPointer;
+    filteredSignalLowPassPointer = make_shared<std::vector<float>>(filteredSignalLowPass);
     m_filteredSignalUsingButterworthFilter = Convolution1D(filteredSignalLowPassPointer, m_ButterworthFilterParameters.GetHighPassFilter(), ConvolutionType::Same);
-      
- 
 }
 
-void ECG_Baseline::MovingAverageFiltering(std::unique_ptr<std::vector<float>>& originalSignal)
+void ECG_Baseline::MovingAverageFiltering()
 {
     
     m_filteredSignalUsingMovingAverageFilter.clear();
@@ -29,13 +28,13 @@ void ECG_Baseline::MovingAverageFiltering(std::unique_ptr<std::vector<float>>& o
     m_MovingAverageFilterParameters.CreateMAFConvolutionWindow();
     if (m_MovingAverageFilterParameters.GetConvolutionWindow().size() > 0)
     {
-        m_filteredSignalUsingMovingAverageFilter = Convolution1D(originalSignal, m_MovingAverageFilterParameters.GetConvolutionWindow(), ConvolutionType::Same);
+        m_filteredSignalUsingMovingAverageFilter = Convolution1D(m_originalSignal, m_MovingAverageFilterParameters.GetConvolutionWindow(), ConvolutionType::Same);
     }
     
    
 }
 
-void ECG_Baseline::LMSFiltering(std::unique_ptr<std::vector<float>>& originalSignal)
+void ECG_Baseline::LMSFiltering()
 {
     float sum = 0.0f;
     float error = 0.0f;
@@ -43,10 +42,10 @@ void ECG_Baseline::LMSFiltering(std::unique_ptr<std::vector<float>>& originalSig
     m_LMSFilterParameters.ResetWeights();
     m_filteredSignalUsingMovingAverageFilter.clear();
 
-    MovingAverageFiltering(originalSignal); //desired signal = filtered signal using another method 
-    for (size_t currentIndex = 0; currentIndex < originalSignal->size(); currentIndex++)
+    MovingAverageFiltering(); //desired signal = filtered signal using another method 
+    for (size_t currentIndex = 0; currentIndex < m_originalSignal->size(); currentIndex++)
     {
-        sum = CalculateConvolutionResultForChosenElementOfSignal(originalSignal, m_LMSFilterParameters.GetWeights(), currentIndex);
+        sum = CalculateConvolutionResultForChosenElementOfSignal(m_originalSignal, m_LMSFilterParameters.GetWeights(), currentIndex);
         error = m_filteredSignalUsingMovingAverageFilter.at(currentIndex) - sum;
         m_LMSFilterParameters.UpdateLMSWeights(error);
         m_filteredSignalUsingLMSFilter.push_back(sum);
@@ -54,7 +53,7 @@ void ECG_Baseline::LMSFiltering(std::unique_ptr<std::vector<float>>& originalSig
 }
 
 
-float ECG_Baseline::CalculateConvolutionResultForChosenElementOfSignal(std::unique_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, size_t currentIndex)
+float ECG_Baseline::CalculateConvolutionResultForChosenElementOfSignal(std::shared_ptr<std::vector<float>> originalSignal, std::vector<float> mask, size_t currentIndex)
 {
     float sum = 0;
     size_t startingIndexForConv = (currentIndex < mask.size() - 1) ? 0 : currentIndex - (mask.size() - 1);
@@ -70,7 +69,7 @@ float ECG_Baseline::CalculateConvolutionResultForChosenElementOfSignal(std::uniq
     return sum;
 }
 
-std::vector<float> ECG_Baseline::Convolution1D(std::unique_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, ConvolutionType parameter)
+std::vector<float> ECG_Baseline::Convolution1D(std::shared_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, ConvolutionType parameter)
 {
     size_t filteredSignalAfterConvolutionLength = originalSignal->size() + mask.size() - 1;
 
@@ -102,14 +101,17 @@ std::vector<float> ECG_Baseline::Convolution1D(std::unique_ptr<std::vector<float
 
 std::vector<float> ECG_Baseline::GetFilteredSignalMovingAverageFilter()
 {
+    MovingAverageFiltering();
     return m_filteredSignalUsingMovingAverageFilter;
 }
 std::vector<float> ECG_Baseline::GetFilteredSignalLMSFilter()
 {
+    LMSFiltering();
     return m_filteredSignalUsingLMSFilter;
 }
 std::vector<float> ECG_Baseline::GetFilteredSignalButterworthFilter()
 {
+    ButterworthFiltering();
     return m_filteredSignalUsingButterworthFilter;
 }
 void ECG_Baseline::SetWindowLengthForMovingAverageFilter(unsigned int length)
@@ -140,7 +142,7 @@ void ECG_Baseline::SetHighPassFrequencyForButteworthFilter(unsigned int freq)
 
 MovingAverageFilterParameters::MovingAverageFilterParameters()
 {
-    m_windowLength = 10;
+    m_windowLength = 1;
     m_convolutionWindow = {};
 }
 void MovingAverageFilterParameters::SetWindowLenght(unsigned int length)
@@ -209,10 +211,10 @@ void LMSFilterParameters::ResetCurrentlyCalculatedSubsignal()
 
 ButterworthFilterParameters::ButterworthFilterParameters()
 {
-    m_fLowPass = 15;
-    m_fHighPass = 5;
+    m_fLowPass = 0;
+    m_fHighPass = 0;
     m_fSampling = 0;
-    m_coefficientsNumber = 40;
+    m_coefficientsNumber = 0;
     m_lowPassFilter = {};
     m_highPassFilter = {};
     m_hammingWindow = {};
