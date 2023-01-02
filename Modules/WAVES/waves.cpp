@@ -59,22 +59,20 @@ vector<T> Utils::gradient(vector<T> input){
 
 int WavesDetector::findQPoint(int interval, int rLoc){
     int start = rLoc - interval;
-    int end = rLoc;
-
     if (rLoc < interval){start = 0;}
 
     vector<float> window;
-    window = slicing(filteredSignal, start, end);
+    window = slicing(filteredSignal, start, rLoc);
 
     return arg_min(window) + start;
 }
 
 int WavesDetector::findSPoint(int interval, int rLoc){
     int start = rLoc;
-    int end = rLoc + interval;
-
-    if (end > filteredSignal.size()) {end = (int) filteredSignal.size();}
     if (start > filteredSignal.size()) {start = (int) filteredSignal.size() - 20;}
+
+    int end = rLoc + interval;
+    if (end > filteredSignal.size()) {end = (int) filteredSignal.size();}
 
     vector<float> window;
     window = slicing(filteredSignal, start, end);
@@ -82,7 +80,7 @@ int WavesDetector::findSPoint(int interval, int rLoc){
     return arg_min(window) + rLoc;
 }
 
-int WavesDetector::findPwaveBoundaryPoint(vector<float> window ){
+int WavesDetector::findPwaveBoundaryPoint(vector<float> window){
     vector<float> windowGradient = gradient(std::move(window));
     double threshold = getAverage(windowGradient) * 0.05;
     int i = 0;
@@ -98,10 +96,10 @@ void WavesDetector::findQRSonset() {
 
         if (q1Loc == q2Loc || filteredSignal[q1Loc] < filteredSignal[q2Loc]) {qLoc = q1Loc;} else {qLoc = q2Loc;};
 
-        int start = qLoc - 40, end = qLoc;
+        int start = qLoc - 40;
         if (qLoc < 40) {start = 0;}
 
-        vector<float> window = slicing(filteredSignal, start, end);
+        vector<float> window = slicing(filteredSignal, start, qLoc);
         reverse(window.begin(), window.end());
         vector<float> windowGradient = gradient(window);
 
@@ -118,11 +116,10 @@ void WavesDetector::findQRSend() {
 
         if (s1Loc == s2Loc || filteredSignal[s1Loc] < filteredSignal[s2Loc]) {sLoc = s1Loc;} else {sLoc = s2Loc;}
 
-        int start = sLoc, end = sLoc + 40;
-
+        int end = sLoc + 40;
         if (sLoc > filteredSignal.size()) {end = int(filteredSignal.size());}
 
-        vector<float> windowGradient = gradient(slicing(filteredSignal, start, end));
+        vector<float> windowGradient = gradient(slicing(filteredSignal, sLoc, end));
 
         qrsEndPoints.push_back(sLoc + arg_min(windowGradient) - 2);
     }
@@ -133,9 +130,9 @@ void WavesDetector::findTend(){
     for(int idx = 0; idx < int(qrsEndPoints.size()) - 1; idx++ )
     {
         int windowSize = (qrsEndPoints[idx + 1] - qrsEndPoints[idx]) * 2 / 3;
-        int start = qrsEndPoints[idx], end = start + windowSize;
+        int start = qrsEndPoints[idx];
 
-        vector<float> window = slicing(filteredSignal, start, end);
+        vector<float> window = slicing(filteredSignal, start, start + windowSize);
         float offset = window[0];
 
         for(float & i : window){if(i < 0)i *= -1; i -= offset;}
