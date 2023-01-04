@@ -6,6 +6,11 @@
 #define ECG_ANALYZER_WAVES_H
 #include <vector>
 
+/* Example usage:
+    WavesDetector wavesDetector(filteredSignal, rPeaksLocs);
+    std::vector<int> QRSonset = wavesDetector.getQRSonset();
+    std::vector<int> Ponset = wavesDetector.getPonset();
+*/
 
 class Utils {
 public:
@@ -48,10 +53,5 @@ public:
     std::vector <int> getPonset() { return m_pOnsetPoints; };
     std::vector <int> getPend() { return m_pEndPoints; };
 };
-
-
-// Temporary functions
-std::vector <float> loadSignal();
-std::vector <float> loadRpeaks();
 
 #endif //ECG_ANALYZER_WAVES_H

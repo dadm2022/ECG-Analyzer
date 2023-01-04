@@ -105,7 +105,6 @@ void WavesDetector::findQRSonset() {
     }
 }
 
-
 void WavesDetector::findQRSend() {
     int sLoc;
 
@@ -146,7 +145,7 @@ void WavesDetector::findTend(){
 
 void WavesDetector::findPwaveBoundaryPoints(){
 
-    for(int idx = 0; idx < int(std::min(m_qrsOnsetPoints.size(), m_tEndPoints.size())) - 1; idx++ )
+    for(int idx = 0; idx < int(std::min(m_qrsOnsetPoints.size(), m_tEndPoints.size())) - 1; idx++)
     {
         int start = m_tEndPoints[idx], end = m_qrsOnsetPoints[idx + 1];
         if (end < start){start = end - 100;}
