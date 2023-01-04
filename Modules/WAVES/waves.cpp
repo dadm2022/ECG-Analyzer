@@ -6,11 +6,9 @@
 // comparison," 2012 Third International Conference on Emerging Applications of Information Technology, 2012,
 // pp. 122-126, doi: 10.1109/EAIT.2012.6407876.
 
-#include "bits/stdc++.h"
 #include "waves.h"
-#include <iostream>
-
-using namespace std;
+#include "bits/stdc++.h"
+#include <utility>
 
 template <typename T, typename A>
 int Utils::arg_max(std::vector<T, A> const& vec) {
@@ -29,17 +27,17 @@ double Utils::getAverage(std::vector<T> const& v) {
 }
 
 template <typename T>
-vector<T> Utils::slicing(vector<T> const& v, int X, int Y){
+std::vector<T> Utils::slicing(std::vector<T> const& v, int X, int Y){
     auto first = v.begin() + X;
     auto last = v.begin() + Y + 1;
-    vector<T> vector(first, last);
+    std::vector<T> vector(first, last);
     return vector;
 }
 
 template <typename T>
-vector<T> Utils::gradient(vector<T> input){
+std::vector<T> Utils::gradient(std::vector<T> input){
     if (input.size() <= 1) return input;
-    vector<T> res;
+    std::vector<T> res;
     for(int j=0; j<input.size(); j++) {
         int j_left = j - 1;
         int j_right = j + 1;
@@ -61,7 +59,7 @@ int WavesDetector::findQPoint(int interval, int rLoc){
     int start = rLoc - interval;
     if (rLoc < interval){start = 0;}
 
-    vector<float> window;
+    std::vector<float> window;
     window = slicing(filteredSignal, start, rLoc);
 
     return arg_min(window) + start;
@@ -74,14 +72,14 @@ int WavesDetector::findSPoint(int interval, int rLoc){
     int end = rLoc + interval;
     if (end > filteredSignal.size()) {end = (int) filteredSignal.size();}
 
-    vector<float> window;
+    std::vector<float> window;
     window = slicing(filteredSignal, start, end);
 
     return arg_min(window) + rLoc;
 }
 
-int WavesDetector::findPwaveBoundaryPoint(vector<float> window){
-    vector<float> windowGradient = gradient(std::move(window));
+int WavesDetector::findPwaveBoundaryPoint(std::vector<float> window){
+    std::vector<float> windowGradient = gradient(std::move(window));
     double threshold = getAverage(windowGradient) * 0.05;
     int i = 0;
     while ((i < windowGradient.size()) && (windowGradient[i] < threshold)) {i++;}
@@ -99,11 +97,11 @@ void WavesDetector::findQRSonset() {
         int start = qLoc - 40;
         if (qLoc < 40) {start = 0;}
 
-        vector<float> window = slicing(filteredSignal, start, qLoc);
+        std::vector<float> window = slicing(filteredSignal, start, qLoc);
         reverse(window.begin(), window.end());
-        vector<float> windowGradient = gradient(window);
+        std::vector<float> windowGradient = gradient(window);
 
-        qrsOnsetPoints.push_back(start + 40 + 2 - arg_min(windowGradient));
+        m_qrsOnsetPoints.push_back(start + 40 + 2 - arg_min(windowGradient));
     }
 }
 
@@ -119,50 +117,50 @@ void WavesDetector::findQRSend() {
         int end = sLoc + 40;
         if (sLoc > filteredSignal.size()) {end = int(filteredSignal.size());}
 
-        vector<float> windowGradient = gradient(slicing(filteredSignal, sLoc, end));
+        std::vector<float> windowGradient = gradient(slicing(filteredSignal, sLoc, end));
 
-        qrsEndPoints.push_back(sLoc + arg_min(windowGradient) - 2);
+        m_qrsEndPoints.push_back(sLoc + arg_min(windowGradient) - 2);
     }
 }
 
 void WavesDetector::findTend(){
 
-    for(int idx = 0; idx < int(qrsEndPoints.size()) - 1; idx++ )
+    for(int idx = 0; idx < int(m_qrsEndPoints.size()) - 1; idx++ )
     {
-        int windowSize = (qrsEndPoints[idx + 1] - qrsEndPoints[idx]) * 2 / 3;
-        int start = qrsEndPoints[idx];
+        int windowSize = (m_qrsEndPoints[idx + 1] - m_qrsEndPoints[idx]) * 2 / 3;
+        int start = m_qrsEndPoints[idx];
 
-        vector<float> window = slicing(filteredSignal, start, start + windowSize);
+        std::vector<float> window = slicing(filteredSignal, start, start + windowSize);
         float offset = window[0];
 
         for(float & i : window){if(i < 0)i *= -1; i -= offset;}
 
         int tLoc = arg_max(window);
 
-        vector<float> tWaveEndWindow = slicing(window, tLoc, int(window.size())-1);
+        std::vector<float> tWaveEndWindow = slicing(window, tLoc, int(window.size())-1);
         int tEnd = findPwaveBoundaryPoint(tWaveEndWindow) + tLoc + start;
 
-        tEndPoints.push_back(tEnd);
+        m_tEndPoints.push_back(tEnd);
     }
 }
 
 void WavesDetector::findPwaveBoundaryPoints(){
 
-    for(int idx = 0; idx < int(min(qrsOnsetPoints.size(), tEndPoints.size())) - 1; idx++ )
+    for(int idx = 0; idx < int(std::min(m_qrsOnsetPoints.size(), m_tEndPoints.size())) - 1; idx++ )
     {
-        int start = tEndPoints[idx], end = qrsOnsetPoints[idx + 1];
+        int start = m_tEndPoints[idx], end = m_qrsOnsetPoints[idx + 1];
         if (end < start){start = end - 100;}
 
-        vector<float> window = slicing(filteredSignal, start, end);
+        std::vector<float> window = slicing(filteredSignal, start, end);
         int pLoc = arg_max(window);
 
-        vector<float> pOnsetWaveWindow = slicing(window, 0, pLoc);
+        std::vector<float> pOnsetWaveWindow = slicing(window, 0, pLoc);
         reverse(pOnsetWaveWindow.begin(), pOnsetWaveWindow.end());
         int pOnset = int(pOnsetWaveWindow.size()) - findPwaveBoundaryPoint(pOnsetWaveWindow) - 1 + start;
-        pOnsetPoints.push_back(pOnset);
+        m_pOnsetPoints.push_back(pOnset);
 
-        vector<float> pEndWaveWindow = slicing(window, pLoc, int(window.size())-1);
+        std::vector<float> pEndWaveWindow = slicing(window, pLoc, int(window.size())-1);
         int pEnd = findPwaveBoundaryPoint(pEndWaveWindow) + pLoc + start;
-        pEndPoints.push_back(pEnd);
+        m_pEndPoints.push_back(pEnd);
     }
 }

@@ -4,56 +4,54 @@
 
 #ifndef ECG_ANALYZER_WAVES_H
 #define ECG_ANALYZER_WAVES_H
-#include <iostream>
 #include <vector>
 
-using namespace std;
 
 class Utils {
 public:
     template <typename T, typename A> int arg_max(std::vector<T, A> const& vec);
     template <typename T, typename A> int arg_min(std::vector<T, A> const& vec);
     template <typename T> double getAverage(std::vector<T> const& v);
-    template <typename T> vector<T> gradient(vector<T> input);
-    template <typename T> vector<T> slicing(vector<T> const& v, int X, int Y);
+    template <typename T> std::vector<T> gradient(std::vector<T> input);
+    template <typename T> std::vector<T> slicing(std::vector<T> const& v, int X, int Y);
 };
 
 class WavesDetector : public Utils {
 private:
-    vector<int>qrsOnsetPoints;
-    vector<int>qrsEndPoints;
-    vector<int>tEndPoints;
-    vector<int>pOnsetPoints;
-    vector<int>pEndPoints;
+    std::vector<int>m_qrsOnsetPoints;
+    std::vector<int>m_qrsEndPoints;
+    std::vector<int>m_tEndPoints;
+    std::vector<int>m_pOnsetPoints;
+    std::vector<int>m_pEndPoints;
     int findQPoint(int interval, int rLoc);
     int findSPoint(int interval, int rLoc);
-    int findPwaveBoundaryPoint(vector<float> window);
+    int findPwaveBoundaryPoint(std::vector<float> window);
     void findQRSonset();
     void findQRSend();
     void findTend();
     void findPwaveBoundaryPoints();
 
 public:
-    vector<float>filteredSignal;
-    vector<int>rPeaks;
+    std::vector<float>filteredSignal;
+    std::vector<int>rPeaks;
 
-    WavesDetector(const vector<float>&filteredSignal, const vector<int>&rPeaks) : filteredSignal(filteredSignal), rPeaks(rPeaks){
+    WavesDetector(std::vector<float> filteredSignal, std::vector<int> rPeaks) : filteredSignal(std::move(filteredSignal)), rPeaks(std::move(rPeaks)){
         findQRSonset();
         findQRSend();
         findTend();
         findPwaveBoundaryPoints();
     };
 
-    vector <int> getQRSonset() { return qrsOnsetPoints; };
-    vector <int> getQRSend() { return qrsEndPoints; };
-    vector <int> getTend() { return tEndPoints; };
-    vector <int> getPonset() { return pOnsetPoints; };
-    vector <int> getPend() { return pEndPoints; };
+    std::vector <int> getQRSonset() { return m_qrsOnsetPoints; };
+    std::vector <int> getQRSend() { return m_qrsEndPoints; };
+    std::vector <int> getTend() { return m_tEndPoints; };
+    std::vector <int> getPonset() { return m_pOnsetPoints; };
+    std::vector <int> getPend() { return m_pEndPoints; };
 };
 
 
 // Temporary functions
-vector <float> loadSignal();
-vector <float> loadRpeaks();
+std::vector <float> loadSignal();
+std::vector <float> loadRpeaks();
 
 #endif //ECG_ANALYZER_WAVES_H
