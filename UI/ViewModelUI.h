@@ -20,6 +20,11 @@
 #include <QMenu>
 #include <QGroupBox>
 #include <QDebug>
+#include <QObject>
+#include <QFileDialog>
+#include <QString>
+#include <QFileInfo>
+
 
 
 class MainWindow : public QMainWindow
@@ -28,17 +33,14 @@ class MainWindow : public QMainWindow
 
     public:
         explicit MainWindow(QWidget *parent = nullptr);
-        std::shared_ptr<QPushButton> pushbuttonOpenFile;
-    public slots:
-        void handleButton();
+
+    private slots:
+        std::string handleOpenActionClicked();
     private:
-//        QPushButton *pushbuttonOpenFile;
-        std::shared_ptr<QPushButton> m_button;
-//        std::shared_ptr<QPushButton> pushbuttonOpenFile;
 
         std::shared_ptr<QHBoxLayout> horizontalLayoutAge;
         std::shared_ptr<QHBoxLayout> horizontalLayoutGender;
-
+        void createPatientInfoGroupBox();
 
 
 };

@@ -9,96 +9,98 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-//    auto sampleData = Sample();
-//    m_button = std::make_shared<QPushButton>(sampleData.getText().c_str(), this);
-//    m_button->setGeometry(500,20,50,20);
-
-
+    //Main Window Layout
     QWidget *centralWidget = new QWidget(parent);
-    QGridLayout *gridLayout = new QGridLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+
+    // Manu Bar
+    QMenuBar *menuBar = new QMenuBar();
+    mainLayout->setMenuBar(menuBar);
+    QMenu *fileMenu = menuBar->addMenu("File");
+    // Options
+    QAction *openAction = fileMenu->addAction("Open");
+    QAction *saveAction = fileMenu->addAction("Close");
+    // Stylesheet
+    menuBar->setStyleSheet("QMenuBar {background-color:#A0E4CB; font-size: 11pt; font-family:Microsoft JhengHei Light;}");
+    fileMenu->setStyleSheet("QMenu {background-color:#A0E4CB; font-family:Microsoft JhengHei Light;}");
+
+    // Divide Main Layout into graph section and parameter section
     QHBoxLayout *horizontalMainWindowLayout = new QHBoxLayout;
-    pushbuttonOpenFile = std::make_shared<QPushButton>();
-//    QPushButton *pushbuttonOpenFile = new QPushButton(this);
-    pushbuttonOpenFile->setText("& Open File");
+    QTabWidget *tabWidgetGraphs = new QTabWidget(this);
+    QScrollArea *scrollAreaParameters = new QScrollArea(this);
+    QScrollBar *scrollBarParameters = new QScrollBar();
+    scrollAreaParameters->setStyleSheet("QScrollArea {background-color:#E7F6F2;}");
+    scrollAreaParameters->setVerticalScrollBar(scrollBarParameters);
+    scrollAreaParameters->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
+    horizontalMainWindowLayout->addWidget(tabWidgetGraphs);
+    tabWidgetGraphs->setMinimumSize(QSize(1400,200));
+    horizontalMainWindowLayout->addWidget(scrollAreaParameters);
 
+    // Scroll Area Group Boxes
 
-    // TO DO - Menu Bar
-//    QMenuBar *menubar = new QMenuBar();
-//    QMenu *menuOptionFile = new QMenu("&File");
-//    menuOptionFile->addMenu("Open");
-//    menuOptionFile->addMenu("Close");
-//
-//    menubar->addMenu(menuOptionFile);
-
-//    QHBoxLayout *layoutAge = new QHBoxLayout;
-//    QHBoxLayout *layoutGender = new QHBoxLayout;
-
+    // Patient Group Box
+    QHBoxLayout *hLayoutAge = new QHBoxLayout();
     QLabel *labelAge = new QLabel(this);
     labelAge->setText("Age");
-    labelAge->setGeometry(500,20,50,30);
-//    QLayoutItem *labelAgeItem = new QWidgetItem(labelAge);
-    QLabel *labelGender = new QLabel(this);
-    labelGender->setText("Gender");
-    labelGender->setGeometry(200,20,40,30);
-//    QLayoutItem *labelGenderItem = new QWidgetItem(labelGender);
+    labelAge->setBaseSize(QSize(40,2));
+
 
     QTextBrowser *textBrowserAge = new QTextBrowser(this);
-    textBrowserAge->setGeometry(50, 50, 30, 10);
-//    QLayoutItem *textBrowserAgeItem = new QWidgetItem(textBrowserAge);
+
+
+    textBrowserAge->setBaseSize(QSize(40,2));
+    textBrowserAge->setStyleSheet("QTextBrowser {background-color:#ffffff; color:#000000;}");
+    hLayoutAge->addWidget(labelAge);
+    hLayoutAge->addWidget(textBrowserAge);
+
+    QHBoxLayout *hLayoutGender = new QHBoxLayout();
+
+    QLabel *labelGender = new QLabel(this);
+    labelGender->setText("Gender");
+    labelGender->setBaseSize(QSize(40,2));
+
 
     QTextBrowser *textBrowserGender = new QTextBrowser(this);
-    textBrowserGender->setGeometry(250, 65, 30, 10);
-//    QLayoutItem *textBrowserGenderItem = new QWidgetItem(textBrowserGender);
-//
-//    layoutAge->addItem(labelAgeItem);
-//    layoutAge->addWidget(textBrowserAge);
-//
-//    layoutGender->addItem(labelGenderItem);
-//    layoutGender->addItem(textBrowserGenderItem);
+    textBrowserGender->setStyleSheet("QTextBrowser {background-color:#ffffff; color:#000000;}");
+    textBrowserGender->setBaseSize(QSize(40,2));
+    hLayoutGender->addWidget(labelGender);
+    hLayoutGender->addWidget(textBrowserGender);
 
-    QTabWidget *tabWidgetGraphs = new QTabWidget(this);
-    tabWidgetGraphs->setGeometry(30,30,1200,300);
-//    tabWidgetGraphs->setMinimumSize(QSize(1200,200));
-    QScrollArea *scrollAreaParameters = new QScrollArea(this);
-//
-    scrollAreaParameters ->setGeometry(tabWidgetGraphs->x()+100, tabWidgetGraphs->y(), 300, tabWidgetGraphs->height());
-    QScrollBar *scrollBarParams = new QScrollBar();
-    scrollAreaParameters->setVerticalScrollBar(scrollBarParams);
-    scrollAreaParameters->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    //    scrollAreaParameters ->setMinimumSize(250,tabWidgetGraphs->height());
-//    scrollAreaParameters ->setMaximumSize(300,tabWidgetGraphs->height());
-    horizontalMainWindowLayout->addWidget(tabWidgetGraphs);
-    horizontalMainWindowLayout->addWidget(scrollAreaParameters);
-    horizontalMainWindowLayout->addWidget(pushbuttonOpenFile);
 
-//    gridLayout->addWidget(tabWidgetGraphs, 0, 0, 0, 0);
-//    gridLayout->addWidget(scrollAreaParameters,0,1);
+    QGroupBox *groupBoxPatientInfo = new QGroupBox(tr("Patient Info"));;
+    QGridLayout *PatientInfo  = new QGridLayout();
+    PatientInfo->addWidget(labelAge,1,0);
+    PatientInfo->addWidget(textBrowserAge,1,1);
+    PatientInfo->addWidget(labelGender,2,0);
+    PatientInfo->addWidget(textBrowserGender,2,1);
 
-    QGroupBox *groupBoxPatientInfo = new QGroupBox();
-    QVBoxLayout *PatientInfo  = new QVBoxLayout();
-    PatientInfo->addWidget(labelAge);
-    PatientInfo->addWidget(labelGender);
-    PatientInfo->addWidget(textBrowserAge);
-    PatientInfo->addWidget(textBrowserGender);
     groupBoxPatientInfo->setLayout(PatientInfo);
-
+    groupBoxPatientInfo->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
     scrollAreaParameters->setWidget(groupBoxPatientInfo);
+//    scrollAreaParameters->setWidgetResizable(true);
 
-    gridLayout->addLayout(horizontalMainWindowLayout,0,0,0,0);
-    centralWidget->setLayout(gridLayout);
+    // Layouts addded to Main Layout
+    mainLayout->addLayout(horizontalMainWindowLayout);
+    centralWidget->setLayout(mainLayout);
+    centralWidget->setStyleSheet("QWidget {background-color: #F1FAEE;}");
     setCentralWidget(centralWidget);
 
 
-
-
+    //SLOTS
+    connect(openAction, SIGNAL(triggered()), this, SLOT(handleOpenActionClicked()));
 
 }
-void MainWindow::handleButton()
-{
-    // change the text
-    pushbuttonOpenFile->setText("Example");
-    // resize button
-    pushbuttonOpenFile->resize(100,100);
-    std::cout<<"dupa";
+std::string MainWindow::handleOpenActionClicked() {
+    QString filePath = QFileDialog::getOpenFileName(
+            this,
+            "Open file",
+            QDir::homePath(), // ścieżka startowa
+            "file (*.dat)" // filtr plików
+
+    );
+    std::string str = filePath.toStdString();
+    const char *cstr_filePath = str.c_str();
+    std::cout << cstr_filePath;
+    return cstr_filePath;
 }
