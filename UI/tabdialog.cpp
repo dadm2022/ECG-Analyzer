@@ -7,8 +7,7 @@
 #include "RPEAKS/rpeakstab.h"
 
 
-TabDialog::TabDialog(const QString &fileName, QWidget *parent)
-        : QDialog(parent) {
+TabDialog::TabDialog(const QString &fileName, QWidget *parent): QDialog(parent) {
     QString filepath = QFileDialog::getOpenFileName(this, tr("Open file with signal"), "/home",
                                                     tr("Signal Files (*.dat)"));
 

@@ -4,9 +4,9 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include <gsl/gsl_fft_complex.h>
+#include "./../../lib/gsl/fft/gsl_fft_complex.h"
 #include <cmath>
-#include <gsl/gsl_complex_math.h>
+#include "./../../lib/gsl/complex/gsl_complex_math.h"
 #include <numeric>
 
 using namespace std;
