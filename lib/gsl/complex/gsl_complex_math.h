@@ -1,6 +1,6 @@
 /* complex/gsl_complex_math.h
  * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004, 2007 Jorma Olavi Tähtinen, Brian Gough
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2004, 2007 Jorma Olavi Tï¿½htinen, Brian Gough
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 #ifndef __GSL_COMPLEX_MATH_H__
 #define __GSL_COMPLEX_MATH_H__
-#include <gsl/gsl_inline.h>
-#include <gsl/gsl_complex.h>
+#include "../../../lib/gsl/complex/gsl_complex_math.h"
+#include "./gsl_complex.h"
 
 #undef __BEGIN_DECLS
 #undef __END_DECLS
