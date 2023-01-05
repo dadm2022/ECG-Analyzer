@@ -5,22 +5,14 @@
 #ifndef ECG_ANALYZER_HRV2_H
 #define ECG_ANALYZER_HRV2_H
 
-#include <complex>
-#include <iostream>
-#include <valarray>
-#include <vector>
-#include <cmath>
-#include <numeric>
-#include <cstdlib>
 #include <algorithm>
 #include <memory>
-using namespace std;
 
 struct HistogramData
 {
     int bins;
-    vector<int> histogram;
-    vector<double> binBorders;
+    std::vector<int> histogram;
+    std::vector<double> binBorders;
     double interval;
     int maxBinSize;
     int maxBinNumber;
@@ -28,12 +20,12 @@ struct HistogramData
 
 struct TinnParams{
 
-    vector<double> xVectorMT;
-    vector<double> yVectorMT;
-    vector<double> xVectorMN;
-    vector<double> yVectorMN;
-    vector<double> xVectorTN;
-    vector<double> yVectorTN;
+    std::vector<double> xVectorMT;
+    std::vector<double> yVectorMT;
+    std::vector<double> xVectorMN;
+    std::vector<double> yVectorMN;
+    std::vector<double> xVectorTN;
+    std::vector<double> yVectorTN;
     double TinnLength;
 
 };
@@ -46,64 +38,136 @@ struct PoincareParameters
 
 struct EllipseParameters
 {
-    vector<int> valuesSD1;
-    vector<int> valuesSD2;
-    vector<int> indicesSD1;
-    vector<int> indicesSD2;
+    std::vector<int> valuesSD1;
+    std::vector<int> valuesSD2;
+    std::vector<int> indicesSD1;
+    std::vector<int> indicesSD2;
 };
 
 class HRV2 {
 private:
 
     HistogramData OurHistogramData;
-    vector<int> peakDistances;
-    void SetPeakDistances(vector<int> values);
+    std::vector<int> peakDistances;
 
     TinnParams TinnResults;
 
     PoincareParameters PoincareParams;
-    vector<int> poincareX;
-    vector<int> poincareY;
-    vector<int> identityLine;
+    std::vector<int> poincareX;
+    std::vector<int> poincareY;
+    std::vector<int> identityLine;
 
     EllipseParameters Ellipse;
+
 public:
+
     HRV2();
 
     //Histogram
 
-    void SetHistogram(int bins, vector<int> values);
-    shared_ptr<HistogramData>  GetHistogram();
+    void SetPeakDistances(std::shared_ptr<std::vector<int>> rPeaks);
+    // This function takes the R-peaks locations and calculates the RR intervals on which all geometric analysis of the HRV2 modulus is based
+
+    void SetHistogram(int bins);
+    // This function prepares all the data needed to create a histogram and assigns it to the HistogramData structure
+    // Input:
+    //      int bins - number of bins we want on the histogram
+    // Output: -
+    // From the structure we can get:
+    //      std::vector<int> histogram - histogram
+    //      std::vector<double> binBorders - bin borders
+    //      double interval - width of bins
+    //      int maxBinSize - the highest value of counts in histogram
+    //      int maxBinNumber - number of bin with the highest value of counts is achieved
+
+    HistogramData GetHistogram();
+
 
     //Tinn
-    void setTinn(int max_hist, int max_bin, int bins, vector <double> borders, vector <double> binsCenters, vector <int> histogram);
-    vector <double> calcBinCenters(int binNum, double binSize, vector <double> borders);
-    shared_ptr<TinnParams> getTinn();
-    int calculateDistance(vector<double> pointsX, vector<double> pointsY);
 
-    //Indeks trojkatny
-    void setTriangularIndex(vector<int> values);
-    shared_ptr<double> getTriangularIndex();
+    std::vector <double> calcBinCenters(int binNum, double binSize, std::vector <double> borders);
+    //This function calculates centers of the bins
+    // Input:
+    //      int binNum - number of bins
+    //      double binSize - size of the bins
+    //      std::vector <double> borders - borders of the bins
+    // Output:
+    //      std::vector <double> binCenters - centers of the bins
 
-    //Wykres Poincare
-    void SetPoincareParams(vector<int>);
-    shared_ptr<PoincareParameters> GetPoincareParameters();
+    int calculateDistance(std::vector<double> pointsX, std::vector<double> pointsY);
+    // Input:
+    //      std::vector<double> pointsX - vector of x-coordinates of points to which we wanted to fit line
+    //      std::vector<double> pointsY - vector of y-coordinates of points to which we wanted to fit line
+    // Output:
+    //          int minDistanceIndex - index of element with the smallest distance from the line fitted to the group of points
 
-    void setPoincareX(vector<int> values);
-    void setPoincareY(vector<int> values);
+    void setTinn(int max_hist, int max_bin, int bins, std::vector <double> borders, std::vector <double> binsCenters, std::vector <int> histogram);
+    // This function prepares all the data needed to create TINN (triangular interpolation of NN intervals) and assigns it to the TinnParams structure
+    // Input:
+    //      int max_hist - the largest histogram value
+    //      int max_bin - bin in which the highest value of the histogram is achieved
+    //      std::vector <double> borders - borders of the bins
+    //      std::vector <double> binCenters - centers of the bins
+    //      std::vector <int> histogram - histogram calculated in the histogram section
+    // Output: -
+    // From structure we get vectors containing the coordinates of the lines connecting the vertices of the triangle:
+    //      std::vector<double> xVectorMT - vector of x-coordinates of MT segment
+    //      std::vector<double> yVectorMT - vector of y-coordinates of MT segment
+    //      std::vector<double> xVectorMN - vector of x-coordinates of MN segment
+    //      std::vector<double> yVectorMN - vector of y-coordinates of MN segment
+    //      std::vector<double> xVectorTN - vector of x-coordinates of TN segment
+    //      std::vector<double> yVectorTN - vector of y-coordinates of TN segment
+    // and :
+    //       double TinnLength - numerical value of the TINN (length of the base of the triangle)
 
-    shared_ptr<vector<int>> getPoincareX();
-    shared_ptr<vector<int>> getPoincareY();
+    TinnParams getTinn();
 
 
-    void setIdentityLine(vector<int> values);
-    shared_ptr<vector<int>> GetIdentityLine();
+    // Triangular index
 
-
-    void setEllipse(vector<int> values);
-
-
+    void setTriangularIndex();
+    // This function set triangular index
+    double getTriangularIndex();
     double triangularIndex;
+
+
+    //Poincare
+
+    void SetPoincareParams();
+    // This function prepares and assigns data it to the PoincareParameters structure
+    // From structure we get:
+    //     double sd1 - sd1 parameter value
+    //     double sd2 - sd2 parameter value
+    PoincareParameters GetPoincareParameters();
+
+    void setPoincareX();
+    // This function set values of the vector:
+    //         std::vector<int> poincareX - vector of the x-coordinates of the Poincare graph
+
+    void setPoincareY();
+    // This function set values of the vector:
+    //          std::vector<int> poincareY vector of the y-coordinates of the Poincare graph
+
+    std::vector<int> getPoincareX();
+    std::vector<int> getPoincareY();
+
+
+    void setIdentityLine();
+    // This function set values of the vector:
+    //          std::vector<int> identityLine - vector of values of identity of the Poincare graph
+
+    std::vector<int> GetIdentityLine();
+
+    void setEllipse();
+    // This function prepares all the data needed to create Ellipse and assigns it to the EllipseParameters structure
+    // From structure we get:
+    //         std::vector<int> valuesSD1 - vector of y-coordinates of SD1 segment
+    //         std::vector<int> valuesSD2 - vector of y-coordinates of SD2 segment
+    //         std::vector<int> indicesSD1 - vector of x-coordinates of SD1 segment
+    //         std::vector<int> indicesSD2 - vector of x-coordinates of SD2 segment
+
+
+
 };
 
 #endif //ECG_ANALYZER_HRV2_H
