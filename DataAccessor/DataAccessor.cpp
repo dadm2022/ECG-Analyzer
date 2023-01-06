@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
+#include <filesystem>
 
 inline std::string trim(std::string &str) {
     return str.erase(str.find_last_not_of("\t\n\v\f\r ") + 1).erase(0, str.find_first_not_of("\t\n\v\f\r "));
