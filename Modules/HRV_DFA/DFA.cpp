@@ -182,7 +182,7 @@ template <typename T> void Polyfit::log10Vec (std::vector<T> &f, std::vector<dou
 long double Polyfit::calcAlfa(bool whichAlfa)
 {
     std::vector <long double> pDfa;
-    if (whichAlfa == 0)
+    if (whichAlfa == false)
     {
         m_Fa.insert(m_Fa.begin(), m_FLog.begin(), m_FLog.begin()+m_NDiv);
         m_Na.insert(m_Na.begin(), m_NLog.begin(), m_NLog.begin()+m_NDiv);
@@ -190,8 +190,8 @@ long double Polyfit::calcAlfa(bool whichAlfa)
     }
     else
     {
-        m_Fa.insert(m_Fa.begin(), m_FLog.begin()+m_NDiv, m_FLog.end());
-        m_Na.insert(m_Na.begin(), m_NLog.begin()+m_NDiv, m_NLog.end());
+        m_Fa.insert(m_Fa.begin(), m_FLog.begin()+m_NDiv-1, m_FLog.end());
+        m_Na.insert(m_Na.begin(), m_NLog.begin()+m_NDiv-1, m_NLog.end());
     }
 
 
@@ -207,7 +207,11 @@ void Polyfit::calculateResults()
     loopPoly();
     log10Vec(m_N, m_NLog);
     log10Vec(m_F, m_FLog);
+    m_Fa.clear();
+    m_Na.clear();
     alfa1 = calcAlfa(false);
+    m_Fa.clear();
+    m_Na.clear();
     alfa2 = calcAlfa(true);
 }
 
