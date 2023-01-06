@@ -7,6 +7,25 @@
 
 #include <QPushButton>
 #include <QMainWindow>
+#include <QLabel>
+#include <QTextBrowser>
+#include <QHBoxLayout>
+#include <QMenuBar>
+#include <QMenu>
+#include <QGridlayout>
+#include <QTabWidget>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QMenubar>
+#include <QMenu>
+#include <QGroupBox>
+#include <QDebug>
+#include <QObject>
+#include <QFileDialog>
+#include <QString>
+#include <QFileInfo>
+
+
 
 class MainWindow : public QMainWindow
 {
@@ -15,8 +34,13 @@ class MainWindow : public QMainWindow
     public:
         explicit MainWindow(QWidget *parent = nullptr);
 
+    private slots:
+        std::string handleOpenActionClicked();
     private:
-        std::shared_ptr<QPushButton> m_button;
+
+        std::shared_ptr<QHBoxLayout> horizontalLayoutAge;
+        std::shared_ptr<QHBoxLayout> horizontalLayoutGender;
+        void createPatientInfoGroupBox();
 
 
 };
