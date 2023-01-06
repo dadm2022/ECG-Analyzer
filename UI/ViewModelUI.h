@@ -37,9 +37,10 @@ class MainWindow : public QMainWindow
     private slots:
         std::string handleOpenActionClicked();
     private:
-
+        QTabWidget *tabWidget;
         std::shared_ptr<QHBoxLayout> horizontalLayoutAge;
         std::shared_ptr<QHBoxLayout> horizontalLayoutGender;
+        QString path;
         void createPatientInfoGroupBox();
 
 

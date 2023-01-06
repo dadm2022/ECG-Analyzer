@@ -1,9 +1,11 @@
 //
 // Created by Bartosz Łukasik on 16/11/2022.
 //
-
+#include <QTabWidget>
 #include "ViewModelUI.h"
 #include <QPushButton>
+#include "tabdialog.h"
+#include "generaltab.h"
 #include "../Modules/Sample/Sample.h"
 
 
@@ -86,6 +88,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     centralWidget->setStyleSheet("QWidget {background-color: #F1FAEE;}");
     setCentralWidget(centralWidget);
 
+    // Angelika
+    QFileInfo fileInfo(path);
+    tabWidget = new QTabWidget;
+    tabWidget->addTab(new GeneralTab(fileInfo), tr("General"));
+//    tabWidget->addTab(new PermissionsTab(fileInfo), tr("Permissions"));
+//    tabWidget->addTab(new ApplicationsTab(fileInfo), tr("Applications"));
+    //    tabWidget->addTab(new GeneralTab(this));
+
+//    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+//                                         | QDialogButtonBox::Cancel);
+
+//        connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+//        connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    //QVBoxLayout *mainLayout = new QVBoxLayout;
+        mainLayout->addWidget(tabWidget);
+       // mainLayout->addWidget(buttonBox);
+        setLayout(mainLayout);
+
+        setWindowTitle(tr("Tab Dialog"));
 
     //SLOTS
     connect(openAction, SIGNAL(triggered()), this, SLOT(handleOpenActionClicked()));
@@ -102,5 +124,6 @@ std::string MainWindow::handleOpenActionClicked() {
     std::string str = filePath.toStdString();
     const char *cstr_filePath = str.c_str();
     std::cout << cstr_filePath;
+    path = filePath;
     return cstr_filePath;
 }
