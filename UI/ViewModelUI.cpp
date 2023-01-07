@@ -89,9 +89,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     setCentralWidget(centralWidget);
 
     // Angelika
-    QFileInfo fileInfo(path);
-    tabWidget = new QTabWidget;
-    tabWidget->addTab(new GeneralTab(fileInfo), tr("General"));
+//    QFileInfo fileInfo(path);
+//    tabWidget = new QTabWidget;
+//    tabWidget->addTab(new GeneralTab(fileInfo), tr("General"));
 //    tabWidget->addTab(new PermissionsTab(fileInfo), tr("Permissions"));
 //    tabWidget->addTab(new ApplicationsTab(fileInfo), tr("Applications"));
     //    tabWidget->addTab(new GeneralTab(this));
