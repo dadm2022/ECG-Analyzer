@@ -4,6 +4,8 @@
 
 #ifndef ECG_ANALYZER_VIEWMODELUI_H
 #define ECG_ANALYZER_VIEWMODELUI_H
+//#include <QtCharts>
+//#include "Tabsgraphs.h"
 
 #include <QPushButton>
 #include <QMainWindow>
@@ -24,6 +26,10 @@
 #include <QFileDialog>
 #include <QString>
 #include <QFileInfo>
+#include <QRadioButton>
+#include <QListWidget>
+#include <QButtonGroup>
+//#include <QtCharts>
 
 
 
@@ -33,16 +39,9 @@ class MainWindow : public QMainWindow
 
     public:
         explicit MainWindow(QWidget *parent = nullptr);
-
     private slots:
         std::string handleOpenActionClicked();
     private:
-        QTabWidget *tabWidget;
-        std::shared_ptr<QHBoxLayout> horizontalLayoutAge;
-        std::shared_ptr<QHBoxLayout> horizontalLayoutGender;
-        QString path;
-        void createPatientInfoGroupBox();
-
 
 };
 
