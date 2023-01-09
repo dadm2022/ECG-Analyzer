@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <numeric>
 #include <bits/stdc++.h>
 
 #include <gsl/gsl_fit.h>
@@ -24,7 +25,7 @@ private:
     std::shared_ptr<std::vector<int>> m_Input;
     int m_Fs;
 
-    std::vector <long double> m_Yk;
+    std::vector <long double> m_Y;
     int m_Start, m_End;
     std::vector <int> m_N;
 

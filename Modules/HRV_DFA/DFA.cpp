@@ -16,8 +16,7 @@ void Polyfit::readInput()
     double m_Num = 0.0;
 
     std::vector <double> m_Data;
-
-
+    
     if (!ifile.is_open()) {
             std::cerr << "There was a problem opening the input file!\n";
             exit(1);//exit or do additional error checking
@@ -27,41 +26,32 @@ void Polyfit::readInput()
             m_Data.push_back(m_Num);
         }
 
+    int m_Length = int(m_Data.size());
+
     // for proper application
     // uncomment before merge
 //    int m_Len = int (m_Input->size());
-//    int k = 0;
-//    int m_Temp;
+//    auto it = 0;
+//    auto m_Temp = 0;
 
 //    while (k < m_Len-1)
 //    {
 //        m_Temp = m_Input->at(k+1) - m_Input->at(k);
 //        m_Data.push_back( m_Temp/m_Fs );
-//        k++;
+//        it++;
 //    }
 
-    int m_Length = int(m_Data.size());
     auto m_Xmean = 0.0l;
-    auto m_Temp = 0.0l;
-    std::vector <long double> m_Y;
 
     m_Xmean = std::accumulate(begin(m_Data), end(m_Data), 0.0l);
 
     m_Xmean = m_Xmean / m_Length;
 
-    for(double i : m_Data)
-    {
-        m_Temp = i - m_Xmean;
-        m_Y.push_back(m_Temp);
-    }
+    std::for_each(m_Data.begin(), m_Data.end(), [&m_Xmean](double d) { d+=m_Xmean;});
 
-    m_Temp = 0.0l;
+    m_Y.resize(size(m_Data));
 
-    for(long double i : m_Y)
-    {
-        m_Temp += i;
-        m_Yk.push_back(m_Temp);
-    }
+    std::partial_sum(m_Data.begin(), m_Data.end(), m_Y.begin());
 }
 
 void Polyfit::loopPoly()
@@ -76,8 +66,8 @@ void Polyfit::loopPoly()
     for (int i = 0; i < size; i++)
     {
         j = m_N[i];
-        mod = int (m_Yk.size()) % j;
-        m_YCut.assign(m_Yk.begin(), m_Yk.end()-mod);
+        mod = int (m_Y.size()) % j;
+        m_YCut.assign(m_Y.begin(), m_Y.end()-mod);
 
         k = 0;
         m = 0;
