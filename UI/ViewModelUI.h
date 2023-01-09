@@ -29,7 +29,6 @@
 #include <QRadioButton>
 #include <QListWidget>
 #include <QButtonGroup>
-//#include <QtCharts>
 
 
 

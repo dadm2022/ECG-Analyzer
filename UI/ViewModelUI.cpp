@@ -276,6 +276,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     groupBoxHRVDetection->setLayout(gridLayoutHRVDetection);
     groupBoxHRVDetection->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
 
+    //// HRV - Geometric Analysis Detection groupbox
+    QGroupBox *groupBoxHRVGeometricAnalysisDetection= new QGroupBox(tr("HRV - Geometric Analysis"));
+    QGridLayout *gridLayoutHRVGeometricAnalysisDetection = new QGridLayout();
+    QPushButton *pushButtonHRVGeometricAnalysisDetection = new QPushButton(tr("HRV Geometric Analysis"));
+    pushButtonHRV->setFixedHeight(30);
+    pushButtonHRV->setFixedWidth(140);
+    pushButtonHRV->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QLabel *labelTINN = new QLabel(tr("TINN"));
+    QLabel *labelHRV = new QLabel(tr("HRV"));
+    QLabel *labelSD1 = new QLabel(tr("SD1"));
+    QLabel *labelSD2 = new QLabel(tr("SD2"));
+
     //// Scroll Area parameters
 
     verticalLayout_scrollAreaCentralWidget->setSizeConstraint(QLayout::SetMinimumSize);
@@ -296,23 +309,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     centralWidget->setStyleSheet("QWidget {background-color: #F1FAEE;}");
     setCentralWidget(centralWidget);
 
-    // Angelika
-//    QFileInfo fileInfo(path);
-//    tabWidget = new QTabWidget;
-//    tabWidget->addTab(new GeneralTab(fileInfo), tr("General"));
-//    tabWidget->addTab(new PermissionsTab(fileInfo), tr("Permissions"));
-//    tabWidget->addTab(new ApplicationsTab(fileInfo), tr("Applications"));
-    //    tabWidget->addTab(new GeneralTab(this));
-
-//    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
-//                                         | QDialogButtonBox::Cancel);
-
-//        connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-//        connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
-    //QVBoxLayout *mainLayout = new QVBoxLayout;
-        mainLayout->addWidget(tabWidget);
-       // mainLayout->addWidget(buttonBox);
         setLayout(mainLayout);
 
         setWindowTitle(tr("Tab Dialog"));
@@ -355,17 +351,7 @@ std::string MainWindow::handleOpenActionClicked() {
     std::string str = filePath.toStdString();
     const char *cstr_filePath = str.c_str();
     std::cout << cstr_filePath;
-<<<<<<< HEAD
-    path = filePath;
-    return cstr_filePath;
-}
-=======
 
     return cstr_filePath;
 }
 
-
-
-
-
->>>>>>> UI

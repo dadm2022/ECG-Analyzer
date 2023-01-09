@@ -1,7 +1,7 @@
 //
 // Created by DiLLu on 07.01.2023.
 //
-
+#include <QtCharts>
 #include "chartCallout.h"
 #include "../Modules/Sample/Sample.h"
 #include <QtWidgets>
@@ -93,8 +93,6 @@ void chartCallout::addDataToQSeries(int startIndex) {
 }
 
 void chartCallout::addSeriesToChart() {
-
-
     chart->addSeries(series);
     series->attachAxis(defXaxis);
     series->attachAxis(defYaxis);
