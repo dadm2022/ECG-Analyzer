@@ -2,12 +2,10 @@
 
 
 #pragma once
-#include <random>
 #include <algorithm>
 #include <iterator>
 #include <vector>
 #include <cmath>
-#include <fstream>
 #include <utility>
 #include <numeric>
 #define M_PIl 3.141592653589793238462643383279502884L
@@ -106,21 +104,26 @@ class ECG_Baseline
 		// In the case of LMS filtering's method, the user should enter the convergance rate and the window length for Moving Average Filter.
 		void SetConvergenceRateForLMSFilter(float rate);
 
-		// Firstly, before calling the method, check if entered values are correct.
+		// Firstly, before calling the method, check if entered values are correct and
+		// if pointer to raw signal is not null.
 		// Then, based on user's choice, call the proper method, that returns the filtered signal. 
 
 		// Input: 
+		//		std::shared_ptr<std::vector<float>> m_originalSignal != nullptr
 		//		ButterworthFilterParameters 
 		//			unsigned int m_fLowPass > 0 (prefered value =  15)
 		//			unsigned int m_fHighPass > 0 (prefered value =  5)
 		//			m_fLowPass > m_fHighPass
+		//			unsigned int m_fSampling > 0
 		//			unsigned int m_coefficientsNumber > 0 (prefered value =  40)
+
 		// 
 		// Output:
 		//		std::vector<float> m_filteredSignalUsingButterworthFilter
 		std::vector<float> GetFilteredSignalButterworthFilter();
 
 		// Input: 
+		//		std::shared_ptr<std::vector<float>> m_originalSignal != nullptr
 		//		MovingAverageFilterParameters 
 		//			unsigned int m_windowLength > 0 (prefered value =  15)
 		//
@@ -129,8 +132,9 @@ class ECG_Baseline
 		std::vector<float> GetFilteredSignalMovingAverageFilter();
 
 		// Input: 
+		//		std::shared_ptr<std::vector<float>> m_originalSignal != nullptr
 		//		LMSFilterParameters 
-		//			unsigned int m_convergenceRate > 0 (prefered value =  0.02)
+		//			float m_convergenceRate > 0 (prefered value =  0.02)
 		// 
 		//		MovingAverageFilterParameters - needed for calculating the desired signal during LMS filtering
 		//			unsigned int m_windowLength > 0 (prefered value =  15)
@@ -146,7 +150,7 @@ class ECG_Baseline
 		void LMSFiltering();
 		void ButterworthFiltering();
 
-		std::vector<float> Convolution1D(std::shared_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, ConvolutionType parameter);
+		std::vector<float> Convolution1D(std::shared_ptr<std::vector<float>> originalSignal, std::vector<float> mask, ConvolutionType parameter);
 		float CalculateConvolutionResultForChosenElementOfSignal(std::shared_ptr<std::vector<float>> originalSignal, std::vector<float> mask, size_t currentIndex);
 		
 		MovingAverageFilterParameters m_MovingAverageFilterParameters;
