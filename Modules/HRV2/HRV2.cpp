@@ -400,3 +400,9 @@ void HRV2::setEllipse()
     }
 
 }
+
+EllipseParameters HRV2::GetEllipse(){
+
+    EllipseParameters output = EllipseParameters(this->Ellipse);
+    return output;
+}

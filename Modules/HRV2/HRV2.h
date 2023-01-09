@@ -8,6 +8,48 @@
 #include <algorithm>
 #include <memory>
 
+/* Example usage:
+
+    HRV2 hrv2;
+    hrv2.SetPeakDistances(mSharedPtr);
+
+    int bins = 16;
+    hrv2.SetHistogram(bins);
+    HistogramData histogramData = hrv2.GetHistogram();
+    vector <int> histogram = histogramData.histogram;
+    std::vector<double> binBorders = histogramData.binBorders;
+    double interval = histogramData.interval;
+    int maxBinSize = histogramData.maxBinSize;
+    int maxBinNumber = histogramData.maxBinNumber;
+    std::vector<double> binCenters = hrv2.calcBinCenters(bins, interval, binBorders);
+
+    hrv2.setTinn(maxBinNumber, maxBinSize, bins, binBorders, binCenters, histogram);
+    TinnParams tinnParams = hrv2.getTinn();
+    std::vector<double> xVectorMT = tinnParams.xVectorMT;
+    std::vector<double> yVectorMT = tinnParams.yVectorMT;
+    double TinnLength = tinnParams.TinnLength;
+
+    hrv2.setTriangularIndex();
+    hrv2.getTriangularIndex();
+    double triangularIndex = hrv2.triangularIndex;
+
+    hrv2.SetPoincareParams();
+    PoincareParameters poincareParameters = hrv2.GetPoincareParameters();
+    double sd1 = poincareParameters.sd1;
+    hrv2.setPoincareX();
+    std::vector<int> poincareX = hrv2.getPoincareX();
+    hrv2.setIdentityLine();
+    hrv2.setPoincareY();
+    std::vector<int> poincareY = hrv2.getPoincareY();
+    std::vector<int> identityLine = hrv2.GetIdentityLine();
+
+    hrv2.setEllipse();
+    EllipseParameters ellipseParameters = hrv2.GetEllipse();
+    std::vector<int> indicesSD1 = ellipseParameters.indicesSD1;
+    std::vector<int> valuesSD1 = ellipseParameters.valuesSD1;
+*/
+
+
 struct HistogramData
 {
     int bins;
@@ -165,6 +207,8 @@ public:
     //         std::vector<int> valuesSD2 - vector of y-coordinates of SD2 segment
     //         std::vector<int> indicesSD1 - vector of x-coordinates of SD1 segment
     //         std::vector<int> indicesSD2 - vector of x-coordinates of SD2 segment
+
+    EllipseParameters GetEllipse();
 
 
 
