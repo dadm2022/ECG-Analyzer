@@ -29,6 +29,20 @@ class textBrowserName : public QTextBrowser
     void handleTextBrowserVLF();
     void handleTextBrowserULF();
     void handleTextBrowserLFHF();
+    void handleTextBrowserTINN();
+    void handleTextBrowserHRV();
+    void handleTextBrowserSD1();
+    void handleTextBrowserSD2();
+    void handleTextBrowserALFA1();
+    void handleTextBrowserALFA2();
+    void handleTextBrowserSV();
+    void handleTextBrowserV();
+    void handleTextBrowserOTHER();
+    void handleTextBrowserARTIFACT();
+    void handleTextBrowserAMPLITUDEALT();
+    void handleTextBrowserTHRESHOLD();
+    void handleTextBrowserDISEASE();
+    void handleTextBrowserCASEDISEASE();
 
     private:
 

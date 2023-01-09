@@ -276,18 +276,242 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     groupBoxHRVDetection->setLayout(gridLayoutHRVDetection);
     groupBoxHRVDetection->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
 
-    //// HRV - Geometric Analysis Detection groupbox
-    QGroupBox *groupBoxHRVGeometricAnalysisDetection= new QGroupBox(tr("HRV - Geometric Analysis"));
-    QGridLayout *gridLayoutHRVGeometricAnalysisDetection = new QGridLayout();
-    QPushButton *pushButtonHRVGeometricAnalysisDetection = new QPushButton(tr("HRV Geometric Analysis"));
-    pushButtonHRV->setFixedHeight(30);
-    pushButtonHRV->setFixedWidth(140);
-    pushButtonHRV->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
+//// HRV - Geometric Analysis Detection groupbox
+    QPushButton *pushButtonHRVGeometricAnalysisDetection = new QPushButton(tr("HRV Geometric Analysis"));
+    pushButtonHRVGeometricAnalysisDetection->setFixedHeight(30);
+    pushButtonHRVGeometricAnalysisDetection->setFixedWidth(140);
+    pushButtonHRVGeometricAnalysisDetection->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QRadioButton *radioButtonMovingAverage1 = new QRadioButton("MA", this);
+    QGridLayout *gridLayoutHRVGeometricAnalysisDetection = new QGridLayout();
+
+    //LABELS
     QLabel *labelTINN = new QLabel(tr("TINN"));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelTINN, 3, 0);
+    labelTINN->setMinimumSize(QSize(40,30));
+    labelTINN->setMaximumSize(QSize(50,30));
+
     QLabel *labelHRV = new QLabel(tr("HRV"));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelHRV, 4, 0);
+    labelHRV->setMinimumSize(QSize(40,30));
+    labelHRV->setMaximumSize(QSize(50,30));
+
     QLabel *labelSD1 = new QLabel(tr("SD1"));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelSD1, 5, 0);
+    labelSD1->setMinimumSize(QSize(40,30));
+    labelSD1->setMaximumSize(QSize(50,30));
+
     QLabel *labelSD2 = new QLabel(tr("SD2"));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelSD2, 6, 0);
+    labelSD2->setMinimumSize(QSize(40,30));
+    labelSD2->setMaximumSize(QSize(50,30));
+
+    textBrowserName *textBrowserTINN = new textBrowserName();
+    textBrowserName *textBrowserHRV = new textBrowserName();
+    textBrowserName *textBrowserSD1 = new textBrowserName();
+    textBrowserName *textBrowserSD2 = new textBrowserName();
+
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserTINN, 3, 1);
+    textBrowserTINN->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserTINN->setMinimumSize(QSize(40,30));
+    textBrowserTINN->setMaximumSize(QSize(50,30));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserHRV, 4, 1);
+    textBrowserHRV->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserHRV->setMinimumSize(QSize(40,30));
+    textBrowserHRV->setMaximumSize(QSize(50,30));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserSD1, 5, 1);
+    textBrowserSD1->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserSD1->setMinimumSize(QSize(40,30));
+    textBrowserSD1->setMaximumSize(QSize(50,30));
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserSD2, 6, 1);
+    textBrowserSD2->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserSD2->setMinimumSize(QSize(40,30));
+    textBrowserSD2->setMaximumSize(QSize(50,30));
+
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(radioButtonMovingAverage1, 1, 0);
+    gridLayoutHRVGeometricAnalysisDetection->setVerticalSpacing(10);
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(pushButtonHRVGeometricAnalysisDetection, 2, 0);
+
+
+    QGroupBox *groupBoxHRVGeometricAnalysisDetection= new QGroupBox(tr("HRV - Geometric Analysis"));
+    groupBoxHRVGeometricAnalysisDetection->setLayout(gridLayoutHRVGeometricAnalysisDetection);
+    groupBoxHRVGeometricAnalysisDetection->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
+
+
+//// Detrended Fluctuation Analysis
+    QPushButton *pushButtonDetrendedFluctuationAnalysis = new QPushButton(tr("Detrended Fluctuation Analysis"));
+    pushButtonDetrendedFluctuationAnalysis->setFixedHeight(30);
+    pushButtonDetrendedFluctuationAnalysis->setFixedWidth(200);
+    pushButtonDetrendedFluctuationAnalysis->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QGridLayout *gridLayoutDetrendedFluctuationAnalysis = new QGridLayout();
+
+    QLabel *labelALFA1 = new QLabel(tr("ALFA1"));
+    gridLayoutDetrendedFluctuationAnalysis->addWidget(labelALFA1, 3, 0);
+    labelALFA1->setMinimumSize(QSize(40,30));
+    labelALFA1->setMaximumSize(QSize(50,30));
+
+    QLabel *labelALFA2 = new QLabel(tr("ALFA2"));
+    gridLayoutDetrendedFluctuationAnalysis->addWidget(labelALFA2, 4, 0);
+    labelALFA2->setMinimumSize(QSize(40,30));
+    labelALFA2->setMaximumSize(QSize(50,30));
+
+    textBrowserName *textBrowserALFA1 = new textBrowserName();
+    textBrowserName *textBrowserALFA2 = new textBrowserName();
+
+    gridLayoutDetrendedFluctuationAnalysis->addWidget(textBrowserALFA1, 3, 1);
+    textBrowserALFA1->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserALFA1->setMinimumSize(QSize(40,30));
+    textBrowserALFA1->setMaximumSize(QSize(50,30));
+
+    gridLayoutDetrendedFluctuationAnalysis->addWidget(textBrowserALFA2, 4, 1);
+    textBrowserALFA2->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserALFA2->setMinimumSize(QSize(40,30));
+    textBrowserALFA2->setMaximumSize(QSize(50,30));
+
+    QGroupBox *groupBoxDetrendedFluctuationAnalysis = new QGroupBox(tr("HRV - Geometric Analysis"));
+    groupBoxDetrendedFluctuationAnalysis->setLayout(gridLayoutDetrendedFluctuationAnalysis);
+    groupBoxDetrendedFluctuationAnalysis->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
+
+    gridLayoutDetrendedFluctuationAnalysis->setVerticalSpacing(10);
+    gridLayoutDetrendedFluctuationAnalysis->addWidget(pushButtonDetrendedFluctuationAnalysis, 2, 0);
+
+//// QRS Classification
+    QPushButton *pushButtonQRSClassification = new QPushButton(tr("DFA"));
+    pushButtonQRSClassification->setFixedHeight(30);
+    pushButtonQRSClassification->setFixedWidth(200);
+    pushButtonQRSClassification->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QGridLayout *gridLayoutQRSClassification = new QGridLayout();
+
+    QLabel *labelSV = new QLabel(tr("SV"));
+    gridLayoutQRSClassification->addWidget(labelSV, 3, 0);
+    labelSV->setMinimumSize(QSize(40,30));
+    labelSV->setMaximumSize(QSize(50,30));
+
+    QLabel *labelV= new QLabel(tr("V"));
+    gridLayoutQRSClassification->addWidget(labelV, 4, 0);
+    labelV->setMinimumSize(QSize(40,30));
+    labelV->setMaximumSize(QSize(50,30));
+
+    QLabel *labelOTHER = new QLabel(tr("OTHER"));
+    gridLayoutQRSClassification->addWidget(labelOTHER, 5, 0);
+    labelOTHER->setMinimumSize(QSize(40,30));
+    labelOTHER->setMaximumSize(QSize(50,30));
+
+    QLabel *labelARTIFACT = new QLabel(tr("ARTIFACT"));
+    gridLayoutQRSClassification->addWidget(labelARTIFACT, 6, 0);
+    labelARTIFACT->setMinimumSize(QSize(40,30));
+    labelARTIFACT->setMaximumSize(QSize(50,30));
+
+    textBrowserName *textBrowserSV = new textBrowserName();
+    textBrowserName *textBrowserV = new textBrowserName();
+    textBrowserName *textBrowserOTHER = new textBrowserName();
+    textBrowserName *textBrowserARTIFACT = new textBrowserName();
+
+    gridLayoutQRSClassification->addWidget(textBrowserSV, 3, 1);
+    textBrowserSV->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserSV->setMinimumSize(QSize(40,30));
+    textBrowserSV->setMaximumSize(QSize(50,30));
+
+    gridLayoutQRSClassification->addWidget(textBrowserV, 4, 1);
+    textBrowserV->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserV->setMinimumSize(QSize(40,30));
+    textBrowserV->setMaximumSize(QSize(50,30));
+
+    gridLayoutQRSClassification->addWidget(textBrowserOTHER, 5, 1);
+    textBrowserOTHER->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserOTHER->setMinimumSize(QSize(40,30));
+    textBrowserOTHER->setMaximumSize(QSize(50,30));
+
+    gridLayoutQRSClassification->addWidget(textBrowserARTIFACT, 6, 1);
+    textBrowserARTIFACT->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserARTIFACT->setMinimumSize(QSize(40,30));
+    textBrowserARTIFACT->setMaximumSize(QSize(50,30));
+
+    QGroupBox *groupBoxQRSClassification = new QGroupBox(tr("HRV - Geometric Analysis"));
+    groupBoxQRSClassification->setLayout(gridLayoutQRSClassification);
+    groupBoxQRSClassification->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
+
+    gridLayoutQRSClassification->setVerticalSpacing(10);
+    gridLayoutQRSClassification->addWidget(pushButtonQRSClassification, 2, 0);
+
+//// ST Segment
+    QPushButton *pushButtonSTSegment = new QPushButton(tr("ST Segment"));
+    pushButtonSTSegment->setFixedHeight(30);
+    pushButtonSTSegment->setFixedWidth(200);
+    pushButtonSTSegment->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QGridLayout *gridLayoutSTSegment = new QGridLayout();
+
+    QLabel *labelDISEASE = new QLabel(tr("HEALTHY"));
+    gridLayoutSTSegment->addWidget(labelDISEASE, 3, 0);
+    labelDISEASE->setMinimumSize(QSize(40,30));
+    labelDISEASE->setMaximumSize(QSize(50,30));
+
+    QLabel *labelCASEDISEASE = new QLabel(tr("CASE OF DISEASE"));
+    gridLayoutSTSegment->addWidget(labelCASEDISEASE, 4, 0);
+    labelCASEDISEASE->setMinimumSize(QSize(40,30));
+    labelCASEDISEASE->setMaximumSize(QSize(100,30));
+
+    textBrowserName *textBrowserDISEASE = new textBrowserName();
+    textBrowserName *textBrowserCASEDISEASE = new textBrowserName();
+
+    gridLayoutSTSegment->addWidget(textBrowserDISEASE, 3, 1);
+    textBrowserDISEASE->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserDISEASE->setMinimumSize(QSize(40,30));
+    textBrowserDISEASE->setMaximumSize(QSize(50,30));
+
+    gridLayoutSTSegment->addWidget(textBrowserCASEDISEASE, 4, 1);
+    textBrowserCASEDISEASE->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserCASEDISEASE->setMinimumSize(QSize(60,50));
+    textBrowserCASEDISEASE->setMaximumSize(QSize(100,70));
+
+    QGroupBox *groupBoxSTSegment = new QGroupBox(tr("ST Segment"));
+    groupBoxSTSegment->setLayout(gridLayoutSTSegment);
+    groupBoxSTSegment->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
+
+    gridLayoutSTSegment->setVerticalSpacing(10);
+    gridLayoutSTSegment->addWidget(pushButtonSTSegment, 2, 0);
+
+//// T Wave Alternans
+    QPushButton *pushButtonTWaveAlternans = new QPushButton(tr("T Wave Alternans"));
+    pushButtonTWaveAlternans->setFixedHeight(30);
+    pushButtonTWaveAlternans->setFixedWidth(200);
+    pushButtonTWaveAlternans->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QGridLayout *gridLayoutTWaveAlternans = new QGridLayout();
+
+    QLabel *labelAMPLITUDEALT = new QLabel(tr("AMP. ALT"));
+    gridLayoutTWaveAlternans->addWidget(labelAMPLITUDEALT, 3, 0);
+    labelAMPLITUDEALT->setMinimumSize(QSize(40,30));
+    labelAMPLITUDEALT->setMaximumSize(QSize(50,30));
+
+    QLabel *labelTHRESHOLD = new QLabel(tr("THRESHOLD"));
+    gridLayoutTWaveAlternans->addWidget(labelTHRESHOLD, 4, 0);
+    labelTHRESHOLD->setMinimumSize(QSize(40,30));
+    labelTHRESHOLD->setMaximumSize(QSize(70,30));
+
+    textBrowserName *textBrowserAMPLITUDEALT = new textBrowserName();
+    textBrowserName *textBrowserTHRESHOLD = new textBrowserName();
+
+    gridLayoutTWaveAlternans->addWidget(textBrowserAMPLITUDEALT, 3, 1);
+    textBrowserAMPLITUDEALT->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserAMPLITUDEALT->setMinimumSize(QSize(40,30));
+    textBrowserAMPLITUDEALT->setMaximumSize(QSize(50,30));
+
+    gridLayoutTWaveAlternans->addWidget(textBrowserTHRESHOLD, 4, 1);
+    textBrowserTHRESHOLD->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
+    textBrowserTHRESHOLD->setMinimumSize(QSize(40,30));
+    textBrowserTHRESHOLD->setMaximumSize(QSize(50,30));
+
+    QGroupBox *groupBoxTWaveAlternans = new QGroupBox(tr("T Wave Alternans"));
+    groupBoxTWaveAlternans->setLayout(gridLayoutTWaveAlternans);
+    groupBoxTWaveAlternans->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
+
+    gridLayoutTWaveAlternans->setVerticalSpacing(10);
+    gridLayoutTWaveAlternans->addWidget(pushButtonTWaveAlternans, 2, 0);
 
     //// Scroll Area parameters
 
@@ -300,6 +524,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     verticalLayout_scrollAreaCentralWidget->addSpacing(20);
     verticalLayout_scrollAreaCentralWidget->addWidget(groupBoxHRVDetection);
     verticalLayout_scrollAreaCentralWidget->addSpacing(20);
+    verticalLayout_scrollAreaCentralWidget->addWidget(groupBoxHRVGeometricAnalysisDetection);
+    verticalLayout_scrollAreaCentralWidget->addSpacing(20);
+    verticalLayout_scrollAreaCentralWidget->addWidget(groupBoxDetrendedFluctuationAnalysis);
+    verticalLayout_scrollAreaCentralWidget->addSpacing(20);
+    verticalLayout_scrollAreaCentralWidget->addWidget(groupBoxQRSClassification);
+    verticalLayout_scrollAreaCentralWidget->addSpacing(20);
+    verticalLayout_scrollAreaCentralWidget->addWidget(groupBoxTWaveAlternans);
+    verticalLayout_scrollAreaCentralWidget->addSpacing(20);
+    verticalLayout_scrollAreaCentralWidget->addWidget(groupBoxSTSegment);
+
     scrollAreaParameters->setWidget(scrollAreaCentralWidget);
 
 
@@ -330,6 +564,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserVLF, SLOT(handleTextBrowserVLF()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserULF, SLOT(handleTextBrowserULF()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserLFHF, SLOT(handleTextBrowserLFHF()));
+
+    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserTINN, SLOT(handleTextBrowserTINN()));
+    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserHRV, SLOT(handleTextBrowserHRV()));
+    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserSD1, SLOT(handleTextBrowserSD1()));
+    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserSD2, SLOT(handleTextBrowserSD2()));
+
+    connect(pushButtonDetrendedFluctuationAnalysis, SIGNAL(clicked(bool)), textBrowserALFA1, SLOT(handleTextBrowserALFA1()));
+    connect(pushButtonDetrendedFluctuationAnalysis, SIGNAL(clicked(bool)), textBrowserALFA2, SLOT(handleTextBrowserALFA2()));
+
+    connect(pushButtonQRSClassification, SIGNAL(clicked(bool)), textBrowserSV, SLOT(handleTextBrowserSV()));
+    connect(pushButtonQRSClassification, SIGNAL(clicked(bool)), textBrowserV, SLOT(handleTextBrowserV()));
+    connect(pushButtonQRSClassification, SIGNAL(clicked(bool)), textBrowserOTHER, SLOT(handleTextBrowserOTHER()));
+    connect(pushButtonQRSClassification, SIGNAL(clicked(bool)), textBrowserARTIFACT, SLOT(handleTextBrowserARTIFACT()));
+
+    connect(pushButtonTWaveAlternans, SIGNAL(clicked(bool)), textBrowserAMPLITUDEALT, SLOT(handleTextBrowserAMPLITUDEALT()));
+    connect(pushButtonTWaveAlternans, SIGNAL(clicked(bool)), textBrowserTHRESHOLD, SLOT(handleTextBrowserTHRESHOLD()));
+
+    connect(pushButtonSTSegment, SIGNAL(clicked(bool)), textBrowserCASEDISEASE, SLOT(handleTextBrowserCASEDISEASE()));
+    connect(pushButtonSTSegment, SIGNAL(clicked(bool)), textBrowserDISEASE, SLOT(handleTextBrowserDISEASE()));
 
     // Menu Bar Options
     //Open Action
