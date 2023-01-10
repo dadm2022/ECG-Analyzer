@@ -1,5 +1,21 @@
 #include "DFA.h"
 
+/**
+ * Created by Natalia Kowalska (10.01.2022)
+ *
+ * Implementation code for DFA class
+ */
+
+Polyfit::Polyfit(int fs, std::shared_ptr<const std::vector<int>> &RPeaks, int start, int end, int nDiv)
+{
+    m_Input = RPeaks;
+    m_Fs = fs;
+    m_Start = start;
+    m_End = end;
+    m_NDiv = nDiv;
+
+    calculateResults();
+}
 
 void Polyfit::createNarray()
 {
@@ -10,44 +26,27 @@ void Polyfit::createNarray()
 
 void Polyfit::readInput()
 {
-    // this only for debugging
-    // delete before merge
-    std::ifstream ifile ("C://Users//Natalia//Desktop//dadm projekt//ECG-Analyzer//Modules//HRV_DFA//nsr001.txt");
-    double m_Num = 0.0;
-
     std::vector <double> m_Data;
-    
-    if (!ifile.is_open()) {
-            std::cerr << "There was a problem opening the input file!\n";
-            exit(1);//exit or do additional error checking
-        }
+    int m_Len = int (m_Input->size()-1);
+    auto it = 0;
+    auto m_Temp = 0;
+    auto m_Double = 0.0;
 
-    while (ifile >> m_Num) {
-            m_Data.push_back(m_Num);
-        }
-
+    while (it < m_Len-1)
+    {
+        m_Temp = m_Input->at(it+1) - m_Input->at(it);
+        m_Double = (double)m_Temp/(double)m_Fs;
+        m_Data.push_back( m_Double );
+        it++;
+    }
     int m_Length = int(m_Data.size());
-
-    // for proper application
-    // uncomment before merge
-//    int m_Len = int (m_Input->size());
-//    auto it = 0;
-//    auto m_Temp = 0;
-
-//    while (k < m_Len-1)
-//    {
-//        m_Temp = m_Input->at(k+1) - m_Input->at(k);
-//        m_Data.push_back( m_Temp/m_Fs );
-//        it++;
-//    }
-
     auto m_Xmean = 0.0l;
 
     m_Xmean = std::accumulate(begin(m_Data), end(m_Data), 0.0l);
 
     m_Xmean = m_Xmean / m_Length;
 
-    std::for_each(m_Data.begin(), m_Data.end(), [&m_Xmean](double d) { d+=m_Xmean;});
+    std::for_each(m_Data.begin(), m_Data.end(), [&m_Xmean](double &d) { d-=m_Xmean;});
 
     m_Y.resize(size(m_Data));
 
@@ -215,12 +214,12 @@ long double Polyfit::returnAlfa2() const
     return alfa2;
 }
 
-std::vector<double> Polyfit::returnLogF()
+std::vector<double> Polyfit::returnLogF() const
 {
     return m_FLog;
 }
 
-std::vector<double> Polyfit::returnLogN()
+std::vector<double> Polyfit::returnLogN() const
 {
     return m_NLog;
 }
@@ -229,3 +228,5 @@ int Polyfit::returnNDiv() const
 {
     return m_NDiv;
 }
+
+

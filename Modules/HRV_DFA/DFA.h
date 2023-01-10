@@ -1,5 +1,10 @@
-#include <cstdio>
-#include <iostream>
+/**
+ * Created by Natalia Kowalska (10.01.2022)
+ *
+ * Header file for DFA class
+ */
+
+
 #include <vector>
 #include <cmath>
 #include <numeric>
@@ -8,12 +13,38 @@
 #include <gsl/gsl_fit.h>
 
 
-// todo - check if all libraries needed
-// todo - delete unnecessary things for debug before merge commit
 // todo - check if functions need to be safe to use (throw errors with bad data)
+// todo - check if any of returned value outside class needs to be std::shared_ptr<const std::vector<...>>
+// todo - check if libraries should be in cpp or h file
 
 #ifndef ECG_ANALYZER_DFA_H
 #define ECG_ANALYZER_DFA_H
+
+/**
+ * Example of usage:
+ * @code
+ * int start = 4;
+ * int end = 64;
+ * int nDiv = 16;
+ * int fs = 360;
+ * std::shared_ptr<const std::vector<int>> RPeaks (from another module)
+ * auto obiekt = Polyfit(fs, RPeaks, start, end, nDiv);
+ * or
+ * auto obiekt = Polyfit(fs, RPeaks);
+ *
+ * long double alfa1, alfa2;
+ * vector <double> logFn;
+ * vector <double> logN;
+ * int div;
+ *
+ * alfa1 = obiekt.returnAlfa1();
+ * alfa2 = obiekt.returnAlfa2();
+ * logFn = obiekt.returnLogF();
+ * logN = obiekt.returnLogN();
+ * div = obiekt.returnNDiv();
+ *
+ * @endcode
+ */
 
 
 /**
@@ -22,7 +53,7 @@
 class Polyfit {
 private:
 
-    std::shared_ptr<std::vector<int>> m_Input;
+    std::shared_ptr<const std::vector<int>> m_Input;
     int m_Fs;
 
     std::vector <long double> m_Y;
@@ -66,7 +97,7 @@ private:
      * (gets dt), than counts integral - cumulative sum minus mean value.
      *
      * @param   RPeaks from higher module
-     * @return  m_Yk vector of long doubles for calculation of DFA algorithm
+     * @return  m_Y vector of long doubles for calculation of DFA algorithm
      */
     void readInput();
 
@@ -81,7 +112,7 @@ private:
      * y value is calculated. For every n value error values are calculated,
      * than the errors are squared and the sum of them is calculated. At the end root mean
      * square of sum is calculated giving n-long vector m_F (F(n))
-     * @param m_Yk      processed input data (@see readInput)
+     * @param m_Y      processed input data (@see readInput)
      * @param m_N       contains values of how long sections of x and y are
      * @return m_F      values of root mean square fluctuation for every n value
      */
@@ -166,26 +197,17 @@ private:
  
 public:
     // Constructor
-    Polyfit(int fs, std::shared_ptr<const std::vector<int>>& RPeaks, int start = 4, int end = 64, int nDiv = 16)
-    {
-        *m_Input = *RPeaks;
-        m_Fs = fs;
-        m_Start = start;
-        m_End = end;
-        m_NDiv = nDiv;
+    Polyfit(int fs, std::shared_ptr<const std::vector<int>> &RPeaks, int start = 4, int end = 64, int nDiv = 16);
 
-        calculateResults();
-
-    }
     /**
      *
-     * @return alfa parameter for less than or equal to m_NDiv values of n
+     * @return alfa1    parameter for less than or equal to m_NDiv values of n
      */
     [[nodiscard]] long double returnAlfa1() const;
 
     /**
      *
-     * @return alfa1 or alfa2   alfa parameter for greater than or equal to m_NDiv values of n
+     * @return alfa2    parameter for greater than or equal to m_NDiv values of n
      */
     [[nodiscard]] long double returnAlfa2() const;
 
@@ -193,17 +215,17 @@ public:
      *
      * @return m_FLog   vector of doubles of log10( F(n) ) (@see log10Vec @see loopPoly)
      */
-    std::vector <double> returnLogF();
+    [[nodiscard]] std::vector <double> returnLogF() const;
 
     /**
      *
      * @return m_NLog   vector of doubles of log10( n ) (@see log10Vec @see createNArray)
      */
-    std::vector <double> returnLogN();
+    [[nodiscard]] std::vector <double> returnLogN() const;
 
     /**
      *
-     * @return m_NDiv   natural value which divides inputs for calculating alfa into 2 sections
+     * @return m_NDiv   natural value which divides inputs for calculating alfa for 2 sections
      * (below and above m_NDiv)
      */
     [[nodiscard]] int returnNDiv() const;
