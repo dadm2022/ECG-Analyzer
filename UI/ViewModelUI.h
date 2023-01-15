@@ -28,6 +28,8 @@
 #include <QRadioButton>
 #include <QListWidget>
 #include <QButtonGroup>
+#include <QRadioButton>
+#include <QEvent>
 
 
 
@@ -37,6 +39,8 @@ class MainWindow : public QMainWindow
 
     public:
         explicit MainWindow(QWidget *parent = nullptr);
+
+
     private slots:
         std::string handleOpenActionClicked();
 
