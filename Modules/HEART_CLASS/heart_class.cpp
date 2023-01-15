@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <complex>
 #include <fstream>
 #include "./heart_class.h"
 
@@ -12,12 +13,12 @@
 /* Odchylenie standarowe (AVDissociation) */
 #define STD_TH                  10
 
-int SamplesToMiliseconds(int value, int fs)
+int SamplesToMiliseconds(int value, unsigned int fs)
 {
     return value*1000/fs;
 }
 
-enum type heart_class::CheckAVDissociation(std::vector<int> rPeaks, std::vector<int> P, int currR, std::vector<int> QRSonset1) {
+enum typeOfActivation HeartActivationClassifier::CheckAVDissociation(std::vector<int> P, int currR, std::vector<int> QRSonset1) {
 
     std::vector<int> intervals;
     std::vector<int> QRSonset = QRSonset1;
@@ -56,7 +57,7 @@ enum type heart_class::CheckAVDissociation(std::vector<int> rPeaks, std::vector<
         return VENTRICULAR;
 }
 
-void heart_class::Classify_Type(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, int fs)
+void HeartActivationClassifier::ClassifyType(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, int fs)
     {
     activations_t nextClassification;
     auto S = QRSend;
@@ -85,7 +86,7 @@ void heart_class::Classify_Type(std::vector<int> rPeaks, std::vector<int> P, std
                     {
                         /* RS jest krotki
                          * Sprawdzamy czy jest dysocjacja */
-                        nextClassification.actType = CheckAVDissociation(rPeaks, P, r, m_QRSonset);
+                        nextClassification.actType = CheckAVDissociation(P, r, m_QRSonset);
                         if(nextClassification.actType == 1)
                         {
                             /* jest dysocjacja -> VT */

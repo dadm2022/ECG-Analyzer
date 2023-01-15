@@ -1,33 +1,28 @@
 #ifndef DADM_HEART_CLASS_H
 #define DADM_HEART_CLASS_H
 
-#include <complex>
 #include <iostream>
 #include <valarray>
 #include <vector>
-#include <memory>
-#include <numeric>
-
-/* #include "../Waves/waves.h" */
 
 /* Mozliwe typy aktywacji */
-enum type{
-    DIFF_DISEASE = 0,
-    VENTRICULAR = 1,
-    SUPRAVENTRICULAR = 2,
-    ARTIFACT = 3,
+enum typeOfActivation{
+    DIFF_DISEASE,
+    VENTRICULAR,
+    SUPRAVENTRICULAR,
+    ARTIFACT,
 };
 
 /* Struktura zawierajaca index i typ klasyfikacji -> STRUKTURA WYJSCIOWA */
 typedef struct activations{
     float Ridx;             /* index R piku */
-    enum type actType;      /* typ aktywacji (enum type) */
+    enum typeOfActivation actType;      /* typ aktywacji (enum type) */
 }activations_t;
 
 /* Glowna klasa modulu
  * Po wywolaniu konstruktora otrzymujemy wskaznik do wektora struktur aktywacji
  */
-class heart_class {
+class HeartActivationClassifier {
 private:
 /*
  * Funkcja sprawdzajaca obecnosc dysocjacji AV.
@@ -35,7 +30,7 @@ private:
  * IN:       currR - aktualny pik R
  * OUT:      rodzaj aktywacji.
  */
-    enum type CheckAVDissociation(std::vector<int> rPeaks, std::vector<int> P, int currR, std::vector<int> QRSonset1);
+    enum typeOfActivation CheckAVDissociation(std::vector<int> P, int currR, std::vector<int> QRSonset1);
 
 /*
  * Funkcja do klasyfikacji
@@ -43,7 +38,7 @@ private:
  * IN:       waves - wektor cech z modulu WAVES
  * IN:       fs - czestotliwosc probkowania
  */
-    void Classify_Type(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, int fs);
+    void ClassifyType(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, int fs);
 
     std::vector<activations_t> activations;
     std::vector <float> m_filteredSignal;
@@ -59,7 +54,7 @@ public:
  * IN:       waves - wektor cech z modulu WAVES
  * IN:       fs - czestotliwosc probkowania
  */
-    heart_class(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, int fs, std::vector <float> filteredSignal,
+    HeartActivationClassifier(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, unsigned int fs, std::vector <float> filteredSignal,
     std::vector<int> rPeaksLocs)
     {
             m_rPeaks = rPeaks;
@@ -68,13 +63,13 @@ public:
             m_QRSonset = QRSonset;
             m_P = P;
             m_filteredSignal = filteredSignal;
-            Classify_Type(rPeaks, P, QRSend, QRSonset, fs);
+            ClassifyType(rPeaks, P, QRSend, QRSonset, fs);
     }
 
 /* Funkcja pobierajaca kolejne aktywacje
  * OUT:      wskaznik do wektora aktywacji.
  */
-    std::shared_ptr<std::vector<activations_t>> heart_classGetActivations()
+    std::shared_ptr<std::vector<activations_t>> HeartActivationClassifierGetActivations()
     {
         return std::make_shared<std::vector<activations_t>>(this->activations);
     }
