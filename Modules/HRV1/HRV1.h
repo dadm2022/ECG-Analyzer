@@ -16,7 +16,6 @@ struct HRV1_results {
     float meanRR;
     float valueSDNN;
     float valueRMSSD;
-    float valueSDNNindex;
     unsigned int valueNN50;
     float valuePNN50;
     vector<float> outputPSD;
@@ -32,7 +31,7 @@ struct HRV1_results {
 class HRV1 {
 
 public:
-    HRV1(std::vector<int> RR_peaks) : m_RR_peaks(RR_peaks){}; // later add as std::shared_ptr
+    HRV1(std::vector<int> RR_peaks) : m_RR_peaks(RR_peaks){}; // add later as std::shared_ptr
 
     void calculateParams();
     float Get_meanRR();
@@ -40,7 +39,6 @@ public:
     float Get_valueRMSSD();
     unsigned int Get_valueNN50();
     float Get_valuePNN50();
-
 
 private:
     void calculateStatisticParams();
@@ -53,7 +51,7 @@ private:
     float calculatePNN50();
     vector<float> m_vectorRPeaks;
     HRV1_results m_Results;
-    vector<int> m_RR_peaks // add leater as shared ptr
+    vector<int> m_RR_peaks // add later as shared ptr
 };
 
 #endif //ECG_ANALYZER_HRV1_H
