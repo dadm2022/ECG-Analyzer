@@ -10,8 +10,7 @@
 
 /* Example usage:
 
-    HRV2 hrv2;
-    hrv2.SetPeakDistances(mSharedPtr);
+    HRV2 hrv2 (rPeaks);
 
     int bins = 16;
     hrv2.SetHistogram(bins);
@@ -33,17 +32,12 @@
     hrv2.getTriangularIndex();
     double triangularIndex = hrv2.triangularIndex;
 
-    hrv2.SetPoincareParams();
     PoincareParameters poincareParameters = hrv2.GetPoincareParameters();
     double sd1 = poincareParameters.sd1;
-    hrv2.setPoincareX();
     std::vector<int> poincareX = hrv2.getPoincareX();
-    hrv2.setIdentityLine();
-    hrv2.setPoincareY();
     std::vector<int> poincareY = hrv2.getPoincareY();
     std::vector<int> identityLine = hrv2.GetIdentityLine();
 
-    hrv2.setEllipse();
     EllipseParameters ellipseParameters = hrv2.GetEllipse();
     std::vector<int> indicesSD1 = ellipseParameters.indicesSD1;
     std::vector<int> valuesSD1 = ellipseParameters.valuesSD1;
@@ -103,7 +97,7 @@ private:
 
 public:
 
-    HRV2();
+    HRV2(std::shared_ptr<std::vector<int>> rPeaks);
 
     //Histogram
 

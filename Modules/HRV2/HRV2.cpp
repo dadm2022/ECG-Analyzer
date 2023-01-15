@@ -10,8 +10,14 @@
 #include <cstdlib>
 
 
-HRV2::HRV2()
+HRV2::HRV2(std::shared_ptr<std::vector<int>> rPeaks)
 {
+    SetPeakDistances(rPeaks);
+    SetPoincareParams();
+    setPoincareX();
+    setPoincareY();
+    setIdentityLine();
+    setEllipse();
 }
 
 
