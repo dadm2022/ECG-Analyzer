@@ -8,3 +8,9 @@ add_library(R_PEAKS HilbertTransform.h HilbertTransform.cpp PanTompkins.h PanTom
 #        GSL::gsl
 #        GSL::gslcblas
 #        )
+
+find_package(Qt5 COMPONENTS
+        Core
+        Gui
+        Widgets
+        REQUIRED)

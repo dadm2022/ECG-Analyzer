@@ -10,7 +10,7 @@ set(CMAKE_AUTOUIC ON)
 
 # Comment the following line on Windows (uncomment on Mac)
 # DO NOT COMMIT THIS CHANGE
-#set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.7/lib/cmake/Qt5")
+#set(CMAKE_PREFIX_PATH "E:/Qt/5.15.11/mingw81_64/lib/cmake/Qt5")
 
 add_subdirectory(Modules)
 
@@ -18,17 +18,28 @@ find_package(Qt5 COMPONENTS
         Core
         Gui
         Widgets
+        Charts
         REQUIRED)
 
-add_executable(ECG_Analyzer main.cpp Modules/Sample/Sample.h Modules/Sample/Sample.cpp UI/ViewModelUI.cpp
-        UI/ViewModelUI.h DataAccessor/DataAccessor.h
-        DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp UI/tabdialog.h)
+add_executable(ECG_Analyzer
+        main.cpp
+        Modules/Sample/Sample.h
+        Modules/Sample/Sample.cpp
+        UI/ViewModelUI.cpp
+        UI/ViewModelUI.h
+        UI/tabdialog.h
+        UI/chartCallout.h
+        UI/chartCallout.cpp
+        UI/generaltab.cpp
+        UI/textBrowserName.cpp
+        UI/Tabsgraphs.cpp)
 
 target_link_libraries(
         ECG_Analyzer
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
-        )
+        Qt5::Charts
+)
 
 target_link_libraries(ECG_Analyzer)
