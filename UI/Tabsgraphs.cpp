@@ -16,20 +16,10 @@ void Tabsgraphs::addtab_ECGBaselineMA() {
     auto *obj = new chartCallout(filteredSignal,detectedRPeaks);
 
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "ECG Baseline");
+    this->addTab(tab1, "ECG Baseline - MA Filter");
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->addWidget(obj);
     tab1->setLayout(vlayout);
-//    QChart *dupa = new QChart();
-//    QChartView *dupaview = new QChartView(dupa);
-//    QVBoxLayout *vlayout = new QVBoxLayout;
-//    vlayout->addWidget(dupaview);
-//    tab1->setLayout(vlayout);
-//    QLineSeries *series = new QLineSeries();
-//    *series << QPointF(0, 6) << QPointF(9, 4) << QPointF(15, 20) << QPointF(25, 12) << QPointF(29, 26);
-//    dupa->legend()->hide();
-//    dupa->addSeries(series);
-
 }
 
 
@@ -40,19 +30,11 @@ void Tabsgraphs::addtab_ECGBaselineLMS() {
     auto *obj = new chartCallout(filteredSignal,detectedRPeaks);
 
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "ECG Baseline");
+    this->addTab(tab1, "ECG Baseline - LMS Filter");
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->addWidget(obj);
     tab1->setLayout(vlayout);
-//    QChart *dupa = new QChart();
-//    QChartView *dupaview = new QChartView(dupa);
-//    QVBoxLayout *vlayout = new QVBoxLayout;
-//    vlayout->addWidget(dupaview);
-//    tab1->setLayout(vlayout);
-//    QLineSeries *series = new QLineSeries();
-//    *series << QPointF(0, 6) << QPointF(9, 4) << QPointF(15, 20) << QPointF(25, 12) << QPointF(29, 26);
-//    dupa->legend()->hide();
-//    dupa->addSeries(series);
+
 
 }
 void Tabsgraphs::addtab_ECGBaselineButterworth() {
@@ -62,19 +44,10 @@ void Tabsgraphs::addtab_ECGBaselineButterworth() {
     auto *obj = new chartCallout(filteredSignal,detectedRPeaks);
 
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "ECG Baseline");
+    this->addTab(tab1, "ECG Baseline - Butterworth Filter");
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->addWidget(obj);
     tab1->setLayout(vlayout);
-//    QChart *dupa = new QChart();
-//    QChartView *dupaview = new QChartView(dupa);
-//    QVBoxLayout *vlayout = new QVBoxLayout;
-//    vlayout->addWidget(dupaview);
-//    tab1->setLayout(vlayout);
-//    QLineSeries *series = new QLineSeries();
-//    *series << QPointF(0, 6) << QPointF(9, 4) << QPointF(15, 20) << QPointF(25, 12) << QPointF(29, 26);
-//    dupa->legend()->hide();
-//    dupa->addSeries(series);
 
 }
 

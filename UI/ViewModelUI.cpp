@@ -112,15 +112,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QPushButton *pushButtonecgLMS = new QPushButton(tr("ECG - LMS"));
 
     pushButtonecgMA->setFixedHeight(30);
-    pushButtonecgMA->setFixedWidth(160);
+    pushButtonecgMA->setFixedWidth(200);
     pushButtonecgMA->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
     pushButtonecgButterworth->setFixedHeight(30);
-    pushButtonecgButterworth->setFixedWidth(160);
+    pushButtonecgButterworth->setFixedWidth(200);
     pushButtonecgButterworth->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
     pushButtonecgLMS->setFixedHeight(30);
-    pushButtonecgLMS->setFixedWidth(160);
+    pushButtonecgLMS->setFixedWidth(200);
     pushButtonecgLMS->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
 
@@ -137,18 +137,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     //// QRSPT Detection groupbox
     QPushButton *pushButtonRPeakDetectionPanTompkins = new QPushButton(tr("R Peaks Detection - Pan Tompkins"));
     pushButtonRPeakDetectionPanTompkins->setFixedHeight(30);
-    pushButtonRPeakDetectionPanTompkins->setFixedWidth(140);
+    pushButtonRPeakDetectionPanTompkins->setFixedWidth(200);
     pushButtonRPeakDetectionPanTompkins->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
     QPushButton *pushButtonRPeaksDetectionHilbert = new QPushButton(tr("R Peaks Detection - Hilbert"));
     pushButtonRPeaksDetectionHilbert->setFixedHeight(30);
-    pushButtonRPeaksDetectionHilbert->setFixedWidth(140);
+    pushButtonRPeaksDetectionHilbert->setFixedWidth(200);
     pushButtonRPeaksDetectionHilbert->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
 
     QPushButton *pushButtonQRSandPTPeaksDetection = new QPushButton(tr("QRS and PT Detection"));
     pushButtonQRSandPTPeaksDetection->setFixedHeight(30);
-    pushButtonQRSandPTPeaksDetection->setFixedWidth(140);
+    pushButtonQRSandPTPeaksDetection->setFixedWidth(200);
     pushButtonQRSandPTPeaksDetection->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
     QGridLayout *gridLayoutQRSPTDetectionPanTompkins = new QGridLayout();
@@ -166,7 +166,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QPushButton *pushButtonHRV = new QPushButton(tr("HRV"));
     pushButtonHRV->setFixedHeight(30);
-    pushButtonHRV->setFixedWidth(140);
+    pushButtonHRV->setFixedWidth(200);
     pushButtonHRV->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
     QLabel *labelTimeDomain = new QLabel(tr("Time Domain"));
     QLabel *labelTD_RRmean = new QLabel(tr("RR mean"));
