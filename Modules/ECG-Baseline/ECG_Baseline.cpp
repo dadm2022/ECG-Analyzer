@@ -12,6 +12,8 @@ ECG_Baseline::ECG_Baseline(std::shared_ptr<std::vector<float>> originalSignal) :
 
 void ECG_Baseline::ButterworthFiltering()
 {
+    m_filteredSignalUsingButterworthFilter.clear();
+    m_ButterworthFilterParameters.ResetFilterParams();
     m_ButterworthFilterParameters.CreateBWBandPassFilter();
     vector<float> filteredSignalLowPass = Convolution1D(m_originalSignal, m_ButterworthFilterParameters.GetLowPassFilter(), ConvolutionType::Same);
     std::shared_ptr<std::vector<float>> filteredSignalLowPassPointer;
@@ -69,7 +71,7 @@ float ECG_Baseline::CalculateConvolutionResultForChosenElementOfSignal(std::shar
     return sum;
 }
 
-std::vector<float> ECG_Baseline::Convolution1D(std::shared_ptr<std::vector<float>>& originalSignal, std::vector<float> mask, ConvolutionType parameter)
+std::vector<float> ECG_Baseline::Convolution1D(std::shared_ptr<std::vector<float>> originalSignal, std::vector<float> mask, ConvolutionType parameter)
 {
     size_t filteredSignalAfterConvolutionLength = originalSignal->size() + mask.size() - 1;
 

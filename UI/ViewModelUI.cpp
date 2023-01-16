@@ -9,7 +9,6 @@
 #include "generaltab.h"
 #include "../Modules/Sample/Sample.h"
 #include "textBrowserName.h"
-//#include "chartCallout.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -110,46 +109,57 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     groupBoxPatientInfo->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
 
     //// Filter Group Box
-    QPushButton *pushButtonecgBaseline = new QPushButton(tr("ECG Baseline"));
-    pushButtonecgBaseline->setFixedHeight(30);
-    pushButtonecgBaseline->setFixedWidth(140);
-    pushButtonecgBaseline->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
-    QRadioButton *radioButtonMovingAverage = new QRadioButton("MA", this);
-    QRadioButton *radioButtonButterworth = new QRadioButton("Butterworth", this);
-    QRadioButton *radioButtonSaviztkyGolay = new QRadioButton("Savitzky-Golay", this);
-    QRadioButton *radioButtonLMS = new QRadioButton("LMS", this);
+    QPushButton *pushButtonecgMA = new QPushButton(tr("ECG - MA Filter"));
+    QPushButton *pushButtonecgButterworth = new QPushButton(tr("ECG - Butterworth Filter "));
+    QPushButton *pushButtonecgLMS = new QPushButton(tr("ECG - LMS"));
+
+    pushButtonecgMA->setFixedHeight(30);
+    pushButtonecgMA->setFixedWidth(200);
+    pushButtonecgMA->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    pushButtonecgButterworth->setFixedHeight(30);
+    pushButtonecgButterworth->setFixedWidth(200);
+    pushButtonecgButterworth->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    pushButtonecgLMS->setFixedHeight(30);
+    pushButtonecgLMS->setFixedWidth(200);
+    pushButtonecgLMS->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
 
     QGridLayout *gridLayoutFilter = new QGridLayout(this);
-    gridLayoutFilter->addWidget(pushButtonecgBaseline, 1,0);
-    gridLayoutFilter->addWidget(radioButtonMovingAverage, 2, 0);
-    gridLayoutFilter->addWidget(radioButtonButterworth,3,0);
-    gridLayoutFilter->addWidget(radioButtonSaviztkyGolay, 4, 0);
-    gridLayoutFilter->addWidget(radioButtonLMS, 5,0);
+    gridLayoutFilter->addWidget(pushButtonecgMA, 1,0);
+    gridLayoutFilter->addWidget(pushButtonecgButterworth, 2, 0);
+    gridLayoutFilter->addWidget(pushButtonecgLMS, 3, 0);
+
 
     QGroupBox *groupBoxFilter= new QGroupBox(tr("Filter"));
     groupBoxFilter->setLayout(gridLayoutFilter);
     groupBoxFilter->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
 
     //// QRSPT Detection groupbox
-    QPushButton * pushButtonRPeakDetection = new QPushButton(tr("R Peaks Detection"));
-    pushButtonRPeakDetection->setFixedHeight(30);
-    pushButtonRPeakDetection->setFixedWidth(140);
-    pushButtonRPeakDetection->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
-    QPushButton * pushButtonQRSandPTPeaksDetection = new QPushButton(tr("QRS and PT Detection"));
-    pushButtonQRSandPTPeaksDetection->setFixedHeight(30);
-    pushButtonQRSandPTPeaksDetection->setFixedWidth(140);
-    pushButtonQRSandPTPeaksDetection->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
-    QRadioButton *radioButtonPanTompkins = new QRadioButton(tr("Pan - Tompkins"));
-    QRadioButton *radioButtonHilbert = new QRadioButton(tr("Hilbert"));
+    QPushButton *pushButtonRPeakDetectionPanTompkins = new QPushButton(tr("R Peaks Detection - Pan Tompkins"));
+    pushButtonRPeakDetectionPanTompkins->setFixedHeight(30);
+    pushButtonRPeakDetectionPanTompkins->setFixedWidth(200);
+    pushButtonRPeakDetectionPanTompkins->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
-    QGridLayout *gridLayoutQRSPTDetection = new QGridLayout();
-    gridLayoutQRSPTDetection->addWidget(pushButtonRPeakDetection, 0,0);
-    gridLayoutQRSPTDetection->addWidget(radioButtonPanTompkins, 1, 0);
-    gridLayoutQRSPTDetection->addWidget(radioButtonHilbert, 2, 0);
-    gridLayoutQRSPTDetection->addWidget(pushButtonQRSandPTPeaksDetection,3, 0);
+    QPushButton *pushButtonRPeaksDetectionHilbert = new QPushButton(tr("R Peaks Detection - Hilbert"));
+    pushButtonRPeaksDetectionHilbert->setFixedHeight(30);
+    pushButtonRPeaksDetectionHilbert->setFixedWidth(200);
+    pushButtonRPeaksDetectionHilbert->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+
+    QPushButton *pushButtonQRSandPTPeaksDetection = new QPushButton(tr("QRS and PT Detection"));
+    pushButtonQRSandPTPeaksDetection->setFixedHeight(30);
+    pushButtonQRSandPTPeaksDetection->setFixedWidth(200);
+    pushButtonQRSandPTPeaksDetection->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    QGridLayout *gridLayoutQRSPTDetectionPanTompkins = new QGridLayout();
+    gridLayoutQRSPTDetectionPanTompkins->addWidget(pushButtonRPeakDetectionPanTompkins, 0,0);
+    gridLayoutQRSPTDetectionPanTompkins->addWidget(pushButtonRPeaksDetectionHilbert, 1,0);
+    gridLayoutQRSPTDetectionPanTompkins->addWidget(pushButtonQRSandPTPeaksDetection,2, 0);
 
     QGroupBox *groupBoxQRSPTDetection= new QGroupBox(tr("QRSPT Detection"));
-    groupBoxQRSPTDetection->setLayout(gridLayoutQRSPTDetection);
+    groupBoxQRSPTDetection->setLayout(gridLayoutQRSPTDetectionPanTompkins);
     groupBoxQRSPTDetection->setStyleSheet("QGroupBox { border-color:#D7F2EB; border-style: solid; border-width: 2px;}");
 
     //// HRV Parameters Groupbox
@@ -158,7 +168,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QPushButton *pushButtonHRV = new QPushButton(tr("HRV"));
     pushButtonHRV->setFixedHeight(30);
-    pushButtonHRV->setFixedWidth(140);
+    pushButtonHRV->setFixedWidth(200);
     pushButtonHRV->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
     QLabel *labelTimeDomain = new QLabel(tr("Time Domain"));
     QLabel *labelTD_RRmean = new QLabel(tr("RR mean"));
@@ -550,8 +560,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     ////SLOTS
     //Buttons
     connect(pushButtonRemoveTab, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(RemoveTab()));
-    connect(pushButtonecgBaseline, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_ECGBaseline()));
-    connect(pushButtonRPeakDetection, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_RPeaksDetection()));
+    connect(pushButtonecgMA, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_ECGBaselineMA()));
+    connect(pushButtonecgLMS, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_ECGBaselineLMS()));
+    connect(pushButtonecgButterworth, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_ECGBaselineButterworth()));
+
+    connect(pushButtonRPeakDetectionPanTompkins, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_RPeaksDetectionPanTompkins()));
+    connect(pushButtonRPeaksDetectionHilbert, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_RPeaksDetectionHilbert()));
     connect(pushButtonQRSandPTPeaksDetection, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_QRSandPTDetection()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserRRmean, SLOT(handleTextBrowserRRmean()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserSDNN, SLOT(handleTextBrowserSDNN()));
@@ -564,6 +578,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserVLF, SLOT(handleTextBrowserVLF()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserULF, SLOT(handleTextBrowserULF()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserLFHF, SLOT(handleTextBrowserLFHF()));
+//    connect(radioButtonLMS, SIGNAL(clicked(bool)), pushButtonecgBaseline, SLOT(setEnabled(bool)));
+//    connect(radioButtonButterworth, SIGNAL(clicked(bool)), pushButtonecgBaseline, SLOT(setEnabled(bool)));
+//    connect(radioButtonSaviztkyGolay, SIGNAL(clicked(bool)), pushButtonecgBaseline, SLOT(setEnabled(bool)));
+//    connect(radioButtonMovingAverage, SIGNAL(clicked(bool)), pushButtonecgBaseline, SLOT(setEnabled(bool)));
 
     connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserTINN, SLOT(handleTextBrowserTINN()));
     connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserHRV, SLOT(handleTextBrowserHRV()));
@@ -590,7 +608,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(openAction, SIGNAL(triggered()), textBrowserAge, SLOT(handleTextBrowserAge()));
     connect(openAction, SIGNAL(triggered()), textBrowserGender, SLOT(handleTextBrowserGender()));
 
-
+//    checked(radioButtonLMS);
+//    checked(radioButtonMovingAverage);
+//    checked(radioButtonSaviztkyGolay);
+//    checked(radioButtonButterworth);
 
 }
 std::string MainWindow::handleOpenActionClicked() {
@@ -607,4 +628,3 @@ std::string MainWindow::handleOpenActionClicked() {
 
     return cstr_filePath;
 }
-

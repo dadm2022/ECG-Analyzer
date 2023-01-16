@@ -9,7 +9,7 @@
 #include <iostream>
 #include <QtCharts>
 #include <QVBoxLayout>
-//#include "chartCallout.h"
+
 class Tabsgraphs : public QTabWidget
 {
     Q_OBJECT;
@@ -19,10 +19,16 @@ public:
 
 
 public slots:
-    void addtab_ECGBaseline();
+
     void RemoveTab();
-    void addtab_RPeaksDetection();
     void addtab_QRSandPTDetection();
+    void addtab_ECGBaselineMA();
+    void addtab_ECGBaselineLMS();
+    void addtab_ECGBaselineButterworth();
+
+    void addtab_RPeaksDetectionPanTompkins();
+    void addtab_RPeaksDetectionHilbert();
+
 private:
 
 };
