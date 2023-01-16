@@ -20,13 +20,12 @@
 #ifndef __GSL_MATH_H__
 #define __GSL_MATH_H__
 #include <math.h>
-#include <gsl/gsl_sys.h>
-#include <gsl/gsl_inline.h>
-#include <gsl/gsl_machine.h>
-#include <gsl/gsl_precision.h>
-#include <gsl/gsl_nan.h>
-#include <gsl/gsl_pow_int.h>
-#include <gsl/gsl_minmax.h>
+#include "./../../lib/gsl/sys/gsl_sys.h"
+#include "./../../lib/gsl/gsl_machine.h"
+#include "./../../lib/gsl/gsl_precision.h"
+#include "./../../lib/gsl/gsl_nan.h"
+#include "./../../lib/gsl/gsl_pow_int.h"
+#include "./../../lib/gsl/gsl_minmax.h"
 
 #ifndef M_E
 #define M_E        2.71828182845904523536028747135      /* e */
