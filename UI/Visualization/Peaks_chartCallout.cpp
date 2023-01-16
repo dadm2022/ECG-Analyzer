@@ -38,8 +38,8 @@ PeaksChartCallout::PeaksChartCallout(std::vector<float> &filteredSignal, std::ve
     defXaxis = new QValueAxis();
     defYaxis = new QValueAxis();
     defXTimeAxis = new QValueAxis();
-    defXaxis->setRange(0, 50000);
-    defYaxis->setRange(-1, 1);
+    defXaxis->setRange(0, 25);
+    defYaxis->setRange(0, 20);
 //    defXTimeAxis->setRange(0, double(7000) / 360);
 
     chart->addAxis(defXaxis, Qt::AlignBottom);
@@ -149,41 +149,40 @@ void PeaksChartCallout::addDataToQSeries(int startIndex) {
 
     }
 
-    std::vector<int> &indexesQrsOneset = detectedMqrsOnesetPoints;
 
-    for (int detectedMqrsOnesetPoints : detectedMqrsOnesetPoints){
-        mQrsOnesetPoints->append(detectedMqrsOnesetPoints, filteredSignal[detectedMqrsOnesetPoints]);
+    for (int detectedMqrsOnesetPoint : detectedMqrsOnesetPoints){
+        mQrsOnesetPoints->append(detectedMqrsOnesetPoint, filteredSignal[detectedMqrsOnesetPoint]);
     }
-    std::vector<int> &indexesQrsEnd = detectedMqrsEndPoints;
 
-    for (int detectedMqrsEndPoints : detectedMqrsEndPoints){
-        mQrsEndPoints->append(detectedMqrsEndPoints, filteredSignal[detectedMqrsEndPoints]);
+
+    for (int detectedMqrsEndPoint : detectedMqrsEndPoints){
+        mQrsEndPoints->append(detectedMqrsEndPoint, filteredSignal[detectedMqrsEndPoint]);
     }
-    std::vector<int> &indexesT = detectedMTPoints;
-    for (int detectedMTPoints : detectedMTPoints){
-        mTPoints->append(detectedMTPoints, filteredSignal[detectedMTPoints]);
+
+    for (int detectedMTPoint : detectedMTPoints){
+        mTPoints->append(detectedMTPoint, filteredSignal[detectedMTPoint]);
     }
 
     //T End
-    std::vector<int> &indexesTend = detectedMTEndPoints;
-    for (int detectedMTEndPoints : detectedMTEndPoints){
-        mTEndPoints->append(detectedMTEndPoints, filteredSignal[detectedMTEndPoints]);
+
+    for (int detectedMTEndPoint : detectedMTEndPoints){
+        mTEndPoints->append(detectedMTEndPoint, filteredSignal[detectedMTEndPoint]);
     }
 
     //P oneset
     std::vector<int> &indexesPoneset = detectedPonesetPoints;
-    for (int detectedPonesetPoints : detectedPonesetPoints) {
-        mPOnesetPoints->append(detectedPonesetPoints, filteredSignal[detectedPonesetPoints]);
+    for (int detectedPonesetPoint : detectedPonesetPoints) {
+        mPOnesetPoints->append(detectedPonesetPoint, filteredSignal[detectedPonesetPoint]);
     }
     // P End
-    std::vector<int> &indexesPend = detectedPendPoints;
-    for (int detectedPendPoints : detectedPendPoints) {
-        mPEndPoints->append(detectedPendPoints, filteredSignal[detectedPendPoints]);
+
+    for (int detectedPendPoint : detectedPendPoints) {
+        mPEndPoints->append(detectedPendPoint, filteredSignal[detectedPendPoint]);
     }
     // P point
-    std::vector<int> &indexesP = detectedPpointPoints;
-    for (int detectedPpointPoints : detectedPpointPoints) {
-        mPpointPoints->append(detectedPpointPoints, filteredSignal[detectedPpointPoints]);
+
+    for (int detectedPpointPoint : detectedPpointPoints) {
+        mPpointPoints->append(detectedPpointPoint, filteredSignal[detectedPpointPoint]);
     }
 }
 
