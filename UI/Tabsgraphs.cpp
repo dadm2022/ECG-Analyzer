@@ -8,6 +8,7 @@
 #include "Visualization/Peaks_chartCallout.h"
 
 
+
 Tabsgraphs::Tabsgraphs(QWidget *parent) : QTabWidget(parent) {
     this->setStyleSheet("QWidget {background-color: #E7F6F2;}");
 }

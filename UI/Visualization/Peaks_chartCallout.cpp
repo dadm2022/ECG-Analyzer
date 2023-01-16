@@ -9,7 +9,9 @@
 #include <QtCore/QtMath>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
+#include "SignalUtils.h"
 
+using SignalUtils::getRangeFromTo;
 
 PeaksChartCallout::PeaksChartCallout(std::vector<float> &filteredSignal, std::vector<int> &detectedRPeaks,
                                      std::vector<int> &detectedMqrsOnesetPoints,
@@ -29,6 +31,8 @@ PeaksChartCallout::PeaksChartCallout(std::vector<float> &filteredSignal, std::ve
     this->detectedPendPoints = detectedPendPoints;
     this->detectedPpointPoints = detectedPpointPoints;
 
+    auto [from, to] = getRangeFromTo(filteredSignal);
+    //auto maxXElement = sizeof(&filteredSignal) / sizeof(int);
 
     createSeries();
     addDataToQSeries(0);
@@ -39,7 +43,7 @@ PeaksChartCallout::PeaksChartCallout(std::vector<float> &filteredSignal, std::ve
     defYaxis = new QValueAxis();
     defXTimeAxis = new QValueAxis();
     defXaxis->setRange(0, 25);
-    defYaxis->setRange(0, 20);
+    defYaxis->setRange(from, to);
 //    defXTimeAxis->setRange(0, double(7000) / 360);
 
     chart->addAxis(defXaxis, Qt::AlignBottom);
