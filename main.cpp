@@ -35,4 +35,7 @@ int main(int argc, char *argv[])
     auto alpha1 = dataController.getAlpha1(std::make_shared<std::vector<int>>(rpks1));
     auto alpha2 = dataController.getAlpha2(std::make_shared<std::vector<int>>(rpks1));
 
+    auto tinnTriangleCorners = dataController.getTinnTriangleCorners(std::make_shared<std::vector<int>>(rpks1));
+    auto hrv2Histogram = dataController.getHRV2Histogram(std::make_shared<std::vector<int>>(rpks1));
+
 }

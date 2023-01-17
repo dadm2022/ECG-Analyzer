@@ -12,6 +12,7 @@
 #include "./../Modules/WAVES/waves.h"
 #include "./../Modules/TWaveAlt/TWaveAlt.h"
 #include "./../Modules/HRV_DFA/DFA.h"
+#include "./../Modules/HRV2/HRV2.h"
 
 struct SignalDetails
 {
@@ -27,6 +28,16 @@ struct Waves
     std::vector<int> Tend;
     std::vector<int> Ponset;
     std::vector<int> Pend;
+};
+
+struct TinnTriangleCorners
+{
+    double Nx;
+    double Ny;
+    double Mx;
+    double My;
+    double Tx;
+    double Ty;
 };
 
 
@@ -67,6 +78,9 @@ public:
 
     const long double getAlpha1(std::shared_ptr<const std::vector<int>> rPeaks);
     const long double getAlpha2(std::shared_ptr<const std::vector<int>> rPeaks);
+
+    const TinnTriangleCorners getTinnTriangleCorners(std::shared_ptr<std::vector<int>> rPeaks);
+    const std::vector<int> getHRV2Histogram(std::shared_ptr<std::vector<int>> rPeaks);
 
 };
 
