@@ -2,8 +2,6 @@
 // Created by Izabela Wilusz and Bartłomiej Ziółkowski on 08.12.2022.
 //
 #include "HRV2.h"
-#include <iostream>
-#include <valarray>
 #include <vector>
 #include <cmath>
 #include <numeric>

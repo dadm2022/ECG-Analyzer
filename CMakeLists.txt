@@ -28,7 +28,8 @@ add_executable(ECG_Analyzer main.cpp UI/ViewModelUI.cpp
         DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp Modules/TWaveAlt/TWaveAlt.cpp
         DataController/DataController.h DataController/DataController.cpp Modules/ECG-Baseline/ECG_Baseline.h
         Modules/ECG-Baseline/ECG_Baseline.cpp Modules/WAVES/waves.h Modules/WAVES/waves.cpp
-        Modules/HRV_DFA/DFA.h Modules/HRV_DFA/DFA.cpp)
+        Modules/HRV_DFA/DFA.h Modules/HRV_DFA/DFA.cpp
+        Modules/HRV2/HRV2.h Modules/HRV2/HRV2.cpp)
 
 target_link_libraries(ECG_Analyzer
         Qt5::Core

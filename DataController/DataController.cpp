@@ -105,3 +105,44 @@ const long double DataController::getAlpha2(std::shared_ptr<const std::vector<in
 }
 
 
+const TinnTriangleCorners DataController::getTinnTriangleCorners(std::shared_ptr<std::vector<int>> rPeaks)
+{
+    HRV2 hrv2 (rPeaks);
+
+    int bins = 16;
+    hrv2.SetHistogram(bins);
+    HistogramData histogramData = hrv2.GetHistogram();
+    std::vector <int> histogram = histogramData.histogram;
+
+    std::vector<double> binBorders = histogramData.binBorders;
+
+    double interval = histogramData.interval;
+
+    int maxBinSize = histogramData.maxBinSize;
+    int maxBinNumber = histogramData.maxBinNumber;
+    std::vector<double> binCenters = hrv2.calcBinCenters(bins, interval, binBorders);
+
+    hrv2.setTinn(maxBinNumber, maxBinSize, bins, binBorders, binCenters, histogram);
+    TinnParams tinnParams = hrv2.getTinn();
+
+    auto tinnTriangleCorners = TinnTriangleCorners();
+    tinnTriangleCorners.Nx = tinnParams.xVectorMN.back();
+    tinnTriangleCorners.Ny = tinnParams.yVectorMN.back();
+    tinnTriangleCorners.Mx = tinnParams.xVectorMN.front();
+    tinnTriangleCorners.My = tinnParams.yVectorMN.front();
+    tinnTriangleCorners.Tx = tinnParams.xVectorTN.front();
+    tinnTriangleCorners.Ty = tinnParams.yVectorTN.front();
+
+    return tinnTriangleCorners;
+}
+
+const std::vector<int> DataController::getHRV2Histogram(std::shared_ptr<std::vector<int>> rPeaks)
+{
+    HRV2 hrv2 (rPeaks);
+    int bins = 16;
+    hrv2.SetHistogram(bins);
+    HistogramData histogramData = hrv2.GetHistogram();
+    return histogramData.histogram;
+}
+
+
