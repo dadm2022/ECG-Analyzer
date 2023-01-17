@@ -25,7 +25,8 @@ find_package(Qt5 COMPONENTS
 
 add_executable(ECG_Analyzer main.cpp Modules/Sample/Sample.h Modules/Sample/Sample.cpp UI/ViewModelUI.cpp
         UI/ViewModelUI.h DataAccessor/DataAccessor.h
-        DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp Modules/TWaveAlt/TWaveAlt.cpp)
+        DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp Modules/TWaveAlt/TWaveAlt.cpp
+        DataController/DataController.h DataController/DataController.cpp Modules/ECG-Baseline/ECG_Baseline.h Modules/ECG-Baseline/ECG_Baseline.cpp)
 
 target_link_libraries(ECG_Analyzer
         Qt5::Core
