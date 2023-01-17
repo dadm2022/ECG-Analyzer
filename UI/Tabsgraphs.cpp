@@ -6,6 +6,7 @@
 #include "chartCallout.h"
 #include "Visualization/ECG_chartCallout.h"
 #include "Visualization/Peaks_chartCallout.h"
+#include "Visualization/HRV2_chartCallout.h"
 
 
 Tabsgraphs::Tabsgraphs(QWidget *parent, std::shared_ptr<DataController> datacontroller) : QTabWidget(parent) {
@@ -85,18 +86,24 @@ void Tabsgraphs::addtab_QRSandPTDetection(){
     tab1->setLayout(vlayout);
 };
 
-void Tabsgraphs::addtab_Histogram(){
+void Tabsgraphs::addtab_HRV2(){
+
+    //histogram mock
+    std::vector<int> bins = {6,7,8};
+    std::vector<int> dupa = {1,2,3};
+    int xM =5;
+    int yM =5;
+    int xT =7;
+    int yT =10;
+    int xN =7;
+    int yN =5;
+
+    auto *obj = new HRV2HistogramCallout(bins, dupa, xM, yM, xT, yT, xN, yN);
 
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "Histogram");
+    this->addTab(tab1, "HRV2");
     QVBoxLayout *vlayout = new QVBoxLayout;
-    tab1->setLayout(vlayout);
-};
-
-void Tabsgraphs::addtab_Poincare(){
-    QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "Poincare");
-    QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->addWidget(obj);
     tab1->setLayout(vlayout);
 };
 

@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QtCharts>
 #include <QDialog>
+#include <QLineF>
 #include <QFileDialog>
 #include <QString>
 #include <QScrollBar>
@@ -18,40 +19,98 @@ class HRV2HistogramCallout : public QChartView {
 
 public:
 //   // explicit HRV2HistogramCallout(std::shared_ptr<HRV2>histogram);
-//   explicit HRV2HistogramCallout(std::vector<int> HRV2::peakDistances,
-//                                 std::vector<int> HRV2::poincareX,
-//                                 std::vector<int> HRV2::poincareY,
-//                                 std::vector<int> HRV2::identityLine,
-//                                 std::vector<int> HistogramData::histogram,
-//                                 std::vector<double> HistogramData::binBorders,
-//                                 std::vector<int> HistogramData::maxBinSize,
-//                                 std::vector<int> HistogramData::maxBinNumber,
-//                                 std::vector<double> HRV2::TinnParams::xVectorMT,
-//                                 std::vector<double> HRV2::TinnParams::yVectorMT,
-//                                 std::vector<double> HRV2::triangularIndex,
-//                                 std::vector<int> EllipseParameters::indicesSD1,
-//                                 std::vector<int> EllipseParameters::valuesSD1);
+//   explicit HRV2HistogramCallout(std::vector<int> &peakDistances,
+//                                 std::vector<int> &poincareX,
+//                                 std::vector<int> &poincareY,
+//                                 std::vector<int> &identityLine,
+//                                 std::vector<int> &histogram,
+//                                 std::vector<double> &binBorders,
+//                                 std::vector<int> &maxBinSize,
+//                                 std::vector<int> &maxBinNumber,
+//                                 std::vector<double> &xVectorMT,
+//                                 std::vector<double> &yVectorMT,
+//                                 std::vector<double> &triangularIndex,
+//                                 std::vector<int> &indicesSD1,
+//                                 std::vector<int> &valuesSD1);
 
 //
 //    explicit HRV2HistogramCallout(std::vector<double> binsBorders, std::vector<int> histogram, int maxHistogramValueIndex,
 //                                  const std::shared_ptr<HRV2> hrv2Ptr,
 //                                  );
 
-    explicit HRV2HistogramCallout( std::shared_ptr<HRV2>PoincareParameters,
-                                        std::shared_ptr<HRV2>HistogramData,
-                                        std::shared_ptr<HRV2>TinnParams,
-                                        std::shared_ptr<HRV2>EllipseParameters);
+//    std::vector<int> &peakDistances,
+//    std::vector<int> &poincareX,
+//    std::vector<int> &poincareY,
+//    std::vector<int> &identityLine,
+//    std::vector<int> &histogram,
+//    std::vector<double> &binBorders,
+//    std::vector<int> &maxBinSize,
+//    std::vector<int> &maxBinNumber,
+//    std::vector<double> &xVectorMT,
+//    std::vector<double> &yVectorMT,
+//    std::vector<double> &xVectorMN,
+//    std::vector<double> &yVectorMN,
+//    std::vector<double> &xVectorTN,
+//    std::vector<double> &yVectorTN,
+//    std::vector<double> &triangularIndex,
+//    std::vector<int> &indicesSD1,
+//    std::vector<int> &valuesSD1
+
+    explicit HRV2HistogramCallout(std::vector<int> &bins, std::vector<int> &dupa,
+                                  int &xT, int &yT, int&xM, int&yM, int &xN, int &yN);
 
 private :
-    std::shared_ptr<HRV2> HistogramData;
-//    QScrollBar *scrollbar;
-//    QChart *chart;
-//    QLineSeries *series;
-//    QScatterSeries *rPeaks;
-//    QValueAxis *defXaxis;
-//    QValueAxis *defYaxis;
-//    QValueAxis *defXTimeAxis;
-//    QBarSeries *bins;
+
+    //std::shared_ptr<HRV2> HistogramData;
+    QScrollBar *scrollbar;
+    QChart *chart;
+    QBarSeries *barseries;
+    QLineSeries *lineseries;
+    QLineSeries *lineseriesMT;
+    QLineSeries *lineseriesTN;
+    QLineSeries *lineseriesMN;
+    QValueAxis *defXaxis;
+    QValueAxis *defYaxis;
+    QValueAxis *defXTimeAxis;
+    QBarSet *set;
+    QBarCategoryAxis *axisX;
+    QScatterSeries *ParamM;
+    QScatterSeries *ParamT;
+    QScatterSeries *ParamN;
+
+    std::vector<int> peakDistances;
+    std::vector<int> poincareX;
+    std::vector<int> poincareY;
+    std::vector<int> identityLine;
+    std::vector<int> histogram;
+    std::vector<double> binBorders;
+    std::vector<int> maxBinSize;
+    std::vector<int> maxBinNumber;
+    std::vector<double> xVectorMT;
+    std::vector<double> yVectorMT;
+    std::vector<double> xVectorMN;
+    std::vector<double> yVectorMN;
+    std::vector<double> xVectorTN;
+    std::vector<double> yVectorTN;
+    std::vector<double> triangularIndex;
+    std::vector<int> indicesSD1;
+    std::vector<int> valuesSD1;
+    std::vector<int> bins;
+    std::vector<int> dupa;
+    int xT;
+    int yT;
+    int xM;
+    int yM;
+    int xN;
+    int yN;
+
+    void createSeries();
+
+    void addDataToBarQSeries(int startIndex);
+
+    void addSeriesToChart();
+
+
 
 
 };
