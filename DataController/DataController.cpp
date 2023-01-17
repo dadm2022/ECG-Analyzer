@@ -37,3 +37,41 @@ const std::vector<float> DataController::getMovingAverageFilteredSignal()
 
     return m_MovingAverageFilteredSignal;
 }
+
+const std::vector<int> DataController::getHilbertRPeaks(std::shared_ptr<std::vector<float>> filteredSignal)
+{
+    if(hilbertTransformRPeaks.empty())
+    {
+        auto handler = HilbertTransform();
+        hilbertTransformRPeaks = handler.GetPeaks(filteredSignal);
+    }
+
+    return hilbertTransformRPeaks;
+}
+
+const std::vector<int> DataController::getPanTompkinsRPeaks(std::shared_ptr<std::vector<float>> filteredSignal)
+{
+    if(panTompkinsRPeaks.empty())
+    {
+        auto handler = PanTompkins();
+        panTompkinsRPeaks = handler.GetPeaks(filteredSignal);
+    }
+
+    return panTompkinsRPeaks;
+}
+
+const Waves DataController::getWaves(std::vector<float> filteredSignal, std::vector<int> rPeaks)
+{
+    if (waves.QRSonset.empty() && waves.QRSend.empty() && waves.Tend.empty() && waves.Ponset.empty() && waves.Pend.empty())
+    {
+        auto handler = WavesDetector(filteredSignal, rPeaks);
+        waves.QRSonset = handler.getQRSonset();
+        waves.QRSend = handler.getQRSend();
+        waves.Tend = handler.getTend();
+        waves.Ponset = handler.getPonset();
+        waves.Pend = handler.getPend();
+    }
+    return waves;
+}
+
+

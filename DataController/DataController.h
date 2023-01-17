@@ -18,6 +18,15 @@ struct SignalDetails
     unsigned int age = 0;
 };
 
+struct Waves
+{
+    std::vector<int> QRSonset;
+    std::vector<int> QRSend;
+    std::vector<int> Tend;
+    std::vector<int> Ponset;
+    std::vector<int> Pend;
+};
+
 
 class DataController
 {
@@ -31,8 +40,12 @@ class DataController
     std::vector<float> m_MovingAverageFilteredSignal;
 
     ECG_Baseline ecgBaseline = {NULL};
-    HilbertTransform hilbertTransform;
-    PanTompkins panTompkins;
+    std::vector<int> hilbertTransformRPeaks;
+    std::vector<int> panTompkinsRPeaks;
+
+    Waves waves = {};
+
+
 
 public:
     DataController(std::string pathToFile);
@@ -40,6 +53,9 @@ public:
     const std::vector<float> getLMSFilteredSignal();
     const std::vector<float> getButterworthFilteredSignal();
     const std::vector<float> getMovingAverageFilteredSignal();
+    const std::vector<int> getHilbertRPeaks(std::shared_ptr<std::vector<float>> filteredSignal);
+    const std::vector<int> getPanTompkinsRPeaks(std::shared_ptr<std::vector<float>> filteredSignal);
+    const Waves getWaves(std::vector<float> filteredSignal, std::vector<int> rPeaks);
 
 };
 

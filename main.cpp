@@ -19,5 +19,12 @@ int main(int argc, char *argv[])
 
     auto dataController = DataController("/Users/bartosz/downloads/100.dat");
     auto filtered = dataController.getButterworthFilteredSignal();
+    auto filtered1 = dataController.getLMSFilteredSignal();
+    auto filtered2 = dataController.getMovingAverageFilteredSignal();
+
+//    auto rpks = dataController.getHilbertRPeaks(std::make_shared<std::vector<float>>(filtered));
+    auto rpks1 = dataController.getPanTompkinsRPeaks(std::make_shared<std::vector<float>>(filtered));
+
+    auto waves = dataController.getWaves(filtered, rpks1);
 
 }
