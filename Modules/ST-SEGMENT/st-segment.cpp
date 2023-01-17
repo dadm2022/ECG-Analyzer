@@ -1,289 +1,214 @@
 #include <memory>
 #include "st-segment.h"
-#include <iostream>
 #include <string>
+#include <cmath>
+#include <algorithm>
 
 
-#define FREQUENCY_360 360
-using namespace std;
+
 
 
 STsegment::STsegment(){}
 
 
-
-vector<int> STsegment::J20points(vector<int> QRSend) {
+std::vector<int> STsegment::J20points(std::vector<int> QRSend) {
 // ta funkcja oblicza punkty J20, czyli punkt przesunięty o 20 względem końca załamka QRS
-    vector<int> J20points;
-    for(int i=0; i<QRSend.size(); i++) {
-         J20points.push_back(QRSend[i] + 20);
+    std::vector<int> J20points;
 
-    }
+    std::for_each(QRSend.begin(), QRSend.end(), [&J20points](int &i){
+        J20points.push_back(i + 20);
+    });
     return J20points;
 }
 
-vector<int> STsegment::calculateJpoints(vector<int> J20points , vector<int> Rpeaks){
+std::vector<int> STsegment::JXpoints(std::vector<int> J20points , std::vector<int> Rpeaks){
 // ta funkcja oblicza punkty JX, czyli punkty przesuniete o X wzgledem punktu J20
-    vector<int> JXpoints;
-    int heart_rate,point;
-    float X80 = FREQUENCY_360 * 0.08;
-    float X72 = FREQUENCY_360 * 0.072;
-    float X64 = FREQUENCY_360 * 0.064;
-    float X60 = FREQUENCY_360 * 0.06;
+    std::vector <int> JXpoints ;
+    int hr;
 
-
-    for(int licznik = 0; licznik < J20points.size(); licznik++){
-        heart_rate =  60 / (Rpeaks[licznik] != 0 ? (FREQUENCY_360 * Rpeaks[licznik]) : 1);
-        point = J20points[licznik];
-        if(heart_rate <= 100){
-            JXpoints.push_back(point + X80);
-        }
-        else if (heart_rate> 100 && heart_rate <= 110){
-            JXpoints.push_back(point + X72);
-        }
-        else if (heart_rate > 110 && heart_rate <= 120){
-            JXpoints.push_back(point + X64);
-        }
-        else if (heart_rate > 120){
-            JXpoints.push_back(point + X60);
+    for(int i = 0; i< J20points.size(); i++){
+        hr =  60 / (Rpeaks[i] != 0 ? (360 * Rpeaks[i]) : 1);
+        if(hr <= 100){
+            JXpoints.push_back(J20points[i] + 28.8);}
+        else if (hr> 100 && hr <= 110){
+            JXpoints.push_back(J20points[i] + 25.92);}
+        else if (hr > 110 && hr <= 120){
+            JXpoints.push_back(J20points[i] + 23.04);}
+        else if (hr > 120){
+            JXpoints.push_back(J20points[i] + 21.6);
         }}
     return JXpoints;
 }
 
-vector <string> STsegment::calculateOffsets(vector<float> filteredSignal, vector<int> QRSonset, vector<int> JXpoints){
+void STsegment::Offset( std::shared_ptr<STsegment::stseg> out, std::vector<float> filteredSignal, std::vector<int> QRSonset, std::vector<int> JXpoints){
+
     float offset;
-    vector <string> Offsets ;
+    int lower = 0;
+    int higher = 1;
+    int normal = 2;
+    float K1 = -0.1;
+    float K2 = 0.1;
     for(int i=0;i<JXpoints.size();i++){
+        // y(JX) - y(ISO)
         offset = filteredSignal[JXpoints[i]] - filteredSignal[QRSonset[i]];
-        cout << offset;
-        if(offset < -0.1){
-            Offsets.push_back("Obnizony");}
-        else if (offset > 0.1){
-            Offsets.push_back("Podwyzszony");}
+        if(offset < K1){
+            out->Offsets.push_back(lower);}
+        else if (offset > K2){
+            out->Offsets.push_back(higher);}
         else{
-            Offsets.push_back("Normalny");}
+            out->Offsets.push_back(normal);}
     }
-    return Offsets;
 }
 
+void STsegment::T_OnSetPoints(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20Point, std::vector<float> FilteredSignal, std::vector<int> Tpeak){
 
+int  pnt, j20 = 0;
+float signal_j20, dist, distance, slope = 0.0;
 
+for (int i=0;i<J20Point.size();i++){
+    slope = (FilteredSignal[Tpeak[i]]-FilteredSignal[j20])/ (float(Tpeak[i]) - float(J20Point[i]));
+out->Slopes.push_back(slope);
+out->Slopes2.push_back(FilteredSignal[Tpeak[i]]-slope*(Tpeak[i] - J20Point[i]));
+}
+for (int i=0; i<J20Point.size(); i++){
+int P,M,N,j = 0;
+float line, signal = 0.0;
+int point = J20Point[i];
 
-
-std::tuple<vector<float>, vector<int>,vector<int>,vector<int>,vector<int>, vector<float> >STsegment::T_OnSetPoints(vector<int> J20Point, vector<float> FilteredSignal, vector<int> Tpeak){
-
-int tpeak, no_probka,j20 = 0;
-float signal_j20, signal_l, signal_t, dystans_temp, dystans, slope = 0.0;
-vector<int> J20_Tpeak_M;
-vector<int> J20_Tpeak_P;
-vector<int> J20_Tpeak_N;
-vector<int> TONpoints;
-vector<float> Slopes;
-vector<float> Intercept;
-vector<float> J20_Tpeak_max_dist;
-
-for (int licznik=0; licznik < J20Point.size(); licznik++){
-tpeak = Tpeak[licznik];
-signal_t = FilteredSignal[tpeak];
-j20 = J20Point[licznik];
-signal_j20 = FilteredSignal[j20];
-slope = (signal_t-signal_j20)/ (float(tpeak) - float(j20));
-
-Slopes.push_back(slope);
-Intercept.push_back(signal_t - slope * (tpeak - j20));
+    for (int k = J20Point[i]+3; k < Tpeak[i]; k++){
+    float slope = out->Slopes2[i];
+    line = slope * (float)(k - point) + out->Slopes2[i];
+    signal = FilteredSignal[k];
+    dist = sqrt((line- signal)*(line - signal));
+    if(dist > distance){
+        pnt = k;
+        distance = dist;}
+    if(line > signal){
+        M=M+1;
+        N=N+1;}
+    else if (line < signal){
+        P=P + 1;
+        M=M + 1;}else{
+    M=M+1;}
+j=j+1;
 }
 
-for (int licznik=0; licznik < J20Point.size(); licznik++){
-int n = 0;
-int p = 0;
-int m = 0;
-float wart_prosta = 0.0;
-float wart_signal = 0.0;
-int i = 0;
-int probka1 = J20Point[licznik];
+out->TONpoints.push_back(pnt);
+out->J20tmdistance.push_back(distance);
+out->j20tN.push_back(N);
+out->j20tP.push_back(P);
+out->j20tM.push_back(M);
 
-for (int probka= J20Point[licznik]+3; probka < Tpeak[licznik]; probka++){
-
-
-float slope = Slopes[licznik];
-wart_prosta = slope * (float)(probka - probka1) + Intercept[licznik];
-wart_signal = FilteredSignal[probka];
-dystans_temp = sqrt((wart_prosta - wart_signal)*(wart_prosta - wart_signal));
-if(dystans_temp > dystans)
-{
-no_probka = probka;
-dystans = dystans_temp;
+distance = 0.0;
+pnt = 0;
 }
-if(wart_prosta > wart_signal)
-{
-//Tu sygnal jest pod prosta
-n = n + 1;
-m = m + 1;
-}
-else if (wart_prosta < wart_signal)
-{
-//Tu sygnal jest nad prosta
-p = p + 1;
-m = m + 1;
-}
-else
-{
-//Sygnal jest na prostej
-m = m + 1;
-}
-i = i + 1;
 }
 
-TONpoints.push_back(no_probka);
+void J20Tdistance(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20points, std::vector<int> TONpoints, std::vector<float> filteredSignal){
 
-
-J20_Tpeak_max_dist.push_back(dystans);
-
-
-J20_Tpeak_N.push_back(n);
-J20_Tpeak_P.push_back(p);
-J20_Tpeak_M.push_back(m);
-
-dystans = 0.0;
-no_probka = 0;
-}
-return std::make_tuple(Slopes, TONpoints, J20_Tpeak_N,J20_Tpeak_P,J20_Tpeak_M,J20_Tpeak_max_dist );
-
-}
-
-std::tuple<vector<float>, vector<int>, vector<int>,vector<int>, vector<float> >STsegment::calculateJ20_TON_distance(vector<int> J20points, vector<int> TONpoints, vector<float> filteredSignal){
-
-    float dystans , dystans_temp, signal_ton, signal_j20, slope = 0.0;
-    int TON, j20 = 0;
-    vector<float> J20_TON_slopes;
-    vector<float> J20_TON_intercepts;
-    vector<float> J20_TON_max_dist;
-    vector<int> J20_TON_N;
-    vector<int> J20_TON_P;
-    vector<int> J20_TON_M;
-
-    for (int licznik=0; licznik < J20points.size(); licznik++){
-        TON = TONpoints[licznik];
-        signal_ton = filteredSignal[TON];
-        j20 = J20points[licznik];
-        signal_j20 = filteredSignal[j20];
-        slope = (signal_ton-signal_j20)/ float(TON - j20);
-
-        J20_TON_slopes.push_back(slope);
-        J20_TON_intercepts.push_back(signal_ton - slope * (TON - j20));
+    float distance, dist, slope = 0.0;
+    for (int i=0; i < J20points.size(); i++){
+        slope = (filteredSignal[TONpoints[i]]-filteredSignal[J20points[i]])/ float(TONpoints[i] - J20points[i]);
+        out->J20tONslopes.push_back(slope);
+        out->J20tONslopes2.push_back(filteredSignal[TONpoints[i]]- slope * (TONpoints[i] - J20points[i]));
     }
 
-    for (int licznik=0; licznik <  J20points.size(); licznik++){
-        int n = 0;
-        int p = 0;
-        int m = 0;
-        float wart_prosta;
-        float wart_signal;
-        int i = 0;
-        int probka0 = J20points[licznik];
-        for (int probka=  J20points[licznik]; probka <  TONpoints[licznik]; probka++){
-
-            float slope = J20_TON_slopes[licznik];
-            wart_prosta = slope * (float)(probka - probka0) / FREQUENCY_360 + J20_TON_intercepts[licznik];
-            wart_signal = filteredSignal[probka];
-            dystans_temp = sqrt((wart_prosta - wart_signal)*(wart_prosta - wart_signal));
-            if(dystans_temp > dystans){
-                dystans = dystans_temp;
-            }
-
-            if(wart_prosta > wart_signal){
-                //Tu sygnal jest pod prosta
-                n = n + 1;
-                m = m + 1;
-            }
-            else if (wart_prosta < wart_signal){
-                //Tu sygnal jest nad prosta
-                p = p + 1;
-                m = m + 1;
-            }
+    for (int i=0; i <  J20points.size(); i++){
+        int M,P,N,j = 0;
+        int probka0 = J20points[i];
+        for (int p= J20points[i]; p <  TONpoints[i]; p++){
+            float slope = out->J20tONslopes[i];
+            float val_line = slope * (float)(p - probka0) / 360 + out->J20tONslopes2[i];
+            dist = sqrt((val_line - filteredSignal[p])*(val_line - filteredSignal[p]));
+            if(dist > distance){
+                distance = dist;}
+            if(val_line > filteredSignal[p]){
+                N=N+1;
+                M=M + 1;}
+            else if (val_line < filteredSignal[p]){
+                M=M+1;
+                P=P+1;}
             else{
-                //Sygnal jest na prostej
-                m = m + 1;
-            }
-            i = i + 1;
-        }
+                M = M + 1;}
+            j = j + 1;}
 
-        J20_TON_max_dist.push_back(dystans);
-        J20_TON_N.push_back(n);
-        J20_TON_P.push_back(p);
-        J20_TON_M.push_back(m);
-        dystans = 0.0;
-        i = 0;
+        out->J20tONmdistance.push_back(distance);
+        out->J20tonM.push_back(M);
+        out->J20tonN.push_back(N);
+        out->J20tonP.push_back(P);
+
+        distance = 0.0;
+        j = 0;
     }
-    return std::make_tuple(J20_TON_max_dist,J20_TON_N,J20_TON_P,J20_TON_M,J20_TON_slopes );
 }
 
-void STsegment::determineSTtype(vector <string> Offsets, vector<float> Slopes, vector<float> J20_Tpeak_max_dist,
-                                vector<float> J20_TON_max_dist, vector<float> J20_TON_slopes, vector<int> J20_Tpeak_N,
-                                vector<int> J20_Tpeak_M, vector<int> J20_Tpeak_P, vector<int> J20_TON_N,
-                                vector<int> J20_TON_P, vector<int> J20_TON_M){
-
-    float max_dystans;
-    float slope;
-    vector <string> Types1, Types2;
-    for(int licznik=0; licznik < Offsets.size() ;licznik++) {
-        if (Offsets[licznik] == "Podwyzszony"){
-            max_dystans = J20_Tpeak_max_dist[licznik];
-            slope = Slopes[licznik];
-        }
-        else{
-            max_dystans = J20_TON_max_dist[licznik];
-            slope = J20_TON_slopes[licznik];
-        }
-        if(max_dystans < 0.15){
-            //Odcinek jest prosty, wyznaczamy czy jest nachylony w gore/w dol/prosty
-            Types1.push_back("Prosty");
+void STsegment::STtype( std::shared_ptr<STsegment::stseg> out){
+    int prosty = 0;
+    int dol = 1;
+    int gora = 2;
+    int poziomy = 3;
+    int zakrzywiony = 4;
+    int wypukly = 5;
+    int wklesly = 6;
+    int nieokreslony = 7;
+    float max_distance, slope;
+    for(int i=0; i < out->Offsets.size() ;i++) {
+        if (out->Offsets[i] == 0){
+            max_distance = out->J20tmdistance[i];
+            slope = out->Slopes[i];
+        }else{
+            max_distance = out->J20tONmdistance[i];
+            slope = out->J20tONslopes[i];
+        }if(max_distance < 0.15){
+            out->T1.push_back(0);
             float k1 = 0.15;
             float k2 = -0.15;
             if(slope < k2){
-                Types2.push_back("N. w dol");
-            }
+                out->T2.push_back(dol);}
             else if(slope > k1){
-                Types2.push_back("N. w gore");
-            }
+                out->T2.push_back(gora);}
             else{
-                Types2.push_back("Poziomy");
-            }
-        }
-        else{
-            Types1.push_back("Zakrzywiony");
-            int N;
-            int P;
-            int M;
-            if (Offsets[licznik] == "Podwyzszony")
-            {
-                N = J20_Tpeak_N[licznik];
-                P = J20_Tpeak_P[licznik];
-                M = J20_Tpeak_M[licznik];
-
-            }
-            else
-            {
-                N = J20_TON_N[licznik];
-                P = J20_TON_P[licznik];
-                M = J20_TON_M[licznik];
-            }
-
-            if( P/M > 0.7){
-                Types2.push_back("Wypukly");
-            }
+                out->T2.push_back(poziomy);}} else{
+            out->T1.push_back(zakrzywiony);
+            int N,P,M;
+            if (out->Offsets[i] == 0){
+                N = out->j20tN[i];
+                P = out->j20tP[i];
+                M = out->j20tM[i];
+            }else{
+                N = out->J20tonN[i];
+                P = out->J20tonP[i];
+                M = out->J20tonM[i];
+            }if( P/M > 0.7){
+                out->T2.push_back(wypukly);}
             else if (N/M > 0.7){
-                Types2.push_back("Wklesly");
-            }
+                out->T2.push_back(wklesly);}
             else{
-                Types2.push_back("Nieokreslony");
-            }
-
+                out->T2.push_back(nieokreslony);}
         }
-
     }
-    cout << "Typ: " << Types2[0] << endl;
+
 }
+
+std::shared_ptr<STsegment::stseg>  STsegment::finalSTfunction(std::vector <int> QRSend,std::vector <int> RPeaks, std::vector <float> FilteredSignal, std::vector <int> QRS_onset, std::vector <int> TPeak  ){
+
+    std::shared_ptr<STsegment::stseg> out(new STsegment::stseg);
+    auto st = STsegment();
+    std::vector <int> J20point = st.J20points(QRSend);
+    std::vector <int> jpoints = st.JXpoints(J20point , RPeaks);
+    st.Offset(out, FilteredSignal,QRS_onset, jpoints);
+    st.T_OnSetPoints(out, J20point, FilteredSignal, TPeak);
+    st.J20Tdistance(out,J20point, FilteredSignal);
+    st.STtype(out);
+
+    return out;
+}
+
+
+
+
+
+
 
 
 

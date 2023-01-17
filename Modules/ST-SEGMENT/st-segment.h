@@ -1,34 +1,47 @@
 #include <iostream>
 #include <vector>
-#include <complex>
-#include <iostream>
-#include <valarray>
-#include <cmath>
-#include <numeric>
-#include <cstdlib>
-#include <algorithm>
-#include <memory>
-#include <string>
 
 
-using namespace std;
+
+
 class STsegment{
+
+
+
 public:
     STsegment();
 
-    vector<int> J20points(std::vector <int> QRSend);
-    std::tuple<vector<float>, vector<int>,vector<int>,vector<int>,vector<int>,vector<float>  >T_OnSetPoints(vector<int> J20Point, vector<float> FilteredSignal, vector<int> Tpeak);
+    struct stseg {
+        std::vector<int> Offsets;
+        std::vector<int> j20tM;
+        std::vector<int> j20tP;
+        std::vector<int> j20tN;
+        std::vector<int> TONpoints;
+        std::vector<float> Slopes;
+        std::vector<float> Slopes2;
+        std::vector<float> J20tmdistance;
+        std::vector<float> J20tONslopes;
+        std::vector<float> J20tONslopes2;
+        std::vector<float> J20tONmdistance;
+        std::vector<int> J20tonN;
+        std::vector<int> J20tonP;
+        std::vector<int> J20tonM;
+        std::vector<int> T1;
+        std::vector<int> T2;
+    };
 
-    std::tuple<vector<float>, vector<int>, vector<int>,vector<int>,vector<float>  >calculateJ20_TON_distance(vector<int> J20points, vector<int> TONpoints, vector<float> filteredSignal);
+    std::shared_ptr<STsegment::stseg> finalSTfunction(std::vector <int> QRSend, std::vector <int> RPeaks, std::vector <float> FilteredSignal, std::vector <int> QRS_onset, std::vector <int> TPeak );
 
-    vector<int> calculateJpoints(vector<int> J20points ,vector<int> Rpeaks);
+private:
+    std::vector<int> J20points(std::vector <int> QRSend);
+    std::vector<int> JXpoints(std::vector<int> J20points ,std::vector<int> Rpeaks);
+    void T_OnSetPoints(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20Point, std::vector<float> FilteredSignal, std::vector<int> Tpeak);
+    void J20Tdistance(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20points, std::vector<float> filteredSignal);
+    void Offset(std::shared_ptr<STsegment::stseg> out,std::vector<float> filteredSignal, std::vector<int> QRSonset, std::vector<int> JXpoints);
+    void STtype(std::shared_ptr<STsegment::stseg> out);
 
-    vector<string> calculateOffsets(vector<float> filteredSignal, vector<int> QRSonset, vector<int> JXpoints);
 
-    void determineSTtype(vector <string> Offsets, vector<float> Slopes, vector<float> J20_Tpeak_max_dist,
-                         vector<float> J20_TON_max_dist, vector<float> J20_TON_slopes, vector<int> J20_Tpeak_N,
-                         vector<int> J20_Tpeak_M, vector<int> J20_Tpeak_P, vector<int> J20_TON_N,
-                         vector<int> J20_TON_P, vector<int> J20_TON_M);
+
 
 
     };
