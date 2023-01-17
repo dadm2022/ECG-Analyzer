@@ -10,10 +10,12 @@ set(CMAKE_AUTOUIC ON)
 
 # Comment the following line on Windows (uncomment on Mac)
 # DO NOT COMMIT THIS CHANGE
-set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.7/lib/cmake/Qt5")
+set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.8_1/lib/cmake/Qt5")
 
 add_subdirectory(Modules)
 find_package(Qt5 COMPONENTS Widgets)
+FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 find_package(Qt5 COMPONENTS
         Core
@@ -29,6 +31,9 @@ target_link_libraries(ECG_Analyzer
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
+        ${Boost_LIBRARIES}
         )
 
 target_link_libraries(ECG_Analyzer R_PEAKS)
+
+

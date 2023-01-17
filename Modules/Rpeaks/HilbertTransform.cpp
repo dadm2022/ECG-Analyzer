@@ -4,9 +4,11 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include "./../../lib/gsl/fft/gsl_fft_complex.h"
+#include <gsl/gsl_fft_complex.h>
 #include <cmath>
+#include <gsl/gsl_complex_math.h>
 #include <numeric>
+#include <boost/math/special_functions.hpp>
 
 using namespace std;
 
@@ -101,7 +103,7 @@ vector<float> HilbertTransform::Filter(const vector<float> &signal, float fc1, f
     {
         float ans = pow(2 * n / N - 1, 2);
         ans = M_PI * alpha * sqrt(1 - ans);
-// TODO ans = cyl_bessel_i(0, ans) / cyl_bessel_i(0, M_PI * alpha);
+        ans = boost::math::cyl_bessel_i(0, ans) / boost::math::cyl_bessel_i(0, M_PI * alpha);
         window.push_back(ans);
     });
 
@@ -171,9 +173,9 @@ vector<float> HilbertTransform::ComputeHilbertTransform(vector<float> signal, in
         GSL_REAL(b) = 0.0;
         GSL_IMAG(b) = -1.0;
 
-//        gsl_complex c = gsl_complex_mul(a, b);
-//        REAL(data, i) = GSL_REAL(c);
-//        IMAG(data, i) = GSL_IMAG(c);
+        gsl_complex c = gsl_complex_mul(a, b);
+        REAL(data, i) = GSL_REAL(c);
+        IMAG(data, i) = GSL_IMAG(c);
     }
 
 
@@ -185,9 +187,9 @@ vector<float> HilbertTransform::ComputeHilbertTransform(vector<float> signal, in
         GSL_REAL(b) = 0.0;
         GSL_IMAG(b) = 1.0;
 
-//        gsl_complex c = gsl_complex_mul(a, b);
-//        REAL(data, i) = GSL_REAL(c);
-//        IMAG(data, i) = GSL_IMAG(c);
+        gsl_complex c = gsl_complex_mul(a, b);
+        REAL(data, i) = GSL_REAL(c);
+        IMAG(data, i) = GSL_IMAG(c);
     }
 
     // inverse fast fourier transform
