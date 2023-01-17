@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 project(ECG_Analyzer)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_COMPILER C:/MinGW/bin/g++)
+set(CMAKE_CXX_COMPILER /usr/bin/g++)
 set(CMAKE_C_COMPILER  /usr/bin/gcc)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -10,7 +10,7 @@ set(CMAKE_AUTOUIC ON)
 
 # Comment the following line on Windows (uncomment on Mac)
 # DO NOT COMMIT THIS CHANGE
-set(CMAKE_PREFIX_PATH C:/Qt/5.15.12/mingw81_64/lib/cmake/Qt5)
+set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.7/lib/cmake/Qt5")
 
 add_subdirectory(Modules)
 find_package(Qt5 COMPONENTS Widgets)
