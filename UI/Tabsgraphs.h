@@ -28,6 +28,7 @@ public slots:
 
     void addtab_RPeaksDetectionPanTompkins();
     void addtab_RPeaksDetectionHilbert();
+    void addtab_HRV2();
 
 private:
 

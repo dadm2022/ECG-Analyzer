@@ -69,7 +69,7 @@ void Tabsgraphs::addtab_RPeaksDetectionPanTompkins(){
         std::vector <int> waves7 = {3, 5, 7, 9, 10, 11, 14, 16};
         auto *obj = new PeaksChartCallout(filteredSignal, detectedRPeaks, waves1, waves2, waves3, waves4, waves5, waves6, waves7);
         QWidget *tab1 = new QWidget;
-        this->addTab(tab1, "Pan Tompkins");
+        this->addTab(tab1, "QRSPT - Pan Tompkins");
 
         QVBoxLayout *vlayout = new QVBoxLayout;
         vlayout->addWidget(obj);
@@ -78,7 +78,7 @@ void Tabsgraphs::addtab_RPeaksDetectionPanTompkins(){
 
 void Tabsgraphs::addtab_RPeaksDetectionHilbert(){
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "Hilbert");
+    this->addTab(tab1, "QRSPT - Hilbert");
     QVBoxLayout *vlayout = new QVBoxLayout;
     tab1->setLayout(vlayout);
 };
@@ -90,7 +90,12 @@ void Tabsgraphs::addtab_QRSandPTDetection(){
     tab1->setLayout(vlayout);
 };
 
-
+void Tabsgraphs::addtab_HRV2(){
+    QWidget *tab1 = new QWidget;
+    this->addTab(tab1, "HRV2");
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    tab1->setLayout(vlayout);
+};
 
 //
 void Tabsgraphs::RemoveTab(){
