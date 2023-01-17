@@ -1,4 +1,3 @@
-#include"pch.h"
 #include "ECG_Baseline.h"
 
 using namespace std; 
