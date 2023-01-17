@@ -13,6 +13,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt@5/5.15.7/lib/cmake/Qt5")
 
 add_subdirectory(Modules)
+find_package(Qt5 COMPONENTS Widgets)
 
 find_package(Qt5 COMPONENTS
         Core
@@ -22,7 +23,7 @@ find_package(Qt5 COMPONENTS
 
 add_executable(ECG_Analyzer main.cpp Modules/Sample/Sample.h Modules/Sample/Sample.cpp UI/ViewModelUI.cpp
         UI/ViewModelUI.h DataAccessor/DataAccessor.h
-        DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp)
+        DataAccessor/DataAccessor.cpp DataAccessor/wfdb.h DataAccessor/wfdb.cpp Modules/TWaveAlt/TWaveAlt.cpp)
 
 target_link_libraries(ECG_Analyzer
         Qt5::Core
