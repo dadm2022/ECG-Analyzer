@@ -10,6 +10,8 @@
 #include "./../Modules/Rpeaks/HilbertTransform.h"
 #include "./../Modules/Rpeaks/PanTompkins.h"
 #include "./../Modules/WAVES/waves.h"
+#include "./../Modules/TWaveAlt/TWaveAlt.h"
+#include "./../Modules/HRV_DFA/DFA.h"
 
 struct SignalDetails
 {
@@ -45,6 +47,8 @@ class DataController
 
     Waves waves = {};
 
+    long double alpha1;
+    long double alpha2;
 
 
 public:
@@ -53,9 +57,16 @@ public:
     const std::vector<float> getLMSFilteredSignal();
     const std::vector<float> getButterworthFilteredSignal();
     const std::vector<float> getMovingAverageFilteredSignal();
+
     const std::vector<int> getHilbertRPeaks(std::shared_ptr<std::vector<float>> filteredSignal);
     const std::vector<int> getPanTompkinsRPeaks(std::shared_ptr<std::vector<float>> filteredSignal);
+
     const Waves getWaves(std::vector<float> filteredSignal, std::vector<int> rPeaks);
+
+    const bool getAlternans(std::shared_ptr<const std::vector<int>>& m_tEndPoints, std::shared_ptr<const std::vector<float>>& FilteredSignal);
+
+    const long double getAlpha1(std::shared_ptr<const std::vector<int>> rPeaks);
+    const long double getAlpha2(std::shared_ptr<const std::vector<int>> rPeaks);
 
 };
 

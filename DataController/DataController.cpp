@@ -74,4 +74,34 @@ const Waves DataController::getWaves(std::vector<float> filteredSignal, std::vec
     return waves;
 }
 
+const bool DataController::getAlternans(std::shared_ptr<const std::vector<int>> &m_tEndPoints,
+                                         std::shared_ptr<const std::vector<float>> &filteredSignal)
+{
+    auto handler = TWaveAlt(m_tEndPoints,filteredSignal);
+    handler.DetectAlt();
+    return handler.GetIfAlt();
+}
+
+const long double DataController::getAlpha1(std::shared_ptr<const std::vector<int>> rPeaks)
+{
+    if (alpha1 == 0.0l)
+    {
+        auto handler = Polyfit(rPeaks);
+        alpha1 = handler.returnAlfa1();
+    }
+
+    return alpha1;
+}
+
+const long double DataController::getAlpha2(std::shared_ptr<const std::vector<int>> rPeaks)
+{
+    if (alpha2 == 0.0l)
+    {
+        auto handler = Polyfit(rPeaks);
+        alpha2 = handler.returnAlfa1();
+    }
+
+    return alpha2;
+}
+
 
