@@ -26,7 +26,7 @@ std::vector<float> TWaveAlt::argMax(){
         }
         it++;
     }
-    return altMax;
+    return std::move(altMax);
 }
 
  void TWaveAlt::DetectAlt() {
