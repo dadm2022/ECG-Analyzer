@@ -27,4 +27,12 @@ int main(int argc, char *argv[])
 
     auto waves = dataController.getWaves(filtered, rpks1);
 
+    auto wavespointer = std::make_shared<const std::vector<int>>(waves.Tend);
+    auto filteredpointer = std::make_shared<const std::vector<float>>(filtered);
+
+    auto alternans = dataController.getAlternans(wavespointer, filteredpointer);
+
+    auto alpha1 = dataController.getAlpha1(std::make_shared<std::vector<int>>(rpks1));
+    auto alpha2 = dataController.getAlpha2(std::make_shared<std::vector<int>>(rpks1));
+
 }

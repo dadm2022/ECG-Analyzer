@@ -5,8 +5,7 @@
 
 #include "TWaveAlt.h"
 
-TWaveAlt::TWaveAlt(std::shared_ptr<const std::vector<int>>& m_tEndPoints, std::shared_ptr<const std::vector<float>>& FilteredSignal, int m_fs) {
-    fs = m_fs;
+TWaveAlt::TWaveAlt(std::shared_ptr<const std::vector<int>>& m_tEndPoints, std::shared_ptr<const std::vector<float>>& FilteredSignal) {
     tInd = m_tEndPoints;
     signal = FilteredSignal;
     ind_len = (int)(fs*0.15);
