@@ -6,13 +6,13 @@
  * Implementation code for DFA class
  */
 
-Polyfit::Polyfit(int fs, std::shared_ptr<const std::vector<int>> &RPeaks, int start, int end, int nDiv)
+Polyfit::Polyfit(std::shared_ptr<const std::vector<int>> &RPeaks)
 {
     m_Input = RPeaks;
-    m_Fs = fs;
-    m_Start = start;
-    m_End = end;
-    m_NDiv = nDiv;
+    m_Fs = 360;
+    m_Start = 4;
+    m_End = 64;
+    m_NDiv = 16;
 
     calculateResults();
 }

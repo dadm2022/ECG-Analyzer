@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 /* Example usage:
 
@@ -16,8 +17,11 @@
     hrv2.SetHistogram(bins);
     HistogramData histogramData = hrv2.GetHistogram();
     vector <int> histogram = histogramData.histogram;
+
     std::vector<double> binBorders = histogramData.binBorders;
+
     double interval = histogramData.interval;
+
     int maxBinSize = histogramData.maxBinSize;
     int maxBinNumber = histogramData.maxBinNumber;
     std::vector<double> binCenters = hrv2.calcBinCenters(bins, interval, binBorders);

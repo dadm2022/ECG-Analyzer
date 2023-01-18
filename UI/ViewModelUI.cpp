@@ -7,7 +7,6 @@
 #include <QPushButton>
 #include "tabdialog.h"
 #include "generaltab.h"
-#include "../Modules/Sample/Sample.h"
 #include "textBrowserName.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)

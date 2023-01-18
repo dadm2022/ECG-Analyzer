@@ -28,7 +28,7 @@ private:
 
     std::shared_ptr<const std::vector<int>> tInd;
     std::shared_ptr<const std::vector<float>> signal;
-    int fs;
+    int fs = 360;
 
     float Alt;
     bool IfAlt;
@@ -43,7 +43,7 @@ private:
     std::vector<float> argMax();
 public:
     //constructor
-    TWaveAlt(std::shared_ptr<const std::vector<int>>& m_tEndPoints, std::shared_ptr<const std::vector<float>>& FilteredSignal, int m_fs);
+    TWaveAlt(std::shared_ptr<const std::vector<int>>& m_tEndPoints, std::shared_ptr<const std::vector<float>>& FilteredSignal);
 
     /**
      * TWaveAlt::DetectAlt();
@@ -53,7 +53,7 @@ public:
     void DetectAlt();
 
     //TWave::IfAlt getter
-    bool GetIfAlt() {return IfAlt;};
+    const bool GetIfAlt() {return IfAlt;};
 
     //TWave::Alt getter
     float GetAlt() {return Alt;};

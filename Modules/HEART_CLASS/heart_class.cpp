@@ -2,6 +2,7 @@
 #include <vector>
 #include <complex>
 #include <fstream>
+#include <numeric>
 #include "./heart_class.h"
 
 /* Dlugosc odcinka RS */
