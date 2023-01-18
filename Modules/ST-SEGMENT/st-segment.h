@@ -27,7 +27,7 @@ class STsegment{
     std::vector<int> JXpoints(std::vector<int> J20points ,std::vector<int> Rpeaks);
 
     void T_OnSetPoints(std::shared_ptr<stseg> out, std::vector<int> J20Point, std::vector<float> FilteredSignal, std::vector<int> Tpeak);
-    void J20Tdistance(std::shared_ptr<stseg> out, std::vector<int> J20points, std::vector<float> filteredSignal);
+    void J20Tdistance(std::shared_ptr<stseg> out, std::vector<int> J20points, std::vector<int> TONpoints, std::vector<float> filteredSignal);
     void Offset(std::shared_ptr<stseg> out,std::vector<float> filteredSignal, std::vector<int> QRSonset, std::vector<int> JXpoints);
     void STtype(std::shared_ptr<stseg> out);
 

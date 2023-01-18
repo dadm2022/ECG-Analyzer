@@ -145,4 +145,22 @@ const std::vector<int> DataController::getHRV2Histogram(std::shared_ptr<std::vec
     return histogramData.histogram;
 }
 
+ std::shared_ptr<std::vector<activations_t>> DataController::getHeartActivationClassification(std::vector<int> &rPeaks, std::vector<int> &P, std::vector<int> &QRSend, std::vector<int> &QRSonset)
+{
+    auto handler = HeartActivationClassifier(rPeaks, P, QRSend, QRSonset);
+
+    auto classifiedHeartActivations = handler.HeartActivationClassifierGetActivations();
+
+
+    return classifiedHeartActivations;
+}
+
+std::shared_ptr<stseg> DataController::getSTSegment(std::vector<int> &QRSend, std::vector<int> &RPeaks, std::vector<float> &FilteredSignal, std::vector<int> &QRS_onset, std::vector<int> &TPeak )
+{
+    auto handler = STsegment();
+
+    return handler.finalSTfunction(QRSend, RPeaks, FilteredSignal, QRS_onset, TPeak);
+}
+
+
 
