@@ -1,8 +1,5 @@
 #include <QApplication>
-#include "UI/ViewModelUI.h"
 #include "DataController/DataController.h"
-
-#include "./DataAccessor/DataAccessor.h"
 
 int main(int argc, char *argv[])
 {
