@@ -8,6 +8,7 @@
 #include <cmath>
 #include <gsl/gsl_complex_math.h>
 #include <numeric>
+#include <boost/math/special_functions.hpp>
 
 using namespace std;
 
@@ -102,7 +103,7 @@ vector<float> HilbertTransform::Filter(const vector<float> &signal, float fc1, f
     {
         float ans = pow(2 * n / N - 1, 2);
         ans = M_PI * alpha * sqrt(1 - ans);
-        ans = cyl_bessel_i(0, ans) / cyl_bessel_i(0, M_PI * alpha);
+        ans = boost::math::cyl_bessel_i(0, ans) / boost::math::cyl_bessel_i(0, M_PI * alpha);
         window.push_back(ans);
     });
 

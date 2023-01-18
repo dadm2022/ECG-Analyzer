@@ -2,16 +2,21 @@
 // Created by Maria Nowak on 13.01.2023.
 //
 
-#include "hrv1.h"
+#include "HRV1.h"
 #include <cmath>
 #include <stdlib.h>
-#include "src/interpolation.h"
-#include "src/fasttransforms.h"
-#include "src/stdafx.h"
+#include "./../../lib/alglib/interpolation.h"
+#include "./../../lib/alglib/fasttransforms.h"
+#include "./../../lib/alglib/stdafx.h"
 
 #define DIFF_50_MS 50
 #define ONE_HUN_PERCENT 100
 #define FREQUENCY_360 360
+
+HRV1::HRV1(std::shared_ptr<std::vector<int>> RR_peaks)
+{
+    m_RR_peaks = RR_peaks;
+}
 
 void HRV1::calculateStatisticParams() {
 
@@ -80,7 +85,7 @@ std::vector<float> HRV1::createTachogram() {
     std::vector<float> timeRPeaks;
     for (int i = 0; i < m_RR_peaks->size(); i++) {
         /* Scale samples to get time */
-        timeRPeaks.push_back((float(m_RR_peaks->at(i) * float(1.0 / FREQUENCY_360)) * 1000);
+        timeRPeaks.push_back(float(m_RR_peaks->at(i) * float(1.0 / FREQUENCY_360)) * 1000);
     }
     /* Creating tachogram */
     std::vector<float> vectorRPeaks;
@@ -266,46 +271,51 @@ std::vector<float> HRV1::calculateFreqSpect(const std::vector<float> sigSpline) 
     return std::move(freqSpect);
 }
 
-float HRV1::Get_meanRR(){
-    return m_Results.meanRR;
-}
+//float HRV1::Get_meanRR(){
+//    return m_Results.meanRR;
+//}
+//
+//float HRV1::Get_valueSDNN(){
+//    return m_Results.valueSDNN;
+//}
+//
+//float HRV1::Get_valueRMSSD(){
+//    return m_Results.valueRMSSD;
+//}
+//
+//unsigned int HRV1::Get_valueNN50(){
+//    return m_Results.valueNN50;
+//}
+//
+//float HRV1::Get_valuePNN50(){
+//    return m_Results.valuePNN50;
+//}
+//
+//float HRV1::Get_HF(){
+//    return m_Results.HF;
+//}
+//
+//float HRV1::Get_LF(){
+//    return m_Results.LF;
+//}
+//
+//float HRV1::Get_VLF(){
+//    return m_Results.VLF;
+//}
+//
+//float HRV1::Get_ULF(){
+//    return m_Results.ULF;
+//}
+//
+//float HRV1::Get_TP(){
+//    return m_Results.TP;
+//}
+//
+//float HRV1::Get_LFHF(){
+//    return m_Results.LFHF;
+//}
 
-float HRV1::Get_valueSDNN(){
-    return m_Results.valueSDNN;
-}
-
-float HRV1::Get_valueRMSSD(){
-    return m_Results.valueRMSSD;
-}
-
-unsigned int HRV1::Get_valueNN50(){
-    return m_Results.valueNN50;
-}
-
-float HRV1::Get_valuePNN50(){
-    return m_Results.valuePNN50;
-}
-
-float HRV1::Get_HF(){
-    return m_Results.HF;
-}
-
-float HRV1::Get_LF(){
-    return m_Results.LF;
-}
-
-float HRV1::Get_VLF(){
-    return m_Results.VLF;
-}
-
-float HRV1::Get_ULF(){
-    return m_Results.ULF;
-}
-
-float HRV1::Get_TP(){
-    return m_Results.TP;
-}
-
-float HRV1::Get_LFHF(){
-    return m_Results.LFHF;
+const HRV1_results HRV1::getCalculatedStatisticParams()
+{
+    return m_Results;
 }

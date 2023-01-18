@@ -36,7 +36,7 @@ struct HRV1_results {
 class HRV1 {
 
 public:
-    HRV1(std::vector<int> RR_peaks) : m_RR_peaks(RR_peaks){};
+    HRV1(std::shared_ptr<std::vector<int>> RR_peaks);
 
     void calculateParams();
     float Get_meanRR();
@@ -50,6 +50,8 @@ public:
     float Get_ULF();
     float Get_TP();
     float Get_LFHF();
+
+    const HRV1_results getCalculatedStatisticParams();
 
 private:
 
