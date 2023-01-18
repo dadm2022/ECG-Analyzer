@@ -90,9 +90,16 @@ void Tabsgraphs::addtab_QRSandPTDetection(){
     tab1->setLayout(vlayout);
 };
 
-void Tabsgraphs::addtab_HRV2(){
+void Tabsgraphs::addtab_Histogram(){
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "HRV2");
+    this->addTab(tab1, "Histogram");
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    tab1->setLayout(vlayout);
+};
+
+void Tabsgraphs::addtab_Poincare(){
+    QWidget *tab1 = new QWidget;
+    this->addTab(tab1, "Poincare");
     QVBoxLayout *vlayout = new QVBoxLayout;
     tab1->setLayout(vlayout);
 };

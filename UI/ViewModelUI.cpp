@@ -287,11 +287,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 
 //// HRV - Geometric Analysis Detection groupbox
-    QPushButton *pushButtonHRVGeometricAnalysisDetection = new QPushButton(tr("HRV2"));
-    pushButtonHRVGeometricAnalysisDetection->setFixedHeight(30);
-    pushButtonHRVGeometricAnalysisDetection->setFixedWidth(140);
-    pushButtonHRVGeometricAnalysisDetection->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+    QPushButton *pushButtonHRV2 = new QPushButton("HRV2"); // Przycisk do parametrów HRV
+    QPushButton *pushButtonHRVHistogram = new QPushButton(tr("Histogram"));
+    QPushButton *pushButtonHRVPoincare = new QPushButton(tr("Poincare"));
+    pushButtonHRV2->setFixedHeight(30);
+    pushButtonHRV2->setFixedWidth(140);
+    pushButtonHRV2->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
+    pushButtonHRVHistogram->setFixedHeight(30);
+    pushButtonHRVHistogram->setFixedWidth(140);
+    pushButtonHRVHistogram->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
+
+    pushButtonHRVPoincare->setFixedHeight(30);
+    pushButtonHRVPoincare->setFixedWidth(140);
+    pushButtonHRVPoincare->setStyleSheet("background-color:#D7F2EB; border: 1px solid #59C1BD;");
 
     QGridLayout *gridLayoutHRVGeometricAnalysisDetection = new QGridLayout();
 
@@ -300,22 +309,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     gridLayoutHRVGeometricAnalysisDetection->addWidget(labelemptyHRVGeomAnalysis, 0,0,1,1,{Qt::AlignTop, Qt::AlignLeft});
 
     QLabel *labelTINN = new QLabel(tr("TINN"));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelTINN, 3, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelTINN, 4, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     labelTINN->setMinimumSize(QSize(40,30));
     labelTINN->setMaximumSize(QSize(50,30));
 
     QLabel *labelHRV = new QLabel(tr("HRV"));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelHRV, 4, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelHRV, 5, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     labelHRV->setMinimumSize(QSize(40,30));
     labelHRV->setMaximumSize(QSize(50,30));
 
     QLabel *labelSD1 = new QLabel(tr("SD1"));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelSD1, 5, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelSD1, 6, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     labelSD1->setMinimumSize(QSize(40,30));
     labelSD1->setMaximumSize(QSize(50,30));
 
     QLabel *labelSD2 = new QLabel(tr("SD2"));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelSD2, 6, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(labelSD2, 7, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     labelSD2->setMinimumSize(QSize(40,30));
     labelSD2->setMaximumSize(QSize(50,30));
 
@@ -324,27 +333,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     textBrowserName *textBrowserSD1 = new textBrowserName();
     textBrowserName *textBrowserSD2 = new textBrowserName();
 
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserTINN, 3, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserTINN, 4, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserTINN->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
     textBrowserTINN->setMinimumSize(QSize(40,30));
     textBrowserTINN->setMaximumSize(QSize(50,30));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserHRV, 4, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserHRV, 5, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserHRV->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
     textBrowserHRV->setMinimumSize(QSize(40,30));
     textBrowserHRV->setMaximumSize(QSize(50,30));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserSD1, 5, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserSD1, 6, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserSD1->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
     textBrowserSD1->setMinimumSize(QSize(40,30));
     textBrowserSD1->setMaximumSize(QSize(50,30));
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserSD2, 6, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserSD2, 7, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserSD2->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
     textBrowserSD2->setMinimumSize(QSize(40,30));
     textBrowserSD2->setMaximumSize(QSize(50,30));
 
 
     gridLayoutHRVGeometricAnalysisDetection->setVerticalSpacing(10);
-    gridLayoutHRVGeometricAnalysisDetection->addWidget(pushButtonHRVGeometricAnalysisDetection, 1, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
-
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(pushButtonHRV2, 1, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(pushButtonHRVHistogram, 2, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
+    gridLayoutHRVGeometricAnalysisDetection->addWidget(pushButtonHRVPoincare, 3, 0, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
 
     QGroupBox *groupBoxHRVGeometricAnalysisDetection= new QGroupBox(tr("HRV - Geometric Analysis"));
     groupBoxHRVGeometricAnalysisDetection->setLayout(gridLayoutHRVGeometricAnalysisDetection);
@@ -565,9 +575,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     centralWidget->setStyleSheet("QWidget {background-color: #F1FAEE;}");
     setCentralWidget(centralWidget);
 
-        setLayout(mainLayout);
-
-        setWindowTitle(tr("ECG - Analyzer"));
+    setLayout(mainLayout);
+    setWindowTitle(tr("ECG - Analyzer"));
 
     ////SLOTS
     //Buttons
@@ -591,11 +600,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserULF, SLOT(handleTextBrowserULF()));
     connect(pushButtonHRV, SIGNAL(clicked(bool)), textBrowserLFHF, SLOT(handleTextBrowserLFHF()));
 
-    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserTINN, SLOT(handleTextBrowserTINN()));
-    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserHRV, SLOT(handleTextBrowserHRV()));
-    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserSD1, SLOT(handleTextBrowserSD1()));
-    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), textBrowserSD2, SLOT(handleTextBrowserSD2()));
-    connect(pushButtonHRVGeometricAnalysisDetection, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_HRV2()));
+    connect(pushButtonHRV2, SIGNAL(clicked(bool)), textBrowserTINN, SLOT(handleTextBrowserTINN()));
+    connect(pushButtonHRV2, SIGNAL(clicked(bool)), textBrowserHRV, SLOT(handleTextBrowserHRV()));
+    connect(pushButtonHRV2, SIGNAL(clicked(bool)), textBrowserSD1, SLOT(handleTextBrowserSD1()));
+    connect(pushButtonHRV2, SIGNAL(clicked(bool)), textBrowserSD2, SLOT(handleTextBrowserSD2()));
+    connect(pushButtonHRVHistogram, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_Histogram()));
+    connect(pushButtonHRVPoincare, SIGNAL(clicked(bool)), tabWidgetGraphs, SLOT(addtab_Poincare()));
 
     connect(pushButtonDetrendedFluctuationAnalysis, SIGNAL(clicked(bool)), textBrowserALFA1, SLOT(handleTextBrowserALFA1()));
     connect(pushButtonDetrendedFluctuationAnalysis, SIGNAL(clicked(bool)), textBrowserALFA2, SLOT(handleTextBrowserALFA2()));
