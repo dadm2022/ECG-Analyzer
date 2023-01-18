@@ -210,7 +210,7 @@ std::vector<float> HRV1::cubicSpline() {
     }
     delete[] newsigAbsolute;
     delete[] newvectorRPeaks;
-    return sigSpline;
+    return std::move(sigSpline);
 }
 
 /* PSD */
