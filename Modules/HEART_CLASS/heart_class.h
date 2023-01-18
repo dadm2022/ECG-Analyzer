@@ -54,16 +54,13 @@ public:
  * IN:       waves - wektor cech z modulu WAVES
  * IN:       fs - czestotliwosc probkowania
  */
-    HeartActivationClassifier(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset, unsigned int fs, std::vector <float> filteredSignal,
-    std::vector<int> rPeaksLocs)
+    HeartActivationClassifier(std::vector<int> rPeaks, std::vector<int> P, std::vector<int> QRSend, std::vector<int> QRSonset)
     {
             m_rPeaks = rPeaks;
-            m_rPeaksLocs = rPeaksLocs;
             m_QRSend = QRSend;
             m_QRSonset = QRSonset;
             m_P = P;
-            m_filteredSignal = filteredSignal;
-            ClassifyType(rPeaks, P, QRSend, QRSonset, fs);
+            ClassifyType(rPeaks, P, QRSend, QRSonset, 360);
     }
 
 /* Funkcja pobierajaca kolejne aktywacje
