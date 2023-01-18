@@ -13,6 +13,8 @@
 #include "./../Modules/TWaveAlt/TWaveAlt.h"
 #include "./../Modules/HRV_DFA/DFA.h"
 #include "./../Modules/HRV2/HRV2.h"
+#include "./../Modules/HEART_CLASS/heart_class.h"
+#include "./../Modules/ST-SEGMENT/st-segment.h"
 
 struct SignalDetails
 {
@@ -81,6 +83,10 @@ public:
 
     const TinnTriangleCorners getTinnTriangleCorners(std::shared_ptr<std::vector<int>> rPeaks);
     const std::vector<int> getHRV2Histogram(std::shared_ptr<std::vector<int>> rPeaks);
+
+    std::shared_ptr<std::vector<activations_t>> getHeartActivationClassification(std::vector<int> &rPeaks, std::vector<int> &P, std::vector<int> &QRSend, std::vector<int> &QRSonset);
+
+    std::shared_ptr<stseg> getSTSegment(std::vector<int> &QRSend, std::vector<int> &RPeaks, std::vector<float> &FilteredSignal, std::vector<int> &QRS_onset, std::vector<int> &TPeak );
 
 };
 

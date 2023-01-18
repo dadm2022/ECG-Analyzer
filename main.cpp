@@ -38,4 +38,7 @@ int main(int argc, char *argv[])
     auto tinnTriangleCorners = dataController.getTinnTriangleCorners(std::make_shared<std::vector<int>>(rpks1));
     auto hrv2Histogram = dataController.getHRV2Histogram(std::make_shared<std::vector<int>>(rpks1));
 
+    auto heartActivationsClassification = dataController.getHeartActivationClassification(rpks1, waves.Ponset,waves.QRSend, waves.QRSonset);
+
+    auto stSegment = dataController.getSTSegment(waves.QRSend, rpks1, filtered, waves.QRSonset, waves.Tend);
 }

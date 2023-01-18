@@ -1,6 +1,5 @@
 #include <memory>
 #include "st-segment.h"
-#include <string>
 #include <cmath>
 #include <algorithm>
 
@@ -40,7 +39,7 @@ std::vector<int> STsegment::JXpoints(std::vector<int> J20points , std::vector<in
     return JXpoints;
 }
 
-void STsegment::Offset( std::shared_ptr<STsegment::stseg> out, std::vector<float> filteredSignal, std::vector<int> QRSonset, std::vector<int> JXpoints){
+void STsegment::Offset( std::shared_ptr<stseg> out, std::vector<float> filteredSignal, std::vector<int> QRSonset, std::vector<int> JXpoints){
 
     float offset;
     int lower = 0;
@@ -60,7 +59,7 @@ void STsegment::Offset( std::shared_ptr<STsegment::stseg> out, std::vector<float
     }
 }
 
-void STsegment::T_OnSetPoints(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20Point, std::vector<float> FilteredSignal, std::vector<int> Tpeak){
+void STsegment::T_OnSetPoints(std::shared_ptr<stseg> out, std::vector<int> J20Point, std::vector<float> FilteredSignal, std::vector<int> Tpeak){
 
 int  pnt, j20 = 0;
 float signal_j20, dist, distance, slope = 0.0;
@@ -104,7 +103,7 @@ pnt = 0;
 }
 }
 
-void J20Tdistance(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20points, std::vector<int> TONpoints, std::vector<float> filteredSignal){
+void STsegment::J20Tdistance(std::shared_ptr<stseg> out, std::vector<int> J20points, std::vector<int> TONpoints, std::vector<float> filteredSignal){
 
     float distance, dist, slope = 0.0;
     for (int i=0; i < J20points.size(); i++){
@@ -142,7 +141,8 @@ void J20Tdistance(std::shared_ptr<STsegment::stseg> out, std::vector<int> J20poi
     }
 }
 
-void STsegment::STtype( std::shared_ptr<STsegment::stseg> out){
+
+void STsegment::STtype( std::shared_ptr<stseg> out){
     int prosty = 0;
     int dol = 1;
     int gora = 2;
@@ -190,16 +190,18 @@ void STsegment::STtype( std::shared_ptr<STsegment::stseg> out){
 
 }
 
-std::shared_ptr<STsegment::stseg>  STsegment::finalSTfunction(std::vector <int> QRSend,std::vector <int> RPeaks, std::vector <float> FilteredSignal, std::vector <int> QRS_onset, std::vector <int> TPeak  ){
+std::shared_ptr<stseg>  STsegment::finalSTfunction(std::vector <int> QRSend,std::vector <int> RPeaks, std::vector <float> FilteredSignal, std::vector <int> QRS_onset, std::vector <int> TPeak  ){
 
-    std::shared_ptr<STsegment::stseg> out(new STsegment::stseg);
-    auto st = STsegment();
-    std::vector <int> J20point = st.J20points(QRSend);
-    std::vector <int> jpoints = st.JXpoints(J20point , RPeaks);
-    st.Offset(out, FilteredSignal,QRS_onset, jpoints);
-    st.T_OnSetPoints(out, J20point, FilteredSignal, TPeak);
-    st.J20Tdistance(out,J20point, FilteredSignal);
-    st.STtype(out);
+    std::shared_ptr<stseg> out(new stseg);
+//    auto st = STsegment();
+    std::vector <int> J20point = this->J20points(QRSend);
+    std::vector <int> jpoints = this->JXpoints(J20point , RPeaks);
+    this->Offset(out, FilteredSignal,QRS_onset, jpoints);
+    this->T_OnSetPoints(out, J20point, FilteredSignal, TPeak);
+
+    this->J20Tdistance(out, J20point, TPeak, FilteredSignal);
+    //this->J20Tdistance(out,J20point, FilteredSignal);
+    this->STtype(out);
 
     return out;
 }
