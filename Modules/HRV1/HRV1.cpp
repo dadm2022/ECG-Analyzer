@@ -13,9 +13,6 @@
 #define ONE_HUN_PERCENT 100
 #define FREQUENCY_360 360
 
-using namespace std;
-using namespace alglib;
-
 void HRV1::calculateStatisticParams() {
 
     m_Results.meanRR = calculateMeanRR();
@@ -27,7 +24,7 @@ void HRV1::calculateStatisticParams() {
 
 void HRV1::calculateFrequencyParams() {
 
-    vector<float> tachSpline = cubicSpline();
+    std::vector<float> tachSpline = cubicSpline();
     m_Results.outputPSD = calculatePSD(tachSpline);
     m_Results.freqSpectrum = calculateFreqSpect(tachSpline);
 
@@ -77,16 +74,16 @@ void HRV1::calculateParams() {
     }
 }
 
-vector<float> HRV1::createTachogram() {
+std::vector<float> HRV1::createTachogram() {
 
     /* Prepare RRpeaks values */
-    vector<float> timeRPeaks;
+    std::vector<float> timeRPeaks;
     for (int i = 0; i < m_RR_peaks->size(); i++) {
         /* Scale samples to get time */
         timeRPeaks.push_back((float(m_RR_peaks->at(i) * float(1.0 / FREQUENCY_360)) * 1000);
     }
     /* Creating tachogram */
-    vector<float> vectorRPeaks;
+    std::vector<float> vectorRPeaks;
     for (int i = 1; i < timeRPeaks.size(); i++) {
         if (timeRPeaks[i] - timeRPeaks[i - 1] > 0) { // if 0 - no interval
             vectorRPeaks.push_back(timeRPeaks[i] - timeRPeaks[i - 1]);
@@ -155,7 +152,7 @@ float HRV1::calculatePNN50() {
     return valuePNN50;
 }
 
-float HRV1::getSigLen(vector<float> vectorRPeaks) {
+float HRV1::getSigLen(std::vector<float> vectorRPeaks) {
 
     float timeLen = 0;
     /* sum of intervals */
@@ -165,22 +162,22 @@ float HRV1::getSigLen(vector<float> vectorRPeaks) {
     return timeLen;
 }
 
-vector<float> HRV1::prepareSigAbsolute() {
+std::vector<float> HRV1::prepareSigAbsolute() {
 
     /* Cumulative total (in seconds) */
-    vector<float> sigAbsolute;
+    std::vector<float> sigAbsolute;
     sigAbsolute.reserve(m_vectorRPeaks.size());
     sigAbsolute.push_back(m_vectorRPeaks[0]/1000);
     for(int i = 1; i < m_vectorRPeaks.size(); i++) {
         sigAbsolute.push_back(sigAbsolute[i-1] + (m_vectorRPeaks[i]/float(1000)));
     }
-    return sigAbsolute;
+    return std::move(sigAbsolute);
 }
 
-vector<float> HRV1::cubicSpline() {
+std::vector<float> HRV1::cubicSpline() {
 
     int n = m_vectorRPeaks.size();
-    vector<float> sigAbsolute = prepareSigAbsolute();
+    std::vector<float> sigAbsolute = prepareSigAbsolute();
 
     /* type conversion */
     double* newsigAbsolute = new double[n];
@@ -195,21 +192,21 @@ vector<float> HRV1::cubicSpline() {
         newvectorRPeaks[i] = double(m_vectorRPeaks[i]/(float(1000)));
     }
 
-    real_1d_array *rx = new real_1d_array();
+    alglib::real_1d_array *rx = new alglib::real_1d_array();
     rx->setcontent(n, newsigAbsolute);
-    real_1d_array *ry = new real_1d_array();
+    alglib::real_1d_array *ry = new alglib::real_1d_array();
     ry->setcontent(n, newvectorRPeaks);
 
-    spline1dinterpolant s;
+    alglib::spline1dinterpolant s;
     /* building interpolate function */
-    spline1dbuildcubic(*const_cast<const real_1d_array*>(rx), *const_cast<const real_1d_array*>(ry), s);
+    alglib::spline1dbuildcubic(*const_cast<const alglib::real_1d_array*>(rx), *const_cast<const alglib::real_1d_array*>(ry), s);
 
     /* interpolation */
-    vector<float> sigSpline;
+    std::vector<float> sigSpline;
     sigSpline.reserve(n);
     float sigLen = (getSigLen(m_vectorRPeaks))/(float(1000));
     for(int i = 0; i < n; i++) {
-        sigSpline.push_back(spline1dcalc(s, i*(sigLen/float(n))));
+        sigSpline.push_back(alglib::spline1dcalc(s, i*(sigLen/float(n))));
     }
     delete[] newsigAbsolute;
     delete[] newvectorRPeaks;
@@ -219,7 +216,7 @@ vector<float> HRV1::cubicSpline() {
 /* PSD */
 /* Parameter(s): vector<float> sigSpline tachogram after interpolation*/
 /* Return: float<vector> outputPSD */
-vector<float> HRV1::calculatePSD(const vector<float> sigSpline) {
+std::vector<float> HRV1::calculatePSD(const std::vector<float> sigSpline) {
 
     int n = sigSpline.size();
 
@@ -230,12 +227,12 @@ vector<float> HRV1::calculatePSD(const vector<float> sigSpline) {
     for(int i = 0; i < n; i++) {
         newInputSignal[i] = (double)sigSpline[i];
     }
-    real_1d_array s; // table needed for fft
+    alglib::real_1d_array s; // table needed for fft
     s.setcontent(n, newInputSignal); // Copying array to a s variable
-    complex_1d_array newFftSignal; // Because the result is in complex numbers
-    fftr1d(s, newFftSignal); //  fft
+    alglib::complex_1d_array newFftSignal; // Because the result is in complex numbers
+    alglib::fftr1d(s, newFftSignal); //  fft
 
-    vector<float> outputPSD;
+    std::vector<float> outputPSD;
     outputPSD.reserve(n);
 
     /* Calculation of one-sided spectrum */
@@ -250,23 +247,23 @@ vector<float> HRV1::calculatePSD(const vector<float> sigSpline) {
     }
 
     delete[] newInputSignal;
-    return outputPSD;
+    return std::move(outputPSD);
 }
 
 /*Frequency vector 									                  */
 /* Parameter(s): vector<float> sigSpline - tachogram after interpolation */
 /* Return: float<vector> freqSpect - frequency spectrum */
-vector<float> HRV1::calculateFreqSpect(const vector<float> sigSpline) {
+std::vector<float> HRV1::calculateFreqSpect(const std::vector<float> sigSpline) {
 
     int n = sigSpline.size();
-    vector<float> freqSpect;
+    std::vector<float> freqSpect;
     freqSpect.reserve(n/2);
     float step = 1.0f/(getSigLen(sigSpline)); // frequency step
 
     for(int i = 0; i < n/2; i++) {
         freqSpect.push_back(float(i)*step);
     }
-    return freqSpect;
+    return std::move(freqSpect);
 }
 
 float HRV1::Get_meanRR(){
@@ -311,89 +308,4 @@ float HRV1::Get_TP(){
 
 float HRV1::Get_LFHF(){
     return m_Results.LFHF;
-}
-
-/* RRmean - average value of all RR intervals
-/* Parameter(s): vector<float> vectorRPeaks - tachogram */
-/* Return: float meanRR */
-float HRV1::calculateMeanRR() {
-
-    float meanRR, sumRR = 0;
-    for (int i = 0; i < m_vectorRPeaks.size(); i++) {
-        sumRR += m_vectorRPeaks[i];
-    }
-    meanRR = sumRR / m_vectorRPeaks.size();
-    return meanRR;
-}
-
-/* SDNN
-/* Parameter(s): vector<float> vectorRPeaks - tachogram, float meanRR 	*/
-/* Return: float valueSDNN - SDNN value */
-float HRV1::calculateSDNN() {
-
-    float value = 0;
-    float valueSDNN;
-    for (int i = 0; i < m_vectorRPeaks.size(); i++) {
-        value += pow(m_vectorRPeaks[i] - m_Results.meanRR, 2);
-    }
-    valueSDNN = sqrt(value / (m_vectorRPeaks.size() - 1));
-    return valueSDNN;
-}
-
-/*RMSSD
-/* Parameter(s): vector<float> vectorRPeaks - tachogram 	*/
-/* Return: float valueRMSSD - RMSSD value   */
-float HRV1::calculateRMSSD() {
-
-    float value = 0;
-    float valueRMSSD;
-    for (int i = 0; i < m_vectorRPeaks.size() - 1; i++) {
-        value += pow(m_vectorRPeaks[i + 1] - m_vectorRPeaks[i], 2);
-    }
-    valueRMSSD = sqrt(
-            value / float(m_vectorRPeaks.size() - 1)); // -1, because it will be 1 less intervwals than sampels
-    return valueRMSSD;
-}
-
-/* NN50 - number of RR intervals that differ by 50 or more milliseconds from the previous one */
-/* Parameter(s): vector<float> vectorRPeaks - tachogram  */
-/* Return: unsigned int valueNN50 - NN50 value	*/
-unsigned int HRV1::calculateNN50() {
-
-    unsigned int valueNN50 = 0;
-    for (int i = 0; i < m_vectorRPeaks.size() - 1; i++) {
-        if (abs(m_vectorRPeaks[i + 1] - m_vectorRPeaks[i]) > DIFF_50_MS) {
-            valueNN50++;
-        }
-    }
-    return valueNN50;
-}
-
-/* pNN50 - the ratio of NN50 occurring in whole record to all RR interwals */
-/* Parameter(s): int n - rozmiar, unsigned int calc_valueNN50 */
-/* Return: float valuePNN50 - pNN50 value [%] */
-float HRV1::calculatePNN50(const int n, const unsigned int calc_valueNN50) {
-
-    float valuePNN50 = float(m_Results.valueNN50) / float(m_vectorRPeaks.size()) * ONE_HUN_PERCENT;
-    return valuePNN50;
-}
-
-float HRV1::Get_meanRR(){
-    return m_Results.meanRR;
-}
-
-float HRV1::Get_valueSDNN(){
-    return m_Results.valueSDNN;
-}
-
-float HRV1::Get_valueRMSSD(){
-    return m_Results.valueRMSSD;
-}
-
-unsigned int HRV1::Get_valueNN50(){
-    return m_Results.valueNN50;
-}
-
-float HRV1::Get_valuePNN50(){
-    return m_Results.valuePNN50;
 }

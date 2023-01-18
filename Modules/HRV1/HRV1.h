@@ -16,8 +16,6 @@
 
     To get parameters use proper getter, for example to get meanRR use Get_meanRR();
  */
-using namespace std;
-
 
 struct HRV1_results {
     float meanRR;
@@ -25,8 +23,8 @@ struct HRV1_results {
     float valueRMSSD;
     unsigned int valueNN50;
     float valuePNN50;
-    vector<float> outputPSD;
-    vector<float> freqSpectrum;
+    std::vector<float> outputPSD;
+    std::vector<float> freqSpectrum;
     float HF;
     float LF;
     float VLF;
@@ -55,25 +53,25 @@ public:
 
 private:
 
-    vector<float> m_vectorRPeaks;
+    std::vector<float> m_vectorRPeaks;
     std::shared_ptr<std::vector<int>> m_RR_peaks;
     HRV1_results m_Results;
 
     void calculateStatisticParams();
     void calculateFrequencyParams();
 
-    vector<float> createTachogram();
+    std::vector<float> createTachogram();
     float calculateMeanRR();
     float calculateSDNN();
     float calculateRMSSD();
     unsigned int calculateNN50();
     float calculatePNN50();
 
-    vector<float> prepareSigAbsolute();
-    float getSigLen(vector<float> vectorRPeaks);
-    vector<float> calculatePSD(const vector<float> sigSpline);
-    vector<float> calculateFreqSpect(const vector<float> sigSpline);
-    vector<float> cubicSpline();
+    std::vector<float> prepareSigAbsolute();
+    float getSigLen(std::vector<float> vectorRPeaks);
+    std::vector<float> calculatePSD(const std::vector<float> sigSpline);
+    std::vector<float> calculateFreqSpect(const std::vector<float> sigSpline);
+    std::vector<float> cubicSpline();
 
 };
 
