@@ -89,7 +89,7 @@ std::vector<float> HRV1::createTachogram() {
             vectorRPeaks.push_back(timeRPeaks[i] - timeRPeaks[i - 1]);
         }
     }
-    return vectorRPeaks;
+    return std::move(vectorRPeaks);
 }
 
 /* RRmean - average value of all RR intervals */
