@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QHBoxLayout *horizontalMainWindowLayout = new QHBoxLayout;
 
 
-    Tabsgraphs *tabWidgetGraphs = new Tabsgraphs;
+    Tabsgraphs *tabWidgetGraphs = new Tabsgraphs();
 
     QPushButton *pushButtonRemoveTab = new QPushButton(tr("Remove Tab"));
     pushButtonRemoveTab->setFixedHeight(30);
@@ -635,9 +635,15 @@ std::string MainWindow::handleOpenActionClicked() {
             "file (*.dat)" // filtr plików
 
     );
+
     std::string str = filePath.toStdString();
+    pathToFile= str;
+    initializeDataController();
     const char *cstr_filePath = str.c_str();
     std::cout << cstr_filePath;
 
     return cstr_filePath;
+}
+void MainWindow::initializeDataController(){
+    datacontroller = std::make_shared<DataController>(pathToFile);
 }

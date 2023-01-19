@@ -31,6 +31,7 @@
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QEvent>
+#include "../DataController/DataController.h"
 
 
 
@@ -41,11 +42,14 @@ class MainWindow : public QMainWindow
     public:
         explicit MainWindow(QWidget *parent = nullptr);
 
+        friend class string;
 
     private slots:
         std::string handleOpenActionClicked();
     private:
-
+        void initializeDataController();
+        std::string pathToFile;
+        std::shared_ptr<DataController> datacontroller=nullptr;
 };
 
 #endif //ECG_ANALYZER_VIEWMODELUI_H

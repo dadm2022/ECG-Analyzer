@@ -3,17 +3,19 @@
 //
 
 #include "textBrowserName.h"
+#include <sstream>
 
-textBrowserName::textBrowserName(QTextBrowser *parent) : QTextBrowser(parent) {
-
+textBrowserName::textBrowserName(QTextBrowser *parent, DataController *datacontroller) : QTextBrowser(parent) {
+    dataController = datacontroller;
 }
 void textBrowserName::handleTextBrowserAge()
-{   // wywloanie funkcji modułu dataAcessor
-    this->setText("12");
+{
+    auto age = dataController->getAge();
+    this->setText(age);
 }
 void textBrowserName::handleTextBrowserGender()
-{
-    this->setText("Male");
+{   auto sex = dataController->getSex();
+    this->setText(sex);
 }
 void textBrowserName::handleTextBrowserRRmean()
 {
@@ -63,6 +65,7 @@ void textBrowserName::handleTextBrowserLFHF()
 // hrv - GEOMETRIC ANALYSIS
 void textBrowserName::handleTextBrowserTINN()
 {
+
     this->setText("16.2");
 }
 void textBrowserName::handleTextBrowserHRV()
@@ -79,11 +82,21 @@ void textBrowserName::handleTextBrowserSD2()
 }
 void textBrowserName::handleTextBrowserALFA1()
 {
-    this->setText("77");
+    auto filteredSignal = dataController->getButterworthFilteredSignal();
+    auto rPeaks = dataController->getPanTompkinsRPeaks(std::make_shared<std::vector<float>>(filteredSignal));
+    auto ALFA1 = dataController->getAlpha1(std::make_shared<std::vector<int>>(rPeaks));
+    std::stringstream alfa1;
+    alfa1 << ALFA1;
+    this->setText(QString::fromStdString(alfa1.str()));
 }
 void textBrowserName::handleTextBrowserALFA2()
 {
-    this->setText("23");
+    auto filteredSignal = dataController->getButterworthFilteredSignal();
+    auto rPeaks = dataController->getPanTompkinsRPeaks(std::make_shared<std::vector<float>>(filteredSignal));
+    auto ALFA2 = dataController->getAlpha2(std::make_shared<std::vector<int>>(rPeaks));
+    std::stringstream alfa2;
+    alfa2 << ALFA2;
+    this->setText(QString::fromStdString(alfa2.str()));
 }
 void textBrowserName::handleTextBrowserSV()
 {

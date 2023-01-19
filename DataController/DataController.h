@@ -16,6 +16,7 @@
 #include "./../Modules/HEART_CLASS/heart_class.h"
 #include "./../Modules/ST-SEGMENT/st-segment.h"
 
+
 struct SignalDetails
 {
     unsigned int numberOfSignals = 0;

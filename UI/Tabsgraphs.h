@@ -9,13 +9,14 @@
 #include <iostream>
 #include <QtCharts>
 #include <QVBoxLayout>
+#include "../DataController/DataController.h"
 
 class Tabsgraphs : public QTabWidget
 {
     Q_OBJECT;
 
 public:
-    explicit Tabsgraphs(QWidget *parent = nullptr);
+    Tabsgraphs(QWidget *parent = nullptr, DataController *datacontroller=nullptr);
 
 
 public slots:
@@ -32,7 +33,7 @@ public slots:
     void addtab_Poincare();
 
 private:
-
+    DataController *dataController;
 };
 
 

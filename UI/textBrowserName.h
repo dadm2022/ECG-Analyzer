@@ -5,14 +5,14 @@
 
 #ifndef ECG_ANALYZER_TEXTBROWSERNAME_H
 #define ECG_ANALYZER_TEXTBROWSERNAME_H
-
+#include "../DataController/DataController.h"
 
 class textBrowserName : public QTextBrowser
 {
     Q_OBJECT;
 
     public:
-    explicit textBrowserName(QTextBrowser *parent = nullptr);
+    explicit textBrowserName(QTextBrowser *parent = nullptr, DataController *datacontroller=nullptr);
 
 
     public slots:
@@ -45,7 +45,7 @@ class textBrowserName : public QTextBrowser
     void handleTextBrowserCASEDISEASE();
 
     private:
-
+    DataController *dataController;
 };
 
 
