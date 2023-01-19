@@ -5,8 +5,6 @@
 #include "Tabsgraphs.h"
 #include "ViewModelUI.h"
 #include <QPushButton>
-#include "tabdialog.h"
-#include "generaltab.h"
 #include "textBrowserName.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -42,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QLabel *labelParameters = new QLabel(tr("Parameters"));
     labelParameters->setAlignment(Qt::AlignCenter);
     labelParameters->setMinimumSize(QSize(110,30));
-    labelGraph->setMinimumSize(QSize(1400,30));
+    labelGraph->setMinimumSize(QSize(800,30));
     labelGraph->setStyleSheet("font-size: 11pt;");
     labelParameters->setStyleSheet("font-size: 11pt;");
     horizontalLayoutLabelAndRemoveTabButton ->addWidget(labelGraph);
