@@ -42,7 +42,7 @@ PeaksChartCallout::PeaksChartCallout(std::vector<float> &filteredSignal, std::ve
     defXaxis = new QValueAxis();
     defYaxis = new QValueAxis();
     defXTimeAxis = new QValueAxis();
-    defXaxis->setRange(0, 25);
+    defXaxis->setRange(0, 10000);
     defYaxis->setRange(from, to);
 //    defXTimeAxis->setRange(0, double(7000) / 360);
 
@@ -138,7 +138,7 @@ void PeaksChartCallout::createSeries(){
 
 void PeaksChartCallout::addDataToQSeries(int startIndex) {
     float signalValue;
-    for (int i = startIndex; i < startIndex + 7000; i++) {
+    for (int i = startIndex; i < startIndex + filteredSignal.size(); i++) {
         if (i >= filteredSignal.size()) {
             break;
         }

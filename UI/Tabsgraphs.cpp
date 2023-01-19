@@ -8,7 +8,7 @@
 #include "Visualization/Peaks_chartCallout.h"
 
 
-Tabsgraphs::Tabsgraphs(QWidget *parent, DataController *datacontroller) : QTabWidget(parent) {
+Tabsgraphs::Tabsgraphs(QWidget *parent, std::shared_ptr<DataController> datacontroller) : QTabWidget(parent) {
     this->setStyleSheet("QWidget {background-color: #E7F6F2;}");
     dataController = datacontroller;
 }
@@ -77,13 +77,13 @@ void Tabsgraphs::addtab_RPeaksDetectionHilbert(){
     tab1->setLayout(vlayout);
 };
 
-//void Tabsgraphs::addtab_QRSandPTDetection(){
-//
-//    QWidget *tab1 = new QWidget;
-//    this->addTab(tab1, "QRS and PT Detection");
-//    QVBoxLayout *vlayout = new QVBoxLayout;
-//    tab1->setLayout(vlayout);
-//};
+void Tabsgraphs::addtab_QRSandPTDetection(){
+
+    QWidget *tab1 = new QWidget;
+    this->addTab(tab1, "QRS and PT Detection");
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    tab1->setLayout(vlayout);
+};
 
 void Tabsgraphs::addtab_Histogram(){
 

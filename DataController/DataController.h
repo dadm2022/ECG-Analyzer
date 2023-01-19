@@ -66,7 +66,12 @@ class DataController
 
 
 public:
-    DataController(std::string pathToFile);
+    DataController();
+
+    void initialize(std::string pathToFile);
+
+    const char getSex();
+    const unsigned int getAge();
 
     const std::vector<float> getLMSFilteredSignal();
     const std::vector<float> getButterworthFilteredSignal();

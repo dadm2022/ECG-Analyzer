@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QHBoxLayout *horizontalMainWindowLayout = new QHBoxLayout;
 
 
-    Tabsgraphs *tabWidgetGraphs = new Tabsgraphs();
+    Tabsgraphs *tabWidgetGraphs = new Tabsgraphs(nullptr, datacontroller);
 
     QPushButton *pushButtonRemoveTab = new QPushButton(tr("Remove Tab"));
     pushButtonRemoveTab->setFixedHeight(30);
@@ -79,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelAge->setMaximumSize(QSize(50,30));
 
 
-    textBrowserName *textBrowserAge = new textBrowserName;
+    textBrowserName *textBrowserAge = new textBrowserName(nullptr, datacontroller);
     textBrowserAge->setMinimumSize(QSize(40,30));
     textBrowserAge->setMaximumSize(QSize(50,30));
     textBrowserAge->setStyleSheet("QTextBrowser {background-color:#ffffff; color:#000000;}");
@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelGender->setMaximumSize(QSize(50,30));
 
 
-    textBrowserName *textBrowserGender = new textBrowserName();
+    textBrowserName *textBrowserGender = new textBrowserName(nullptr, datacontroller);
     textBrowserGender->setStyleSheet("QTextBrowser {background-color:#ffffff; color:#000000;}");
     textBrowserGender->setMinimumSize(QSize(40,30));
     textBrowserGender->setMaximumSize(QSize(50,30));
@@ -192,11 +192,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelTD_pNN50->setMinimumSize(QSize(40,30));
     labelTD_pNN50->setMaximumSize(QSize(50,30));
 
-    textBrowserName *textBrowserRRmean = new textBrowserName();
-    textBrowserName *textBrowserSDNN = new textBrowserName();
-    textBrowserName *textBrowserRMSSD = new textBrowserName();
-    textBrowserName *textBrowserNN50 = new textBrowserName();
-    textBrowserName *textBrowserpNN50 = new textBrowserName();
+    textBrowserName *textBrowserRRmean = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserSDNN = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserRMSSD = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserNN50 = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserpNN50 = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutHRVDetection->addWidget(textBrowserRRmean, 3, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserRRmean->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -247,12 +247,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelFD_LFHF->setMinimumSize(QSize(40,30));
     labelFD_LFHF->setMaximumSize(QSize(50,30));
 
-    textBrowserName *textBrowserTP = new textBrowserName();
-    textBrowserName *textBrowserHF = new textBrowserName();
-    textBrowserName *textBrowserLF = new textBrowserName();
-    textBrowserName *textBrowserVLF = new textBrowserName();
-    textBrowserName *textBrowserULF = new textBrowserName();
-    textBrowserName *textBrowserLFHF = new textBrowserName();
+    textBrowserName *textBrowserTP = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserHF = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserLF = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserVLF = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserULF = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserLFHF = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutHRVDetection->addWidget(textBrowserTP, 3, 3, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserTP->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -325,10 +325,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelSD2->setMinimumSize(QSize(40,30));
     labelSD2->setMaximumSize(QSize(50,30));
 
-    textBrowserName *textBrowserTINN = new textBrowserName();
-    textBrowserName *textBrowserHRV = new textBrowserName();
-    textBrowserName *textBrowserSD1 = new textBrowserName();
-    textBrowserName *textBrowserSD2 = new textBrowserName();
+    textBrowserName *textBrowserTINN = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserHRV = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserSD1 = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserSD2 = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutHRVGeometricAnalysisDetection->addWidget(textBrowserTINN, 4, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserTINN->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -379,8 +379,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelALFA2->setMinimumSize(QSize(40,30));
     labelALFA2->setMaximumSize(QSize(50,30));
 
-    textBrowserName *textBrowserALFA1 = new textBrowserName();
-    textBrowserName *textBrowserALFA2 = new textBrowserName();
+    textBrowserName *textBrowserALFA1 = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserALFA2 = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutDetrendedFluctuationAnalysis->addWidget(textBrowserALFA1, 3, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserALFA1->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -429,10 +429,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelARTIFACT->setMinimumSize(QSize(40,30));
     labelARTIFACT->setMaximumSize(QSize(60,30));
 
-    textBrowserName *textBrowserSV = new textBrowserName();
-    textBrowserName *textBrowserV = new textBrowserName();
-    textBrowserName *textBrowserOTHER = new textBrowserName();
-    textBrowserName *textBrowserARTIFACT = new textBrowserName();
+    textBrowserName *textBrowserSV = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserV = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserOTHER = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserARTIFACT = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutQRSClassification->addWidget(textBrowserSV, 3, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserSV->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -481,8 +481,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelCASEDISEASE->setMinimumSize(QSize(40,30));
     labelCASEDISEASE->setMaximumSize(QSize(100,30));
 
-    textBrowserName *textBrowserDISEASE = new textBrowserName();
-    textBrowserName *textBrowserCASEDISEASE = new textBrowserName();
+    textBrowserName *textBrowserDISEASE = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserCASEDISEASE = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutSTSegment->addWidget(textBrowserDISEASE, 3, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserDISEASE->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -522,8 +522,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     labelTHRESHOLD->setMinimumSize(QSize(40,30));
     labelTHRESHOLD->setMaximumSize(QSize(70,30));
 
-    textBrowserName *textBrowserAMPLITUDEALT = new textBrowserName();
-    textBrowserName *textBrowserTHRESHOLD = new textBrowserName();
+    textBrowserName *textBrowserAMPLITUDEALT = new textBrowserName(nullptr, datacontroller);
+    textBrowserName *textBrowserTHRESHOLD = new textBrowserName(nullptr, datacontroller);
 
     gridLayoutTWaveAlternans->addWidget(textBrowserAMPLITUDEALT, 3, 1, 1, 1,{ Qt::AlignTop, Qt::AlignLeft});
     textBrowserAMPLITUDEALT->setStyleSheet("QTextBrowser {background-color:#ffffff;}");
@@ -643,5 +643,5 @@ std::string MainWindow::handleOpenActionClicked() {
     return cstr_filePath;
 }
 void MainWindow::initializeDataController(){
-    datacontroller = std::make_shared<DataController>(pathToFile);
+    datacontroller->initialize(pathToFile);
 }
