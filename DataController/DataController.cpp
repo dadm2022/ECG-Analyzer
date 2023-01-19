@@ -97,6 +97,14 @@ const bool DataController::getAlternans(std::shared_ptr<const std::vector<int>> 
     return handler.GetIfAlt();
 }
 
+const float DataController::getAlternansValue(std::shared_ptr<const std::vector<int>> &m_tEndPoints,
+                                        std::shared_ptr<const std::vector<float>> &filteredSignal)
+{
+    auto handler = TWaveAlt(m_tEndPoints,filteredSignal);
+    handler.DetectAlt();
+    return handler.GetAlt();
+}
+
 const long double DataController::getAlpha1(std::shared_ptr<const std::vector<int>> rPeaks)
 {
     if (alpha1 == 0.0l)
