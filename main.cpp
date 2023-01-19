@@ -1,12 +1,15 @@
 #include <QApplication>
 #include "DataController/DataController.h"
+#include "./UI/ViewModelUI.h"
 
 int main(int argc, char *argv[])
 {
-//    QApplication a(argc, argv);
-//    auto window = MainWindow();
-//    window.show();
-//    return a.exec();
+    QApplication a(argc, argv);
+    a.setStyleSheet("QWidget { color:#000000;}");
+
+    auto window = MainWindow();
+    window.show();
+    return a.exec();
 
 //    auto da = DataAccessor();
 //    da.load("/Users/marcelpikula/Desktop/Data/233.dat");

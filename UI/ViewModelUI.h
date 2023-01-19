@@ -5,7 +5,7 @@
 #ifndef ECG_ANALYZER_VIEWMODELUI_H
 #define ECG_ANALYZER_VIEWMODELUI_H
 //#include <QtCharts>
-//#include "Tabsgraphs.h"
+#include "Tabsgraphs.h"
 
 #include <QPushButton>
 #include <QMainWindow>
