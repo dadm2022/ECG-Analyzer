@@ -1,4 +1,3 @@
-#include"pch.h"
 #include "ECG_Baseline.h"
 
 using namespace std; 
@@ -14,26 +13,40 @@ void ECG_Baseline::ButterworthFiltering()
 {
     m_filteredSignalUsingButterworthFilter.clear();
     m_ButterworthFilterParameters.ResetFilterParams();
-    m_ButterworthFilterParameters.CreateBWBandPassFilter();
-    vector<float> filteredSignalLowPass = Convolution1D(m_originalSignal, m_ButterworthFilterParameters.GetLowPassFilter(), ConvolutionType::Same);
+    m_ButterworthFilterParameters.CalculateFilterCoeff();
+    
+
+    vector<float> filteredSignalLowPass = m_ButterworthFilterParameters.CalculateDifferenceEquation(m_originalSignal, m_ButterworthFilterParameters.GetLowPassFilterCoeff());
     std::shared_ptr<std::vector<float>> filteredSignalLowPassPointer;
     filteredSignalLowPassPointer = make_shared<std::vector<float>>(filteredSignalLowPass);
-    m_filteredSignalUsingButterworthFilter = Convolution1D(filteredSignalLowPassPointer, m_ButterworthFilterParameters.GetHighPassFilter(), ConvolutionType::Same);
+    m_filteredSignalUsingButterworthFilter = m_ButterworthFilterParameters.CalculateDifferenceEquation(filteredSignalLowPassPointer, m_ButterworthFilterParameters.GetHighPassFilterCoeff());
 }
 
 void ECG_Baseline::MovingAverageFiltering()
 {
     
     m_filteredSignalUsingMovingAverageFilter.clear();
+  
+    std::vector<float> lowFiltered = {};
+    std::vector<float> highFiltered = {};
     m_MovingAverageFilterParameters.ResetConvolutionWindow();
 
     m_MovingAverageFilterParameters.CreateMAFConvolutionWindow();
-    if (m_MovingAverageFilterParameters.GetConvolutionWindow().size() > 0)
+
+    
+    if (m_MovingAverageFilterParameters.GetWindowLow().size() > 0)
     {
-        m_filteredSignalUsingMovingAverageFilter = Convolution1D(m_originalSignal, m_MovingAverageFilterParameters.GetConvolutionWindow(), ConvolutionType::Same);
+        lowFiltered = Convolution1D(m_originalSignal, m_MovingAverageFilterParameters.GetWindowLow(), ConvolutionType::Same);
+        highFiltered = Convolution1D(m_originalSignal, m_MovingAverageFilterParameters.GetWindowHigh(), ConvolutionType::Same);
     }
     
-   
+ 
+    for (int i = 0; i < m_originalSignal->size(); i++)
+    {
+        m_filteredSignalUsingMovingAverageFilter.push_back(highFiltered.at(i) - lowFiltered.at(i));
+    }
+       
+
 }
 
 void ECG_Baseline::LMSFiltering()
@@ -104,7 +117,7 @@ std::vector<float> ECG_Baseline::Convolution1D(std::shared_ptr<std::vector<float
 std::vector<float> ECG_Baseline::GetFilteredSignalMovingAverageFilter()
 {
     MovingAverageFiltering();
-    return m_filteredSignalUsingMovingAverageFilter;
+    return m_filteredSignalUsingMovingAverageFilter ;
 }
 std::vector<float> ECG_Baseline::GetFilteredSignalLMSFilter()
 {
@@ -116,14 +129,12 @@ std::vector<float> ECG_Baseline::GetFilteredSignalButterworthFilter()
     ButterworthFiltering();
     return m_filteredSignalUsingButterworthFilter;
 }
-void ECG_Baseline::SetWindowLengthForMovingAverageFilter(unsigned int length)
+void ECG_Baseline::SetWindowLengthForMovingAverageFilter(unsigned int lengthLow, unsigned int lengthHigh )
 {
-    m_MovingAverageFilterParameters.SetWindowLenght(length);
+    m_MovingAverageFilterParameters.SetWindowLenghtLow(lengthLow);
+    m_MovingAverageFilterParameters.SetWindowLenghtHigh(lengthHigh);
 }
-void ECG_Baseline::SetNumberOfCoefficientsForButteworthFilter(unsigned int number)
-{
-    m_ButterworthFilterParameters.SetBWCoefficientsNumber(number);
-}
+
 void ECG_Baseline::SetConvergenceRateForLMSFilter(float rate)
 {
     m_LMSFilterParameters.SetConvergenceRate(rate);
@@ -141,32 +152,43 @@ void ECG_Baseline::SetHighPassFrequencyForButteworthFilter(unsigned int freq)
     m_ButterworthFilterParameters.SetBWFrequencyHighPassFilter(freq);
 }
 
+std::vector<float> MovingAverageFilterParameters::GetWindowLow()
+{
+    return m_convolutionWindowLow;
+}
+std::vector<float> MovingAverageFilterParameters::GetWindowHigh()
+{
+    return m_convolutionWindowHigh;
+}
+
 
 MovingAverageFilterParameters::MovingAverageFilterParameters()
 {
-    m_windowLength = 1;
-    m_convolutionWindow = {};
+    m_windowLengthLow = 15;
+    m_windowLengthHigh = 5;
+    m_convolutionWindowLow = {};
 }
-void MovingAverageFilterParameters::SetWindowLenght(unsigned int length)
+void MovingAverageFilterParameters::SetWindowLenghtLow(unsigned int length)
 {
-    m_windowLength = length;
+    m_windowLengthLow = length;
 }
-unsigned int MovingAverageFilterParameters::GetWindowLenght()
+void MovingAverageFilterParameters::SetWindowLenghtHigh(unsigned int length)
 {
-    return m_windowLength;
+    m_windowLengthHigh = length;
 }
-std::vector<float> MovingAverageFilterParameters::GetConvolutionWindow()
-{
-    return m_convolutionWindow;
-}
+
 void MovingAverageFilterParameters::CreateMAFConvolutionWindow()
 {
-    float maskValue = static_cast<float>(1.f / m_windowLength);
-    m_convolutionWindow.insert(m_convolutionWindow.begin(), m_windowLength, maskValue);
+    float maskValueLow = static_cast<float>(1.f / m_windowLengthLow);
+    m_convolutionWindowLow.insert(m_convolutionWindowLow.begin(), m_windowLengthLow, maskValueLow);
+
+    float maskValueHigh = static_cast<float>(1.f / m_windowLengthHigh);
+    m_convolutionWindowHigh.insert(m_convolutionWindowHigh.begin(), m_windowLengthHigh, maskValueHigh);
 }
 void MovingAverageFilterParameters::ResetConvolutionWindow()
 {
-    m_convolutionWindow.clear();
+    m_convolutionWindowLow.clear();
+    m_convolutionWindowHigh.clear();
 }
 
 LMSFilterParameters::LMSFilterParameters()
@@ -213,54 +235,14 @@ void LMSFilterParameters::ResetCurrentlyCalculatedSubsignal()
 
 ButterworthFilterParameters::ButterworthFilterParameters()
 {
-    m_fLowPass = 0;
-    m_fHighPass = 0;
-    m_fSampling = 0;
-    m_coefficientsNumber = 0;
-    m_lowPassFilter = {};
-    m_highPassFilter = {};
-    m_hammingWindow = {};
+    m_fLowPass = 15;
+    m_fHighPass = 1;
+    m_fSampling = 360;
+    m_lowPassFilterCoeff = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+    m_lowPassFilterCoeff = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+ 
 }
-void ButterworthFilterParameters::CreateBWBandPassFilter()
-{
-    // Vector of filter coefficients
-    std::vector<float> vectorOfCoefficients;
-    unsigned int numberOfCoefficients = 2 * m_coefficientsNumber + 1;
-    vectorOfCoefficients.resize(numberOfCoefficients);
-    std::iota(vectorOfCoefficients.begin(), vectorOfCoefficients.end(), - m_coefficientsNumber);
-    
-    // Frequency normalization
-    unsigned int normfLowPass = m_fLowPass / (m_fSampling / 2);
-    unsigned int normfHighPass = m_fHighPass / (m_fSampling / 2);
 
-    // LowPass and HighPass Filter Coeff
-    for (auto& coeff : vectorOfCoefficients)
-    {
-        if (coeff == 0)
-        {
-            m_lowPassFilter.push_back(2.0f * normfLowPass);
-            m_highPassFilter.push_back(1.0f - 2.0f * normfHighPass);
-        }
-        else
-        {
-            m_lowPassFilter.push_back(static_cast<float>(sin((2.0f * M_PIl * normfLowPass * coeff) / (M_PIl * coeff))));
-            m_highPassFilter.push_back(static_cast<float>(-sin((2.0f * M_PIl * normfHighPass * coeff) / (M_PIl * coeff))));
-        }
-    }
-
-    // Create HammingWindow
-    for (size_t i = 0; i < vectorOfCoefficients.size(); i++)
-    {
-        m_hammingWindow.push_back(static_cast<float>(0.54 - 0.46 * cos((2 * M_PIl * i) / (vectorOfCoefficients.size()))));
-    }
-
-    // Windowing 
-    for (size_t i = 0; i < vectorOfCoefficients.size(); i++)
-    {
-        m_lowPassFilter.at(i) *= m_hammingWindow.at(i);
-        m_highPassFilter.at(i) *= m_hammingWindow.at(i);
-    }
-}
 
 unsigned int ButterworthFilterParameters::GetBWFrequencyLowPassFilter()
 {
@@ -286,25 +268,91 @@ void ButterworthFilterParameters::SetBWFrequencySampling(unsigned int freq)
 {
     m_fSampling = freq;
 }
-unsigned int ButterworthFilterParameters::GetBWCoefficientsNumber()
-{
-    return m_coefficientsNumber;
-}
-void ButterworthFilterParameters::SetBWCoefficientsNumber(unsigned int number)
-{
-    m_coefficientsNumber = number;
-}
+
 void ButterworthFilterParameters::ResetFilterParams()
 {
-    m_lowPassFilter.clear();
-    m_highPassFilter.clear();
-    m_hammingWindow.clear();
+    m_lowPassFilterCoeff = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+    m_lowPassFilterCoeff = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+  
 }
-std::vector<float> ButterworthFilterParameters::GetLowPassFilter()
+std::vector<float> ButterworthFilterParameters::GetLowPassFilterCoeff()
 {
-    return m_lowPassFilter;
+    return m_lowPassFilterCoeff;
 }
-std::vector<float> ButterworthFilterParameters::GetHighPassFilter()
+std::vector<float> ButterworthFilterParameters::GetHighPassFilterCoeff()
 {
-    return m_highPassFilter;
+    return m_highPassFilterCoeff;
+}
+
+void ButterworthFilterParameters::CalculateFilterCoeff()
+{
+    CalculateLowPassFilterCoeff();
+    CalculateHighPassFilterCoeff();
+}
+
+void ButterworthFilterParameters::CalculateLowPassFilterCoeff()
+{
+    /*float ff_lowPass = m_fLowPass / m_fSampling;
+    const float ita = 1.0 / tan(M_PI * ff_lowPass);
+    const float q = sqrt(2.0);
+    float b0 = 1.0 / (1.0 + q * ita + ita * ita);
+    float b1 = 2 * b0;
+    float b2 = b0;
+    float a1 = 2.0 * (ita * ita - 1.0) * b0;
+    float a2 = -(1.0 - q * ita + ita * ita) * b0;*/
+    float b0 = static_cast < float>(0.0144);
+    float b1 = static_cast < float>(0.0288);
+    float b2 = static_cast < float>(0.0144);
+    float a1 = static_cast<float>(- 1.6330);
+    float a2 = static_cast < float>(0.6906);
+
+
+    m_lowPassFilterCoeff = { b0, b1, b2, a1, a2 };
+}
+
+void ButterworthFilterParameters::CalculateHighPassFilterCoeff()
+{
+   /* float ff_lowPass = m_fHighPass / m_fSampling;
+    const float ita = 1.0 / tan(M_PI * ff_lowPass);
+    const float q = sqrt(2.0);
+    float b0 = (1.0 / (1.0 + q * ita + ita * ita)) * ita * ita;
+    float b1 = - 2 * b0;
+    float b2 = b0;
+    float a1 = 2.0 * (ita * ita - 1.0) * b0;
+    float a2 = -(1.0 - q * ita + ita * ita) * b0;*/
+
+    float b0 = static_cast <float>(0.9877);
+    float b1 = static_cast <float>(- 1.9755);
+    float b2 = static_cast <float>(0.9877);
+    float a1 = static_cast <float>(-1.9753);
+    float a2 = static_cast <float>(0.9756);
+
+
+    m_highPassFilterCoeff = { b0, b1, b2, a1, a2 };
+}
+
+std::vector<float> ButterworthFilterParameters::CalculateDifferenceEquation(std::shared_ptr<std::vector<float>> signal, std::vector<float> coeff)
+{
+    std::vector<float> filteredSignal = {};
+    float currentValue = 0.0f;
+    for (int i = 0; i < signal->size(); i++)
+    {
+        currentValue = 0.0f;
+        if (i == 0) 
+        {
+            currentValue = m_lowPassFilterCoeff.at(0) * signal->at(i);
+        }
+        else if (i == 1)
+        {
+            currentValue = m_lowPassFilterCoeff.at(0) * signal->at(i) + m_lowPassFilterCoeff.at(1) * signal->at(i - 1) + m_lowPassFilterCoeff.at(3) * filteredSignal.at(i - 1);
+        }
+        else
+        {
+            currentValue = m_lowPassFilterCoeff.at(0) * signal->at(i) + m_lowPassFilterCoeff.at(1) * signal->at(i-1) + m_lowPassFilterCoeff.at(2) * signal->at(i - 2) - (m_lowPassFilterCoeff.at(3) * filteredSignal.at(i - 1)) - (m_lowPassFilterCoeff.at(4) * filteredSignal.at(i - 2));
+        }
+
+        filteredSignal.push_back(currentValue);
+    }
+
+    return filteredSignal;
 }

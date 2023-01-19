@@ -7,8 +7,8 @@
 // pp. 122-126, doi: 10.1109/EAIT.2012.6407876.
 
 #include "waves.h"
-#include "bits/stdc++.h"
 #include <utility>
+#include <numeric>
 
 template <typename T, typename A>
 int Utils::arg_max(std::vector<T, A> const& vec) {

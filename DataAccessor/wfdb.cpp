@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <time.h>
 #include "wfdb.h"
 
 /* Structures used by internal WFDB library functions only */

@@ -8,14 +8,9 @@
 #include <vector>
 #include <cmath>
 #include <numeric>
-#include <bits/stdc++.h>
 
 #include <gsl/gsl_fit.h>
 
-
-// todo - check if functions need to be safe to use (throw errors with bad data)
-// todo - check if any of returned value outside class needs to be std::shared_ptr<const std::vector<...>>
-// todo - check if libraries should be in cpp or h file
 
 #ifndef ECG_ANALYZER_DFA_H
 #define ECG_ANALYZER_DFA_H
@@ -23,10 +18,6 @@
 /**
  * Example of usage:
  * @code
- * int start = 4;
- * int end = 64;
- * int nDiv = 16;
- * int fs = 360;
  * std::shared_ptr<const std::vector<int>> RPeaks (from another module)
  * auto obiekt = Polyfit(fs, RPeaks, start, end, nDiv);
  * or
@@ -197,7 +188,7 @@ private:
  
 public:
     // Constructor
-    Polyfit(int fs, std::shared_ptr<const std::vector<int>> &RPeaks, int start = 4, int end = 64, int nDiv = 16);
+    Polyfit(std::shared_ptr<const std::vector<int>> &RPeaks);
 
     /**
      *
