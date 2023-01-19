@@ -8,16 +8,13 @@
 #include "Visualization/Peaks_chartCallout.h"
 
 
-
-Tabsgraphs::Tabsgraphs(QWidget *parent) : QTabWidget(parent) {
+Tabsgraphs::Tabsgraphs(QWidget *parent, DataController *datacontroller) : QTabWidget(parent) {
     this->setStyleSheet("QWidget {background-color: #E7F6F2;}");
+    dataController = datacontroller;
 }
 
 void Tabsgraphs::addtab_ECGBaselineMA() {
-
-
-    std::vector <float> filteredSignal={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
-//    std::vector <int> detectedRPeaks={2,4,6};
+    auto filteredSignal = dataController->getMovingAverageFilteredSignal();
     auto *obj = new MovingAverageFilteredSignal(filteredSignal);
 
     QWidget *tab1 = new QWidget;
@@ -29,9 +26,7 @@ void Tabsgraphs::addtab_ECGBaselineMA() {
 
 
 void Tabsgraphs::addtab_ECGBaselineLMS() {
-
-    std::vector <float> filteredSignal={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-    std::vector <int> detectedRPeaks={2,4,6};
+    auto filteredSignal = dataController->getLMSFilteredSignal();
     auto *obj = new LMSFilteredSignal(filteredSignal);
 
     QWidget *tab1 = new QWidget;
@@ -43,9 +38,7 @@ void Tabsgraphs::addtab_ECGBaselineLMS() {
 
 }
 void Tabsgraphs::addtab_ECGBaselineButterworth() {
-
-    std::vector <float> filteredSignal={1,2,3};
-    std::vector <int> detectedRPeaks={2,4,6};
+    auto filteredSignal = dataController->getButterworthFilteredSignal();
     auto *obj = new ButterworthFilteredSignal(filteredSignal);
 
     QWidget *tab1 = new QWidget;
@@ -57,17 +50,11 @@ void Tabsgraphs::addtab_ECGBaselineButterworth() {
 }
 
 void Tabsgraphs::addtab_RPeaksDetectionPanTompkins(){
+        auto filteredSignal = dataController->getButterworthFilteredSignal(); // zmiana algorytmu filtracji
+        auto detectedPeaks = dataController->getPanTompkinsRPeaks(std::make_shared<std::vector <float>>(filteredSignal));
+        auto Waves = dataController->getWaves(dataController->getButterworthFilteredSignal(), detectedPeaks);
 
-        std::vector <float> filteredSignal={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-        std::vector <int> detectedRPeaks={2,4,6,7,8,10,14,16,20};
-        std::vector <int> waves1 = {1, 2, 3, 4, 5, 7, 15, 17};
-        std::vector <int> waves2 = {1, 2, 4, 4, 5, 8, 15, 18};
-        std::vector <int> waves3 = {1, 2, 3, 4, 5, 9, 15, 19};
-        std::vector <int> waves4 = {1, 2, 3, 4, 5, 10, 14, 15};
-        std::vector <int> waves5 = {1, 2, 3, 4, 5, 11, 14, 16};
-        std::vector <int> waves6 = {1, 2, 3, 4, 5, 10, 14, 15};
-        std::vector <int> waves7 = {3, 5, 7, 9, 10, 11, 14, 16};
-        auto *obj = new PeaksChartCallout(filteredSignal, detectedRPeaks, waves1, waves2, waves3, waves4, waves5, waves6, waves7);
+        auto *obj = new PeaksChartCallout(filteredSignal, detectedPeaks, Waves.QRSonset, Waves.QRSend, Waves.Tend, Waves.Tend, Waves.Ponset, Waves.Pend, Waves.Pend);
         QWidget *tab1 = new QWidget;
         this->addTab(tab1, "QRSPT - Pan Tompkins");
 
@@ -77,22 +64,38 @@ void Tabsgraphs::addtab_RPeaksDetectionPanTompkins(){
 };
 
 void Tabsgraphs::addtab_RPeaksDetectionHilbert(){
+    auto filteredSignal = dataController->getButterworthFilteredSignal(); // zmiana algorytmu filtracji
+    auto detectedPeaks = dataController->getHilbertRPeaks(std::make_shared<std::vector <float>>(filteredSignal));
+    auto Waves = dataController->getWaves(dataController->getButterworthFilteredSignal(), detectedPeaks);
+
+    auto *obj = new PeaksChartCallout(filteredSignal, detectedPeaks, Waves.QRSonset, Waves.QRSend, Waves.Tend, Waves.Tend, Waves.Ponset, Waves.Pend, Waves.Pend);
+
     QWidget *tab1 = new QWidget;
     this->addTab(tab1, "QRSPT - Hilbert");
     QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->addWidget(obj);
     tab1->setLayout(vlayout);
 };
 
-void Tabsgraphs::addtab_QRSandPTDetection(){
+//void Tabsgraphs::addtab_QRSandPTDetection(){
+//
+//    QWidget *tab1 = new QWidget;
+//    this->addTab(tab1, "QRS and PT Detection");
+//    QVBoxLayout *vlayout = new QVBoxLayout;
+//    tab1->setLayout(vlayout);
+//};
+
+void Tabsgraphs::addtab_Histogram(){
+
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "QRS and PT Detection");
+    this->addTab(tab1, "Histogram");
     QVBoxLayout *vlayout = new QVBoxLayout;
     tab1->setLayout(vlayout);
 };
 
-void Tabsgraphs::addtab_HRV2(){
+void Tabsgraphs::addtab_Poincare(){
     QWidget *tab1 = new QWidget;
-    this->addTab(tab1, "HRV2");
+    this->addTab(tab1, "Poincare");
     QVBoxLayout *vlayout = new QVBoxLayout;
     tab1->setLayout(vlayout);
 };
