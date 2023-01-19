@@ -16,7 +16,7 @@ class Tabsgraphs : public QTabWidget
     Q_OBJECT;
 
 public:
-    Tabsgraphs(QWidget *parent = nullptr, DataController *datacontroller=nullptr);
+    Tabsgraphs(QWidget *parent = nullptr, std::shared_ptr<DataController> datacontroller=nullptr);
 
 
 public slots:
@@ -33,7 +33,7 @@ public slots:
     void addtab_Poincare();
 
 private:
-    DataController *dataController;
+    std::shared_ptr<DataController> dataController;
 };
 
 

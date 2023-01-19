@@ -3,7 +3,12 @@
 //
 #include "DataController.h"
 
-DataController::DataController(std::string pathToFile)
+DataController::DataController()
+{
+
+}
+
+void DataController::initialize(std::string pathToFile)
 {
     dataAccessor.load(pathToFile);
     if (dataAccessor.isLoaded())
@@ -14,6 +19,16 @@ DataController::DataController(std::string pathToFile)
         m_rawSignal = dataAccessor.at(0).data;
         ecgBaseline = ECG_Baseline(std::make_shared<std::vector<float>>(m_rawSignal));
     }
+}
+
+const char DataController::getSex()
+{
+    return m_signalDetails.sex;
+}
+
+const unsigned int DataController::getAge()
+{
+    return m_signalDetails.age;
 }
 
 const std::vector<float> DataController::getLMSFilteredSignal()

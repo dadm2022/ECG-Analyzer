@@ -5,17 +5,18 @@
 #include "textBrowserName.h"
 #include <sstream>
 
-textBrowserName::textBrowserName(QTextBrowser *parent, DataController *datacontroller) : QTextBrowser(parent) {
+textBrowserName::textBrowserName(QTextBrowser *parent, std::shared_ptr<DataController> datacontroller) : QTextBrowser(parent) {
     dataController = datacontroller;
 }
 void textBrowserName::handleTextBrowserAge()
 {
-    auto age = dataController->getAge();
-    this->setText(age);
+    std::stringstream age;
+    age << dataController->getAge();
+    this->setText(QString::fromStdString(age.str()));
 }
 void textBrowserName::handleTextBrowserGender()
 {   auto sex = dataController->getSex();
-    this->setText(sex);
+    this->setText(QString(sex));
 }
 void textBrowserName::handleTextBrowserRRmean()
 {
