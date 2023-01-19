@@ -5,9 +5,9 @@
 #include "hrv1.h"
 #include <cmath>
 #include <stdlib.h>
-#include "src/interpolation.h"
-#include "src/fasttransforms.h"
-#include "src/stdafx.h"
+//#include "src/interpolation.h"
+//#include "src/fasttransforms.h"
+//#include "src/stdafx.h"
 
 #define DIFF_50_MS 50
 #define ONE_HUN_PERCENT 100
@@ -22,46 +22,46 @@ void HRV1::calculateStatisticParams() {
     m_Results.valuePNN50 = calculatePNN50();
 }
 
-void HRV1::calculateFrequencyParams() {
-
-    std::vector<float> tachSpline = cubicSpline();
-    m_Results.outputPSD = calculatePSD(tachSpline);
-    m_Results.freqSpectrum = calculateFreqSpect(tachSpline);
-
-    int n = m_Results.freqSpectrum.size();
-
-    float HF = 0;
-    float LF = 0;
-    float VLF = 0;
-    float ULF = 0;
-    float LFHF, TP;
-
-    for(int i = 1; i < n; i++) {
-        if(0.40 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i]> 0.15) {
-            HF += m_Results.outputPSD[i];
-        }
-        else if(0.15 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i] > 0.04) {
-            LF += m_Results.outputPSD[i];
-        }
-        else if(0.04 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i] > 0.003) {
-            VLF += m_Results.outputPSD[i];
-        }
-        else if(0.003 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i] > 0.0001){
-            ULF += m_Results.outputPSD[i];
-        }
-    }
-
-    LFHF = LF/HF;
-    TP = HF + LF + VLF + ULF;
-
-    m_Results.HF = HF;
-    m_Results.LF = LF;
-    m_Results.VLF = VLF;
-    m_Results.ULF = ULF;
-    m_Results.TP = TP;
-    m_Results.LFHF = LFHF;
-
-}
+//void HRV1::calculateFrequencyParams() {
+//
+//    std::vector<float> tachSpline = cubicSpline();
+//    m_Results.outputPSD = calculatePSD(tachSpline);
+//    m_Results.freqSpectrum = calculateFreqSpect(tachSpline);
+//
+//    int n = m_Results.freqSpectrum.size();
+//
+//    float HF = 0;
+//    float LF = 0;
+//    float VLF = 0;
+//    float ULF = 0;
+//    float LFHF, TP;
+//
+//    for(int i = 1; i < n; i++) {
+//        if(0.40 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i]> 0.15) {
+//            HF += m_Results.outputPSD[i];
+//        }
+//        else if(0.15 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i] > 0.04) {
+//            LF += m_Results.outputPSD[i];
+//        }
+//        else if(0.04 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i] > 0.003) {
+//            VLF += m_Results.outputPSD[i];
+//        }
+//        else if(0.003 >= m_Results.freqSpectrum[i] && m_Results.freqSpectrum[i] > 0.0001){
+//            ULF += m_Results.outputPSD[i];
+//        }
+//    }
+//
+//    LFHF = LF/HF;
+//    TP = HF + LF + VLF + ULF;
+//
+//    m_Results.HF = HF;
+//    m_Results.LF = LF;
+//    m_Results.VLF = VLF;
+//    m_Results.ULF = ULF;
+//    m_Results.TP = TP;
+//    m_Results.LFHF = LFHF;
+//
+//}
 
 void HRV1::calculateParams() {
 
@@ -69,7 +69,7 @@ void HRV1::calculateParams() {
         m_vectorRPeaks = createTachogram();
         if (m_vectorRPeaks.size() > 0) {
             calculateStatisticParams();
-            calculateFrequencyParams();
+            /*calculateFrequencyParams();*/
         }
     }
 }
@@ -151,120 +151,119 @@ float HRV1::calculatePNN50() {
     float valuePNN50 = float(m_Results.valueNN50) / float(m_vectorRPeaks.size()) * ONE_HUN_PERCENT;
     return valuePNN50;
 }
-
-float HRV1::getSigLen(std::vector<float> vectorRPeaks) {
-
-    float timeLen = 0;
-    /* sum of intervals */
-    for (int i = 0; i < vectorRPeaks.size(); i++) {
-        timeLen += vectorRPeaks[i];
-    }
-    return timeLen;
-}
-
-std::vector<float> HRV1::prepareSigAbsolute() {
-
-    /* Cumulative total (in seconds) */
-    std::vector<float> sigAbsolute;
-    sigAbsolute.reserve(m_vectorRPeaks.size());
-    sigAbsolute.push_back(m_vectorRPeaks[0]/1000);
-    for(int i = 1; i < m_vectorRPeaks.size(); i++) {
-        sigAbsolute.push_back(sigAbsolute[i-1] + (m_vectorRPeaks[i]/float(1000)));
-    }
-    return std::move(sigAbsolute);
-}
-
-std::vector<float> HRV1::cubicSpline() {
-
-    int n = m_vectorRPeaks.size();
-    std::vector<float> sigAbsolute = prepareSigAbsolute();
-
-    /* type conversion */
-    double* newsigAbsolute = new double[n];
-    double* newvectorRPeaks = new double[n];
-
-    /* sigAbsolute vector to double array */
-    for(int i = 0; i<sigAbsolute.size(); i++) {
-        newsigAbsolute[i] = double(sigAbsolute[i]);
-    }
-    /* tachogram to double array */
-    for(int i = 0; i<m_vectorRPeaks.size(); i++) {
-        newvectorRPeaks[i] = double(m_vectorRPeaks[i]/(float(1000)));
-    }
-
-    alglib::real_1d_array *rx = new alglib::real_1d_array();
-    rx->setcontent(n, newsigAbsolute);
-    alglib::real_1d_array *ry = new alglib::real_1d_array();
-    ry->setcontent(n, newvectorRPeaks);
-
-    alglib::spline1dinterpolant s;
-    /* building interpolate function */
-    alglib::spline1dbuildcubic(*const_cast<const alglib::real_1d_array*>(rx), *const_cast<const alglib::real_1d_array*>(ry), s);
-
-    /* interpolation */
-    std::vector<float> sigSpline;
-    sigSpline.reserve(n);
-    float sigLen = (getSigLen(m_vectorRPeaks))/(float(1000));
-    for(int i = 0; i < n; i++) {
-        sigSpline.push_back(alglib::spline1dcalc(s, i*(sigLen/float(n))));
-    }
-    delete[] newsigAbsolute;
-    delete[] newvectorRPeaks;
-    return std::move(sigSpline);
-}
-
-/* PSD */
-/* Parameter(s): vector<float> sigSpline tachogram after interpolation*/
-/* Return: float<vector> outputPSD */
-std::vector<float> HRV1::calculatePSD(const std::vector<float> sigSpline) {
-
-    int n = sigSpline.size();
-
-    /* type conversion */
-    double * newInputSignal = new double[n];
-
-    /* rewriting data from vector to array */
-    for(int i = 0; i < n; i++) {
-        newInputSignal[i] = (double)sigSpline[i];
-    }
-    alglib::real_1d_array s; // table needed for fft
-    s.setcontent(n, newInputSignal); // Copying array to a s variable
-    alglib::complex_1d_array newFftSignal; // Because the result is in complex numbers
-    alglib::fftr1d(s, newFftSignal); //  fft
-
-    std::vector<float> outputPSD;
-    outputPSD.reserve(n);
-
-    /* Calculation of one-sided spectrum */
-    /* Spectral density determination*/
-    for(int i = 0; i < n/2; i++) {
-        if ( i == 0) {
-            outputPSD.push_back(pow(sqrt(pow(newFftSignal[i].x, 2)+ pow(newFftSignal[i].y,2)),2)/(n));
-        }
-        else {
-            outputPSD.push_back(2*pow(sqrt(pow(newFftSignal[i].x, 2) + pow(newFftSignal[i].y, 2)), 2)/(n));
-        }
-    }
-
-    delete[] newInputSignal;
-    return std::move(outputPSD);
-}
-
-/*Frequency vector 									                  */
-/* Parameter(s): vector<float> sigSpline - tachogram after interpolation */
-/* Return: float<vector> freqSpect - frequency spectrum */
-std::vector<float> HRV1::calculateFreqSpect(const std::vector<float> sigSpline) {
-
-    int n = sigSpline.size();
-    std::vector<float> freqSpect;
-    freqSpect.reserve(n/2);
-    float step = 1.0f/(getSigLen(sigSpline)); // frequency step
-
-    for(int i = 0; i < n/2; i++) {
-        freqSpect.push_back(float(i)*step);
-    }
-    return std::move(freqSpect);
-}
+//
+//float HRV1::getSigLen(std::vector<float> vectorRPeaks) {
+//
+//    float timeLen = 0;
+//    /* sum of intervals */
+//    for (int i = 0; i < vectorRPeaks.size(); i++) {
+//        timeLen += vectorRPeaks[i];
+//    }
+//    return timeLen;
+//}
+//std::vector<float> HRV1::prepareSigAbsolute() {
+//
+//    /* Cumulative total (in seconds) */
+//    std::vector<float> sigAbsolute;
+//    sigAbsolute.reserve(m_vectorRPeaks.size());
+//    sigAbsolute.push_back(m_vectorRPeaks[0]/1000);
+//    for(int i = 1; i < m_vectorRPeaks.size(); i++) {
+//        sigAbsolute.push_back(sigAbsolute[i-1] + (m_vectorRPeaks[i]/float(1000)));
+//    }
+//    return std::move(sigAbsolute);
+//}
+//
+//std::vector<float> HRV1::cubicSpline() {
+//
+//    int n = m_vectorRPeaks.size();
+//    std::vector<float> sigAbsolute = prepareSigAbsolute();
+//
+//    /* type conversion */
+//    double* newsigAbsolute = new double[n];
+//    double* newvectorRPeaks = new double[n];
+//
+//    /* sigAbsolute vector to double array */
+//    for(int i = 0; i<sigAbsolute.size(); i++) {
+//        newsigAbsolute[i] = double(sigAbsolute[i]);
+//    }
+//    /* tachogram to double array */
+//    for(int i = 0; i<m_vectorRPeaks.size(); i++) {
+//        newvectorRPeaks[i] = double(m_vectorRPeaks[i]/(float(1000)));
+//    }
+//
+//    alglib::real_1d_array *rx = new alglib::real_1d_array();
+//    rx->setcontent(n, newsigAbsolute);
+//    alglib::real_1d_array *ry = new alglib::real_1d_array();
+//    ry->setcontent(n, newvectorRPeaks);
+//
+//    alglib::spline1dinterpolant s;
+//    /* building interpolate function */
+//    alglib::spline1dbuildcubic(*const_cast<const alglib::real_1d_array*>(rx), *const_cast<const alglib::real_1d_array*>(ry), s);
+//
+//    /* interpolation */
+//    std::vector<float> sigSpline;
+//    sigSpline.reserve(n);
+//    float sigLen = (getSigLen(m_vectorRPeaks))/(float(1000));
+//    for(int i = 0; i < n; i++) {
+//        sigSpline.push_back(alglib::spline1dcalc(s, i*(sigLen/float(n))));
+//    }
+//    delete[] newsigAbsolute;
+//    delete[] newvectorRPeaks;
+//    return std::move(sigSpline);
+//}
+//
+///* PSD */
+///* Parameter(s): vector<float> sigSpline tachogram after interpolation*/
+///* Return: float<vector> outputPSD */
+//std::vector<float> HRV1::calculatePSD(const std::vector<float> sigSpline) {
+//
+//    int n = sigSpline.size();
+//
+//    /* type conversion */
+//    double * newInputSignal = new double[n];
+//
+//    /* rewriting data from vector to array */
+//    for(int i = 0; i < n; i++) {
+//        newInputSignal[i] = (double)sigSpline[i];
+//    }
+//    alglib::real_1d_array s; // table needed for fft
+//    s.setcontent(n, newInputSignal); // Copying array to a s variable
+//    alglib::complex_1d_array newFftSignal; // Because the result is in complex numbers
+//    alglib::fftr1d(s, newFftSignal); //  fft
+//
+//    std::vector<float> outputPSD;
+//    outputPSD.reserve(n);
+//
+//    /* Calculation of one-sided spectrum */
+//    /* Spectral density determination*/
+//    for(int i = 0; i < n/2; i++) {
+//        if ( i == 0) {
+//            outputPSD.push_back(pow(sqrt(pow(newFftSignal[i].x, 2)+ pow(newFftSignal[i].y,2)),2)/(n));
+//        }
+//        else {
+//            outputPSD.push_back(2*pow(sqrt(pow(newFftSignal[i].x, 2) + pow(newFftSignal[i].y, 2)), 2)/(n));
+//        }
+//    }
+//
+//    delete[] newInputSignal;
+//    return std::move(outputPSD);
+//}
+//
+///*Frequency vector 									                  */
+///* Parameter(s): vector<float> sigSpline - tachogram after interpolation */
+///* Return: float<vector> freqSpect - frequency spectrum */
+//std::vector<float> HRV1::calculateFreqSpect(const std::vector<float> sigSpline) {
+//
+//    int n = sigSpline.size();
+//    std::vector<float> freqSpect;
+//    freqSpect.reserve(n/2);
+//    float step = 1.0f/(getSigLen(sigSpline)); // frequency step
+//
+//    for(int i = 0; i < n/2; i++) {
+//        freqSpect.push_back(float(i)*step);
+//    }
+//    return std::move(freqSpect);
+//}
 
 float HRV1::Get_meanRR(){
     return m_Results.meanRR;
@@ -286,26 +285,26 @@ float HRV1::Get_valuePNN50(){
     return m_Results.valuePNN50;
 }
 
-float HRV1::Get_HF(){
-    return m_Results.HF;
-}
-
-float HRV1::Get_LF(){
-    return m_Results.LF;
-}
-
-float HRV1::Get_VLF(){
-    return m_Results.VLF;
-}
-
-float HRV1::Get_ULF(){
-    return m_Results.ULF;
-}
-
-float HRV1::Get_TP(){
-    return m_Results.TP;
-}
-
-float HRV1::Get_LFHF(){
-    return m_Results.LFHF;
-}
+//float HRV1::Get_HF(){
+//    return m_Results.HF;
+//}
+//
+//float HRV1::Get_LF(){
+//    return m_Results.LF;
+//}
+//
+//float HRV1::Get_VLF(){
+//    return m_Results.VLF;
+//}
+//
+//float HRV1::Get_ULF(){
+//    return m_Results.ULF;
+//}
+//
+//float HRV1::Get_TP(){
+//    return m_Results.TP;
+//}
+//
+//float HRV1::Get_LFHF(){
+//    return m_Results.LFHF;
+//}

@@ -23,14 +23,14 @@ struct HRV1_results {
     float valueRMSSD;
     unsigned int valueNN50;
     float valuePNN50;
-    std::vector<float> outputPSD;
-    std::vector<float> freqSpectrum;
-    float HF;
-    float LF;
-    float VLF;
-    float ULF;
-    float TP;
-    float LFHF;
+//    std::vector<float> outputPSD;
+//    std::vector<float> freqSpectrum;
+//    float HF;
+//    float LF;
+//    float VLF;
+//    float ULF;
+//    float TP;
+//    float LFHF;
 };
 
 class HRV1 {
@@ -44,12 +44,12 @@ public:
     float Get_valueRMSSD();
     unsigned int Get_valueNN50();
     float Get_valuePNN50();
-    float Get_HF();
-    float Get_LF();
-    float Get_VLF();
-    float Get_ULF();
-    float Get_TP();
-    float Get_LFHF();
+//    float Get_HF();
+//    float Get_LF();
+//    float Get_VLF();
+//    float Get_ULF();
+//    float Get_TP();
+//    float Get_LFHF();
 
 private:
 
@@ -58,7 +58,7 @@ private:
     HRV1_results m_Results;
 
     void calculateStatisticParams();
-    void calculateFrequencyParams();
+    /*void calculateFrequencyParams();*/
 
     std::vector<float> createTachogram();
     float calculateMeanRR();
@@ -67,11 +67,11 @@ private:
     unsigned int calculateNN50();
     float calculatePNN50();
 
-    std::vector<float> prepareSigAbsolute();
-    float getSigLen(std::vector<float> vectorRPeaks);
-    std::vector<float> calculatePSD(const std::vector<float> sigSpline);
-    std::vector<float> calculateFreqSpect(const std::vector<float> sigSpline);
-    std::vector<float> cubicSpline();
+//    std::vector<float> prepareSigAbsolute();
+//    float getSigLen(std::vector<float> vectorRPeaks);
+//    std::vector<float> calculatePSD(const std::vector<float> sigSpline);
+//    std::vector<float> calculateFreqSpect(const std::vector<float> sigSpline);
+//    std::vector<float> cubicSpline();
 
 };
 
