@@ -5,7 +5,7 @@
 #ifndef ECG_ANALYZER_VIEWMODELUI_H
 #define ECG_ANALYZER_VIEWMODELUI_H
 //#include <QtCharts>
-//#include "Tabsgraphs.h"
+#include "Tabsgraphs.h"
 
 #include <QPushButton>
 #include <QMainWindow>
@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow
     private:
         void initializeDataController();
         std::string pathToFile;
-        std::shared_ptr<DataController> datacontroller=nullptr;
+        std::shared_ptr<DataController> datacontroller = std::make_shared<DataController>(DataController());
 };
 
 #endif //ECG_ANALYZER_VIEWMODELUI_H

@@ -66,7 +66,12 @@ class DataController
 
 
 public:
-    DataController(std::string pathToFile);
+    DataController();
+
+    void initialize(std::string pathToFile);
+
+    const char getSex();
+    const unsigned int getAge();
 
     const std::vector<float> getLMSFilteredSignal();
     const std::vector<float> getButterworthFilteredSignal();
@@ -78,6 +83,8 @@ public:
     const Waves getWaves(std::vector<float> filteredSignal, std::vector<int> rPeaks);
 
     const bool getAlternans(std::shared_ptr<const std::vector<int>>& m_tEndPoints, std::shared_ptr<const std::vector<float>>& FilteredSignal);
+    const float getAlternansValue(std::shared_ptr<const std::vector<int>> &m_tEndPoints,
+                                                  std::shared_ptr<const std::vector<float>> &filteredSignal);
 
     const long double getAlpha1(std::shared_ptr<const std::vector<int>> rPeaks);
     const long double getAlpha2(std::shared_ptr<const std::vector<int>> rPeaks);

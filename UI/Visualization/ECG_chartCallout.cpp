@@ -23,8 +23,8 @@ ECGSignal::ECGSignal(std::vector<float> &FilteredECGSignal):
 
     defXaxis = new QValueAxis();
     defYaxis = new QValueAxis();
-    defXaxis->setRange(0, 70);
-    defYaxis->setRange(-10, 10);
+    defXaxis->setRange(0, 10000);
+    defYaxis->setRange(-2, 2);
 
     chart->addAxis(defXaxis, Qt::AlignBottom);
     chart->addAxis(defYaxis, Qt::AlignLeft);
@@ -64,7 +64,7 @@ void ECGSignal::createSeries(){
 void ECGSignal::addDataToQSeries(int startIndex) {
 
     float signalValue;
-    for (int i = startIndex; i < startIndex + 7000; i++) {
+    for (int i = startIndex; i < startIndex + FilteredECGSignal.size(); i++) {
         if (i >= FilteredECGSignal.size()) {
             break;
         }

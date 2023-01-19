@@ -3,7 +3,6 @@
 //
 #include <QtCharts>
 #include "chartCallout.h"
-#include "../Modules/Sample/Sample.h"
 #include <QtWidgets>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>

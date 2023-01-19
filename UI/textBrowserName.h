@@ -12,7 +12,7 @@ class textBrowserName : public QTextBrowser
     Q_OBJECT;
 
     public:
-    explicit textBrowserName(QTextBrowser *parent = nullptr, DataController *datacontroller=nullptr);
+    explicit textBrowserName(QTextBrowser *parent = nullptr, std::shared_ptr<DataController> datacontroller=nullptr);
 
 
     public slots:
@@ -45,7 +45,7 @@ class textBrowserName : public QTextBrowser
     void handleTextBrowserCASEDISEASE();
 
     private:
-    DataController *dataController;
+    std::shared_ptr<DataController> dataController;
 };
 
 

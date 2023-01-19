@@ -5,17 +5,18 @@
 #include "textBrowserName.h"
 #include <sstream>
 
-textBrowserName::textBrowserName(QTextBrowser *parent, DataController *datacontroller) : QTextBrowser(parent) {
+textBrowserName::textBrowserName(QTextBrowser *parent, std::shared_ptr<DataController> datacontroller) : QTextBrowser(parent) {
     dataController = datacontroller;
 }
 void textBrowserName::handleTextBrowserAge()
 {
-    auto age = dataController->getAge();
-    this->setText(age);
+    std::stringstream age;
+    age << dataController->getAge();
+    this->setText(QString::fromStdString(age.str()));
 }
 void textBrowserName::handleTextBrowserGender()
 {   auto sex = dataController->getSex();
-    this->setText(sex);
+    this->setText(QString(sex));
 }
 void textBrowserName::handleTextBrowserRRmean()
 {
@@ -116,11 +117,25 @@ void textBrowserName::handleTextBrowserARTIFACT()
 }
 void textBrowserName::handleTextBrowserAMPLITUDEALT()
 {
-    this->setText("45");
+    auto filteredSignal = dataController->getLMSFilteredSignal();
+    auto rpeaks = dataController->getPanTompkinsRPeaks(std::make_shared<std::vector<float>>(filteredSignal));
+    auto waves = dataController->getWaves(filteredSignal, rpeaks);
+    auto dupa = std::make_shared<const std::vector<int>>(waves.Tend);
+    auto siusiak = std::make_shared<const std::vector<float>>(filteredSignal);
+    auto value = dataController->getAlternansValue(dupa, siusiak);
+    std::stringstream strValue;
+    strValue << value;
+    this->setText(QString::fromStdString(strValue.str()));
 }
 void textBrowserName::handleTextBrowserTHRESHOLD()
 {
-    this->setText("Tak"); // boolowska wartosc zawiadamiajaca o przekroczeniu progu
+    auto filteredSignal = dataController->getLMSFilteredSignal();
+    auto rpeaks = dataController->getPanTompkinsRPeaks(std::make_shared<std::vector<float>>(filteredSignal));
+    auto waves = dataController->getWaves(filteredSignal, rpeaks);
+    auto dupa = std::make_shared<const std::vector<int>>(waves.Tend);
+    auto siusiak = std::make_shared<const std::vector<float>>(filteredSignal);
+    auto value = dataController->getAlternans(dupa, siusiak);
+    this->setText(value ? "Tak" : "Nie");
 }
 void textBrowserName::handleTextBrowserDISEASE()
 {
